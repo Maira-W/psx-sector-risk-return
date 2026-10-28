@@ -3,6 +3,7 @@
 import json
 import re
 
+import numpy as np
 import pytest
 
 from psxsec import config, dashboard, docs, notebook
@@ -69,6 +70,27 @@ def test_no_document_overstates_the_ranking(summary):
         assert "guarantee" not in text_of(path).lower() or "no guarantee" in text_of(path).lower(), path.name
 
 
+def test_the_second_layer_text_matches_the_results(summary):
+    """The wording about skill, luck and the walk-forward test must follow the numbers; nothing may claim a finding they do not show."""
+    a, m, w = summary["alpha"], summary["macro"], summary["walk_forward"]
+    n, win, eq = a["trials"], w["strategies"]["winners"], w["strategies"]["equal_weight"]
+    readme, memo = text_of(config.ROOT / "README.md"), text_of(config.ROOT / "docs/recommendation_memo.md")
+    for text in (readme, memo):
+        assert f"{a['best_alpha_p_adjusted']:.3f}" in text and f"{win['sharpe']:.2f}" in text and f"{eq['sharpe']:.2f}" in text
+        assert f"{len(m['rate_fdr'])} of the {n} sectors react clearly to interest rates" in text
+        assert f"{summary['structure']['effective_bets']:.1f} independent bets" in text
+    for name in ("README.md", "docs/recommendation_memo.md", "docs/methodology.md"):
+        text = text_of(config.ROOT / name)
+        if a["alpha_adjusted_significant"] == 0:
+            assert "keep a significant alpha" not in text, name
+        if win["sharpe_vs_equal"] <= 0 or win["vs_equal_p"] >= 0.05:
+            assert "The past ranking beat equal weighting out of sample." not in text, name       # that sentence is only for a gain that is more than luck
+    table = [line for line in memo.split("## Is it skill or luck?")[1].split("## What moves")[0].splitlines() if line.startswith("| ") and not line.startswith("| ---")]
+    assert len(table) == n + 1                                                       # a header and one row for every ranked sector
+    rows = [line for line in memo.split("## Could you have used the ranking?")[1].splitlines() if line.startswith("| ") and "Rule" not in line and "---" not in line]
+    assert any(config.STRATEGIES["winners"] in row for row in rows) and any(config.STRATEGIES["min_variance"] in row for row in rows)
+
+
 def test_every_document_says_it_is_not_investment_advice():
     for name in ("README.md", "docs/recommendation_memo.md", "docs/methodology.md"):
         assert "not investment advice" in text_of(config.ROOT / name).lower(), name
@@ -84,10 +106,38 @@ def test_dashboard_is_current_and_its_data_are_valid_json():
     page = text_of(config.DASHBOARD / "dashboard.html")
     assert page == dashboard.render()
     data = json.loads(re.search(r'<script id="data" type="application/json">(.*?)</script>', page, re.S).group(1))
-    assert {"sectors", "stocks", "weeks", "levels", "drawdowns", "robust", "corr", "stats"} <= set(data)
+    assert {"sectors", "stocks", "weeks", "levels", "drawdowns", "robust", "corr", "stats", "daily", "presets", "walkForward", "structure"} <= set(data)
     assert "NaN" not in page and "__DATA__" not in page and "__PLOTLY__" not in page
     assert all(len(v) == len(data["weeks"]) for v in data["levels"].values())
     assert {r["sector"] for r in data["sectors"]} >= set(data["rankedOrder"])
+
+
+def test_the_dashboard_carries_what_the_second_layer_needs(summary, daily):
+    data = dashboard.payload()
+    ranked, days = data["rankedOrder"], data["daily"]
+    assert days["scale"] == dashboard.DAILY_SCALE and len(days["dates"]) == len(daily) and len(days["safe"]) == len(daily)
+    assert set(days["returns"]) == {*ranked, dashboard.MARKET} and all(len(v) == len(daily) for v in days["returns"].values())
+    for name in (ranked[0], dashboard.MARKET):                                  # the builder works from these numbers, so they must be the results rounded, not changed
+        assert np.allclose(np.array(days["returns"][name]) / days["scale"], daily[name], atol=0.6 / days["scale"])
+    assert np.allclose(days["safe"], daily[dashboard.CASH], atol=1e-8)
+    for name, weights in data["presets"].items():
+        assert len(weights) == len(ranked) and min(weights) >= 0 and abs(sum(weights) - 1) < 1e-6, name
+    walk = data["walkForward"]
+    assert set(walk["levels"]) == set(walk["names"]) == set(config.STRATEGIES)
+    assert all(len(v) == len(walk["weeks"]) for v in walk["levels"].values())
+    assert len(walk["ic"]) == len(walk["icDates"]) == summary["walk_forward"]["ic"]["months"]
+    names, matrix = data["structure"]["names"], np.array(data["structure"]["matrix"])
+    assert sorted(names) == sorted(ranked) and matrix.shape == (len(names), len(names)) and np.allclose(matrix, matrix.T, atol=1e-3)
+    assert [name for group in summary["structure"]["groups"] for name in group] == names       # the heatmap draws each group as a block of rows
+
+
+def test_the_dashboard_has_a_tab_for_every_section_and_no_leftover_hooks():
+    page = text_of(config.DASHBOARD / "dashboard.html")
+    tabs = re.findall(r'\["(\w+)", "([^"]+)"\]', re.search(r"const tabs = (\[.*?\]);", page, re.S).group(1))
+    ids = [i for i, _ in tabs]
+    assert ids == ["answer", "table", "ups", "sure", "risk", "moves", "port", "method"]
+    assert all(f'<section id="{i}" hidden></section>' in page or i == "answer" for i in ids) and 'id="answer"' in page
+    assert "console.log" not in page and "debugger" not in page
 
 
 def test_figures_exist_and_are_not_empty():
@@ -95,7 +145,9 @@ def test_figures_exist_and_are_not_empty():
     assert names
     for name in names:
         assert (config.FIGURES / name).stat().st_size > 10_000
-    assert len(list(config.FIGURES.glob("*.png"))) == 9
+    assert len(list(config.FIGURES.glob("*.png"))) == 13
+    mentioned = set(re.findall(r"figures/([\w.]+\.png)", "".join(text_of(path) for path in DOCUMENTS)))
+    assert {p.name for p in config.FIGURES.glob("*.png")} <= mentioned, "a figure is not used in any document"
 
 
 def test_the_notebook_has_the_code_in_notebook_py_and_ran_without_errors():

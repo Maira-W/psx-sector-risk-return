@@ -26,7 +26,7 @@ The raw files are **not stored in this repository.** The prices and the exchange
 ## 2. Prices, volume and dividends: Yahoo Finance
 
 - **What:** daily close, adjusted close, volume, dividends and stock splits for each symbol with the suffix `.KA`, through the `yfinance` package (1.7.0), retrieved 2026-10-28.
-- **Used for:** every return in the analysis (579,383 price rows in all). The exchange rate (rupees per US dollar, Yahoo symbol `PKR=X`, same source and date) is used only to show returns in dollars as well as rupees: it went from 174.5 to 276.8 over the window.
+- **Used for:** every return in the analysis (579,383 price rows in all). The exchange rate (rupees per US dollar, Yahoo symbol `PKR=X`, same source and date) is used to show returns in dollars as well as rupees (it went from 174.5 to 276.8 over the window) and, as its percentage change from one month end to the next, as one of the inputs to the interest-rate and rupee model (methodology, section 10).
 - **Problems found:**
   - **Missing companies.** Yahoo had no data for 103 of the 538 operating companies asked for (for example AASM, ABSON, AHCL, ALTN, AMSL, ANNT, APOT, ARMG, AVN, AZMT, BAPLR1 and BBFL). They are listed in the manifest and in [`data/processed/stock_status.csv`](../data/processed/stock_status.csv). 5 of them are KSE-100 companies (AHCL, BML, ENGROH, GAL and HUBC), which weakens the KSE-100 cross-check a little.
   - **Holidays.** Yahoo lists PSX holidays as rows with no volume and the previous price. They are dropped (a date counts as a market day only if at least 50 companies traded).
@@ -43,7 +43,7 @@ Why Yahoo Finance? It is free, covers most of the market and carries adjusted pr
 - **What:** the SBP policy rate, typed in by hand as a table of changes ([`data/reference/policy_rate.csv`](../data/reference/policy_rate.csv)) with a source for every row.
 - **How the dates were set:** where an SBP circular or a news report gave the effective date, that date is used; otherwise the day after the announcement is assumed. A difference of a day or two changes the cash return by a few thousandths of a percentage point.
 - **Why typed in:** the State Bank's website refuses automated requests, so the series could not be downloaded. Every change was checked against at least one dated news report or SBP circular found by search; the sources are linked below. Nothing was scraped from the SBP site.
-- **Used for:** the "safe" return in the Sharpe ratio. The policy rate stands in for a risk-free rate; Treasury bill yields were close to it but were not available in a downloadable form.
+- **Used for:** the "safe" return in the Sharpe ratio and, as its change from one month end to the next, as an input to the interest-rate and rupee model. The policy rate stands in for a risk-free rate; Treasury bill yields were close to it but were not available in a downloadable form.
 
 | Effective | Rate | How the date was set | Source |
 | --- | ---: | --- | --- |

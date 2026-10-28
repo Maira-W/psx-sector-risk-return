@@ -247,9 +247,11 @@ def _python(value):
     if isinstance(value, list | tuple):
         return [_python(v) for v in value]
     if isinstance(value, np.generic):
-        return value.item()
+        value = value.item()
     if isinstance(value, pd.Timestamp):
         return value.date().isoformat()
+    if isinstance(value, float) and not np.isfinite(value):
+        return None                      # strict JSON has no NaN
     return value
 
 
@@ -268,8 +270,6 @@ def run() -> None:
     edges = year_edges(d.total.index, d.base_date)
     years = yearly_returns(idx_total, edges)
     excess = idx_total.sub(d.safe, axis=0)
-    market_ex = excess[MARKET]
-    beta = excess.apply(lambda s: s.cov(market_ex) / market_ex.var())
     corr = idx_total.corr()[MARKET]
     buy_hold = {s: ((1 + d.total[m]).cumprod().mean(axis=1).iloc[-1]) ** (1 / d.years) - 1 for s, m in {**members_all, MARKET: available}.items()}
 
@@ -286,7 +286,6 @@ def run() -> None:
     table["dividend_points"] = table["cagr"] - table["price_cagr"]
     table["cagr_buy_and_hold"] = pd.Series(buy_hold)
     table["cagr_daily_rebalanced"] = metrics.annualised_return(index_returns(d.total, members_all, available, rebalance="D"), d.years)
-    table["beta"] = beta
     table["correlation_with_market"] = corr
     fx = json.loads((config.INTERIM / "data_quality.json").read_text(encoding="utf-8")).get("fx")
     table["usd_cagr"] = ((1 + table["total_return"]) / (1 + fx["rupee_change"])) ** (1 / d.years) - 1 if fx else np.nan
@@ -302,6 +301,20 @@ def run() -> None:
     best_total = (1 + d.total).prod() - 1
     table["typical_company_sharpe"] = [typical[members_all[s]].median() if s != MARKET else typical.median() for s in table.index]
     table["best_company"] = [best_total[members_all[s]].idxmax() if s != MARKET else best_total.idxmax() for s in table.index]
+
+    # ---- the second layer: market model, rates and the rupee, the out-of-sample test, structure
+    from . import advanced
+    policy = pd.read_csv(config.POLICY_RATE_FILE, parse_dates=["effective_date"])
+    rest = advanced.market_excluding(d.total, members_all, ranked)
+    risk, risk_summary = advanced.risk_and_alpha(idx_total, d.safe, rest, ranked, d.base_date, d.years)
+    fx_daily = pd.read_csv(config.INTERIM / "fx_rate.csv.gz", index_col=0, parse_dates=True)["rupees_per_dollar"]
+    macro_frame = advanced.macro_inputs(idx_total, d.safe, rest, ranked, policy, fx_daily)
+    macro = advanced.macro_betas(macro_frame)
+    oos = advanced.out_of_sample(idx_total, d.safe, ranked, d.base_date, d.ppy)
+    structure = advanced.structure(idx_total, d.safe, rest, ranked)
+    presets = advanced.presets(idx_total, d.safe, ranked)
+    table = table.join(risk).join(macro)
+    table["group"] = pd.Series(structure["labels"])
     table = table.sort_values(["ranked", "sharpe"], ascending=[False, False])
 
     stocks = stock_table(d)
@@ -323,11 +336,22 @@ def run() -> None:
         config.PROCESSED / "sector_rank_distribution.csv", index_label="sector", float_format="%.4f", lineterminator="\n")
     sharpes.to_csv(config.PROCESSED / "robustness_sharpe.csv", index_label="sector", float_format="%.4f", lineterminator="\n")
     summary_rows.to_csv(config.PROCESSED / "robustness_summary.csv", index=False, float_format="%.4f", lineterminator="\n")
+    rest.rename_axis("date").to_csv(config.PROCESSED / "market_excluding_sector_daily_returns.csv", float_format="%.7f", lineterminator="\n")
+    macro_frame.to_csv(config.PROCESSED / "macro_monthly.csv", float_format="%.6f", lineterminator="\n")
+    oos["returns"].rename_axis("date").to_csv(config.PROCESSED / "walk_forward_daily_returns.csv", float_format="%.7f", lineterminator="\n")
+    oos["table"].to_csv(config.PROCESSED / "walk_forward_summary.csv", float_format="%.6g", lineterminator="\n")
+    oos["ic"].rename_axis("decision_date").to_csv(config.PROCESSED / "walk_forward_ic.csv", float_format="%.4f", lineterminator="\n")
+    oos["sensitivity"].to_csv(config.PROCESSED / "walk_forward_sensitivity.csv", index=False, float_format="%.5g", lineterminator="\n")
+    presets.rename_axis("portfolio").to_csv(config.PROCESSED / "portfolio_presets.csv", float_format="%.9f", lineterminator="\n")
+    pd.DataFrame({"sector": structure["order"], "group": [structure["labels"][s] for s in structure["order"]],
+                  "component_1": [structure["loadings"].loc[s, 0] for s in structure["order"]],
+                  "component_2": [structure["loadings"].loc[s, 1] for s in structure["order"]]}).to_csv(
+        config.PROCESSED / "sector_structure.csv", index=False, float_format="%.5f", lineterminator="\n")
+    structure["residual_correlations"].to_csv(config.PROCESSED / "market_adjusted_correlations.csv", index_label="sector", float_format="%.4f", lineterminator="\n")
 
     # ---- the headline numbers the documents quote
     ranked_table = table[table["ranked"]].sort_values("sharpe", ascending=False)
     first = ranked_table.iloc[0]
-    policy = pd.read_csv(config.POLICY_RATE_FILE, parse_dates=["effective_date"])
     in_window = policy[policy["effective_date"] <= d.total.index[-1]]          # the changes that had happened by the end of the window
     market = table.loc[MARKET]
     window = json.loads((config.INTERIM / "data_quality.json").read_text(encoding="utf-8"))
@@ -354,8 +378,30 @@ def run() -> None:
         "max_p_top1": float(ranked_table["p_top1"].max()), "top_sector": first["sector"],
         "robustness": {"n_choices": len(summary_rows), "method": robustness_totals(summary_rows, "method"),
                        "period": robustness_totals(summary_rows, "period")},
+        "alpha": {**risk_summary, "best_sector": risk["alpha"].idxmax(), "best_alpha": risk["alpha"].max(), "best_alpha_t": risk.loc[risk["alpha"].idxmax(), "alpha_t"],
+                  "best_alpha_p": risk.loc[risk["alpha"].idxmax(), "alpha_p"], "best_alpha_p_adjusted": risk.loc[risk["alpha"].idxmax(), "alpha_p_adjusted"],
+                  "best_beta": risk.loc[risk["alpha"].idxmax(), "beta"], "highest_beta_sector": risk["beta"].idxmax(), "lowest_beta_sector": risk["beta"].idxmin(),
+                  "median_beta": risk["beta"].median(), "median_r2": risk["market_model_r2"].median(), "best_dsr_sector": risk["dsr"].idxmax(),
+                  "best_dsr": risk["dsr"].max(), "n_dsr_95": int((risk["dsr"] >= 0.95).sum()), "lowest_alpha_sector": risk["alpha"].idxmin(),
+                  "lowest_alpha": risk["alpha"].min()},
+        "macro": {"months": len(macro_frame), "policy_changes": int((macro_frame["d_policy_rate_pp"] != 0).sum()),
+                  "rate_positive": macro.index[(macro["rate_p"] < 0.05) & (macro["rate_beta"] > 0)].tolist(),
+                  "rate_negative": macro.index[(macro["rate_p"] < 0.05) & (macro["rate_beta"] < 0)].tolist(),
+                  "fx_positive": macro.index[(macro["fx_p"] < 0.05) & (macro["fx_beta"] > 0)].tolist(),
+                  "fx_negative": macro.index[(macro["fx_p"] < 0.05) & (macro["fx_beta"] < 0)].tolist(),
+                  "rate_fdr": macro.index[macro["rate_q"] < 0.05].tolist(), "fx_fdr": macro.index[macro["fx_q"] < 0.05].tolist(),
+                  "largest_rate_sector": macro["rate_beta"].abs().idxmax(), "largest_rate_beta": macro.loc[macro["rate_beta"].abs().idxmax(), "rate_beta"],
+                  "largest_fx_sector": macro["fx_beta"].abs().idxmax(), "largest_fx_beta": macro.loc[macro["fx_beta"].abs().idxmax(), "fx_beta"],
+                  "median_macro_r2": macro["macro_r2"].median()},
+        "walk_forward": {"lookback_months": config.LOOKBACK_MONTHS, "top_sectors": config.TOP_SECTORS, "months": oos["months"], "first_month": oos["first_month"],
+                         "strategies": oos["table"].to_dict(orient="index"), "ic": oos["ic_summary"],
+                         "sensitivity": oos["sensitivity"].to_dict(orient="records")},
+        "structure": {"pc1_share": structure["share"][0], "pc2_share": structure["share"][1], "pc3_share": structure["share"][2],
+                      "shares": [float(v) for v in structure["share"][:8]], "effective_bets": structure["effective_bets"], "mean_correlation": structure["mean_correlation"],
+                      "residual_mean_correlation": structure["residual_mean_correlation"], "residual_effective_bets": structure["residual_effective_bets"],
+                      "strongest_pairs": structure["strongest_pairs"], "groups": structure["groups"], "order": structure["order"]},
         "quality": window,
     }
-    (config.PROCESSED / "summary.json").write_text(json.dumps(_python(summary), indent=2) + "\n", encoding="utf-8", newline="\n")
+    (config.PROCESSED / "summary.json").write_text(json.dumps(_python(summary), indent=2, allow_nan=False) + "\n", encoding="utf-8", newline="\n")
     print(f"[analyze] {len(ranked)} sectors ranked from {len(available)} companies; top by Sharpe: {first['sector']} "
           f"({first['sharpe']:.2f}, 95% {first['sharpe_lo']:.2f} to {first['sharpe_hi']:.2f}); market Sharpe {market['sharpe']:.2f}")

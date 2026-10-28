@@ -60,6 +60,154 @@ def _sp(x: float, digits: int = 1) -> str:
     return f"{x * 100:+.{digits}f}%"
 
 
+def _pv(x: float) -> str:
+    return "<0.001" if x < 0.001 else f"{x:.3f}"
+
+
+def _opt(x, fmt) -> str:
+    """A number formatted, or nothing where the result has none (a reference row has no test against itself)."""
+    return "" if x is None else fmt(x)
+
+
+def second_layer(ranked: pd.DataFrame, mk: pd.Series, top: list[dict], s: dict) -> dict:
+    """The values and sentences for the second layer of the analysis: beta and alpha, interest rates and the rupee, how the
+    sectors group, and the out-of-sample test. The wording follows the numbers (a result that is not significant is not
+    described as one), so a new run cannot leave a sentence that the data contradict."""
+    A, M, T, W = s["alpha"], s["macro"], s["structure"], s["walk_forward"]
+    n = len(ranked)
+    sector = ranked.set_index("sector")
+
+    # ---- beta and alpha
+    on_own = A["alpha_raw_positive"] + A["alpha_raw_negative"]
+    fdr = ranked[ranked["alpha_q"] < 0.05]
+    if A["alpha_adjusted_significant"]:
+        alpha_head = f"{A['alpha_adjusted_significant']} of the {n} sectors keep a significant alpha after the correction."
+    elif on_own:
+        alpha_head = f"No sector's alpha holds up once all {n} are tested together."
+    else:
+        alpha_head = "No sector has an alpha that looks real."
+    alpha_detail = (f"Tested one at a time, {on_own} of the {n} sectors look real ({A['alpha_raw_positive']} positive, {A['alpha_raw_negative']} negative)."
+                    if on_own else "Even tested one at a time, no sector looks real.")
+    fdr_names = _join([f"{r.sector} ({_sp(r.alpha, 0)} a year)" for r in fdr.itertuples()])
+    fdr_note = (f"On the looser false-discovery-rate rule, which accepts that a small share of findings may be false, {fdr_names} "
+                f"{'clears' if len(fdr) == 1 else 'clear'} the bar." if len(fdr) else "No sector clears the looser false-discovery-rate rule either.")
+    beta_sharpe = metrics.spearman(ranked["beta"], ranked["sharpe"])
+    lowest_beta = set(ranked.nsmallest(5, "beta")["sector"])
+    top3_low_beta = sum(r["sector"] in lowest_beta for r in top[:3])
+    how_many = {0: "none", 3: "all"}.get(top3_low_beta, f"{top3_low_beta}")
+    if beta_sharpe <= -0.3:
+        beta_verdict = (f"Sectors with a lower beta tended to have the higher Sharpe ratio (rank correlation {beta_sharpe:.2f}), and {how_many} of the top three "
+                        f"are among the five lowest-beta sectors. That describes these five years, in which the whole market's Sharpe ratio was {mk['sharpe']:.2f}.")
+    elif beta_sharpe >= 0.3:
+        beta_verdict = (f"Sectors with a higher beta tended to have the higher Sharpe ratio (rank correlation {beta_sharpe:.2f}). "
+                        f"That describes these five years, in which the whole market's Sharpe ratio was {mk['sharpe']:.2f}.")
+    else:
+        beta_verdict = f"Beta and the Sharpe ratio were only weakly related (rank correlation {beta_sharpe:.2f})."
+    low_beta_link = (f"The lower-beta sectors did lead in this window (rank correlation {beta_sharpe:.2f} between beta and the Sharpe ratio), so part of this result may "
+                     "belong to these five years." if beta_sharpe <= -0.3 else "")
+    dsr_reach = {0: "none reaches it", 1: "1 sector reaches it"}.get(A["n_dsr_95"], f"{A['n_dsr_95']} sectors reach it")
+
+    # ---- interest rates and the rupee
+    def named(names: list[str]) -> str:
+        return f" ({_join(names)})" if names else ""
+
+    def effect(positive: list[str], negative: list[str], up: str, down: str) -> str:
+        return "; ".join(([f"{_join(positive)} {up}"] if positive else []) + ([f"{_join(negative)} {down}"] if negative else []))
+
+    rate_alone, fx_alone = len(M["rate_positive"]) + len(M["rate_negative"]), len(M["fx_positive"]) + len(M["fx_negative"])
+    macro_verdict = (f"Tested together, {len(M['rate_fdr'])} of the {n} sectors react clearly to interest rates{named(M['rate_fdr'])} "
+                     f"and {len(M['fx_fdr'])} to the rupee{named(M['fx_fdr'])}.")
+    rate_detail = (f"Tested one at a time, {rate_alone} of the {n} sectors {'shows' if rate_alone == 1 else 'show'} a rate effect "
+                   f"({effect(M['rate_positive'], M['rate_negative'], 'did better in months when the rate rose', 'did worse in months when the rate rose')})."
+                   if rate_alone else "Even one at a time, no sector shows a rate effect.")
+    fx_detail = (f"Tested one at a time, {fx_alone} of the {n} sectors {'shows' if fx_alone == 1 else 'show'} a rupee effect "
+                 f"({effect(M['fx_positive'], M['fx_negative'], 'did better in months when the rupee weakened', 'did worse in months when the rupee weakened')})."
+                 if fx_alone else "Even one at a time, no sector shows a rupee effect.")
+    macro_rows = ranked.assign(best_p=ranked[["rate_p", "fx_p"]].min(axis=1)).sort_values("best_p")
+    macro_rows = macro_rows[macro_rows["best_p"] < 0.05]
+    table_macro = (_table(["Sector", "Rate effect (% per point)", "p", "p corrected", "Rupee effect (% per 1% weaker)", "p", "p corrected"],
+                          [[r.sector, f"{r.rate_beta:+.2f}", _pv(r.rate_p), _pv(r.rate_q), f"{r.fx_beta:+.2f}", _pv(r.fx_p), _pv(r.fx_q)] for r in macro_rows.itertuples()], "lrrrrrr")
+                   if len(macro_rows) else "No sector shows a significant effect, even one at a time.")
+
+    # ---- how the sectors group
+    pair = T["strongest_pairs"][0]
+    structure_verdict = (f"{T['pc1_share'] * 100:.0f}% of the variation in sector returns is one market-wide movement, so the {n} sectors behave like "
+                         f"{T['effective_bets']:.1f} independent bets. With the market taken out, the average correlation between two sectors falls from "
+                         f"{T['mean_correlation']:.2f} to {T['residual_mean_correlation']:.2f}; the strongest remaining link is {pair['first']} with {pair['second']} "
+                         f"({pair['correlation']:.2f}).")
+
+    # ---- could the ranking have been used?
+    st, sens, ic = W["strategies"], W["sensitivity"], W["ic"]
+    win, eq, mv, lose = st["winners"], st["equal_weight"], st["min_variance"], st["losers"]
+    if win["sharpe_vs_equal"] > 0 and win["vs_equal_p"] < 0.05:
+        oos_head = "The past ranking beat equal weighting out of sample."
+    elif win["sharpe_vs_equal"] > 0:
+        oos_head = "The past ranking beat equal weighting out of sample, but not by more than luck could give."
+    else:
+        oos_head = "The past ranking did not beat equal weighting out of sample."
+    mv_gap = (f"a volatility of {mv['volatility'] * 100:.0f}% against {eq['volatility'] * 100:.0f}% and a Sharpe ratio of {mv['sharpe']:.2f} against {eq['sharpe']:.2f}")
+    if mv["sharpe_vs_equal"] > 0 and mv["vs_equal_p_adjusted"] < 0.05:
+        mv_verdict = f"Weights chosen to make the portfolio as steady as possible gave {mv_gap}, a gain that holds up after allowing for the five comparisons made (p = {_pv(mv['vs_equal_p_adjusted'])})."
+    elif mv["sharpe_vs_equal"] > 0 and mv["vs_equal_p"] < 0.05:
+        mv_verdict = (f"Weights chosen to make the portfolio as steady as possible gave {mv_gap}. The gain in Sharpe ratio is significant on its own (p = {_pv(mv['vs_equal_p'])}) "
+                      f"but not after allowing for the five comparisons made (p = {_pv(mv['vs_equal_p_adjusted'])}).")
+    elif mv["sharpe_vs_equal"] > 0:
+        mv_verdict = f"Weights chosen to make the portfolio as steady as possible gave {mv_gap}, a gain that luck could account for (p = {_pv(mv['vs_equal_p'])})."
+    else:
+        mv_verdict = f"Weights chosen to make the portfolio as steady as possible gave {mv_gap}: no gain over equal weights."
+    if ic["t"] >= 2:
+        ic_verdict = "On average the past ranking pointed the right way, by more than luck would usually give."
+    elif ic["mean"] > 0:
+        ic_verdict = "On average the past ranking pointed the right way, but only weakly."
+    else:
+        ic_verdict = "On average the past ranking did not point the right way."
+
+    order = ["equal_weight", "winners", "losers", "min_variance", "inverse_volatility", "market"]
+    return {
+        # beta and alpha
+        "alpha_head": alpha_head, "alpha_detail": alpha_detail, "fdr_note": fdr_note, "beta_verdict": beta_verdict, "beta_sharpe": beta_sharpe,
+        "low_beta_link": low_beta_link, "dsr_reach": dsr_reach,
+        "naive_flag": (1 - 0.95 ** n) * 100, "n_alpha_own": on_own, "alpha_pos": A["alpha_raw_positive"], "alpha_neg": A["alpha_raw_negative"], "alpha_adj": A["alpha_adjusted_significant"],
+        "alpha_best_sector": A["best_sector"], "alpha_best": A["best_alpha"] * 100, "alpha_best_t": A["best_alpha_t"], "alpha_best_p": A["best_alpha_p"],
+        "alpha_best_padj": A["best_alpha_p_adjusted"], "alpha_worst_sector": A["lowest_alpha_sector"], "alpha_worst": A["lowest_alpha"] * 100,
+        "alpha_worst_p": float(sector.loc[A["lowest_alpha_sector"], "alpha_p"]), "alpha_worst_padj": float(sector.loc[A["lowest_alpha_sector"], "alpha_p_adjusted"]),
+        "null_t": A["null_largest_t_95"], "expected_best_sharpe": A["expected_best_sharpe"], "dsr_best": A["best_dsr"], "dsr_best_sector": A["best_dsr_sector"],
+        "n_dsr95": A["n_dsr_95"], "beta_median": A["median_beta"], "r2_median": A["median_r2"] * 100, "weeks": A["weeks"], "weeks_per_year": A["weeks_per_year"],
+        "beta_low_sector": A["lowest_beta_sector"], "beta_low": float(sector.loc[A["lowest_beta_sector"], "beta"]),
+        "beta_high_sector": A["highest_beta_sector"], "beta_high": float(sector.loc[A["highest_beta_sector"], "beta"]),
+        "hac_weekly": config.HAC_LAGS_WEEKLY, "hac_monthly": config.HAC_LAGS_MONTHLY, "block_weeks": config.BOOTSTRAP_BLOCK_WEEKS,
+        # rates and the rupee
+        "macro_verdict": macro_verdict, "rate_detail": rate_detail, "fx_detail": fx_detail, "macro_months": M["months"], "macro_changes": M["policy_changes"],
+        "macro_r2": M["median_macro_r2"] * 100, "n_rate_fdr": len(M["rate_fdr"]), "n_fx_fdr": len(M["fx_fdr"]),
+        # structure
+        "structure_verdict": structure_verdict, "pc1": T["pc1_share"] * 100, "pc2": T["pc2_share"] * 100, "pc3": T["pc3_share"] * 100,
+        "effective_bets": T["effective_bets"], "corr_raw": T["mean_correlation"], "corr_resid": T["residual_mean_correlation"],
+        "resid_bets": T["residual_effective_bets"], "n_groups": len(T["groups"]), "pair_a": pair["first"], "pair_b": pair["second"], "pair_corr": pair["correlation"],
+        # the out-of-sample test
+        "oos_head": oos_head, "mv_verdict": mv_verdict, "ic_verdict": ic_verdict,
+        "wf_months": W["months"], "wf_first": _month(W["first_month"] + "-01"), "wf_lookback": W["lookback_months"], "wf_top": W["top_sectors"],
+        "win_sharpe": win["sharpe"], "win_cagr": win["cagr"] * 100, "win_vol": win["volatility"] * 100, "win_diff": win["sharpe_vs_equal"], "win_p": win["vs_equal_p"],
+        "win_padj": win["vs_equal_p_adjusted"], "eq_sharpe": eq["sharpe"], "eq_cagr": eq["cagr"] * 100, "eq_vol": eq["volatility"] * 100, "lose_sharpe": lose["sharpe"],
+        "mv_sharpe": mv["sharpe"], "mv_vol": mv["volatility"] * 100, "sens_n": len(sens), "sens_ahead": sum(r["difference"] > 0 for r in sens),
+        "sens_clear": sum(r["difference"] > 0 and r["p"] < 0.05 for r in sens), "ic_mean": ic["mean"], "ic_t": ic["t"], "ic_pos": ic["share_positive"] * 100,
+        # tables
+        "table_alpha": _table(["Sector", "Beta", "Alpha a year", "t", "p alone", "p corrected", "Deflated Sharpe"],
+                              [[r.sector, f"{r.beta:.2f}", _sp(r.alpha, 0), f"{r.alpha_t:.1f}", _pv(r.alpha_p), _pv(r.alpha_p_adjusted), f"{r.dsr:.2f}"]
+                               for r in ranked.sort_values("alpha_p").itertuples()], "lrrrrrr"),
+        "table_walk_forward": _table(["Rule", "Return a year", "Volatility", "Worst fall", "Sharpe", "Sharpe minus equal weight", "95% range", "p", "p corrected", "Traded each month"],
+                                     [[config.STRATEGIES[k], _sp(st[k]["cagr"]), _p(st[k]["volatility"]), _p(st[k]["max_drawdown"], 0), f"{st[k]['sharpe']:.2f}",
+                                       "" if k == "equal_weight" else f"{st[k]['sharpe_vs_equal']:+.2f}",
+                                       _opt(st[k]["vs_equal_lo"], lambda lo, k=k: f"{lo:+.2f} to {st[k]['vs_equal_hi']:+.2f}"),
+                                       _opt(st[k]["vs_equal_p"], _pv), _opt(st[k]["vs_equal_p_adjusted"], _pv), _opt(st[k]["turnover"], lambda x: _p(x, 0))] for k in order], "lrrrrrrrrr"),
+        "table_sensitivity": _table(["Look-back", "Sectors held", "Months tested", "Sharpe of the rule", "Sharpe of equal weights", "Difference", "p"],
+                                    [[f"{r['lookback_months']} months", r["top_sectors"], r["months"], f"{r['sharpe_winners']:.2f}", f"{r['sharpe_equal_weight']:.2f}",
+                                      f"{r['difference']:+.2f}", _pv(r["p"])] for r in sens], "lrrrrrr"),
+        "table_macro": table_macro,
+        "table_groups": _table(["Group", "Sectors"], [[config.GROUP_LETTERS[i], _join(g)] for i, g in enumerate(T["groups"])], "ll"),
+        "table_pairs": _table(["First sector", "Second sector", "Correlation"], [[p["first"], p["second"], f"{p['correlation']:.2f}"] for p in T["strongest_pairs"]], "llr"),
+    }
+
+
 def context() -> dict:
     p = config.PROCESSED
     s = json.loads((p / "summary.json").read_text(encoding="utf-8"))
@@ -159,6 +307,7 @@ def context() -> dict:
                    if typical_div_share >= 0.15 else "Dividends were a modest part of the return.")
     return_heading = "Return alone is a poor guide." if best_cagr["rank_sharpe"] > 2 else "Return and return per unit of risk agree at the top."
     falls_heading = "Falls were deep." if (ranked["max_drawdown"] < -0.2).sum() >= len(ranked) / 2 else "Falls varied widely."
+    second = second_layer(ranked, mk, top, s)
 
     return {
         # window and universe
@@ -256,6 +405,7 @@ def context() -> dict:
                               [[f"`data/raw/{k}`", f"{v['bytes']:,}", f"`{v['sha256'][:12]}`", v["source"].split("/")[2] if v["source"].startswith("http") else v["source"],
                                 v["retrieved"][:10]] for k, v in manifest.items()], "lrlll"),
         "table_status": _table(["Status", "Companies"], [[k, int(v)] for k, v in status["status"].value_counts().items()], "lr"),
+        **second,
     }
 
 

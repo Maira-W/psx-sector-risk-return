@@ -1,4 +1,4 @@
-"""Nine static figures for the README and the memo (docs/figures)."""
+"""Thirteen static figures for the README and the memo (docs/figures)."""
 
 from __future__ import annotations
 
@@ -7,11 +7,12 @@ import json
 import matplotlib
 
 matplotlib.use("Agg")
+import matplotlib.dates as mdates  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 from matplotlib.colors import TwoSlopeNorm  # noqa: E402
-from matplotlib.ticker import MaxNLocator  # noqa: E402
+from matplotlib.ticker import MaxNLocator, NullFormatter  # noqa: E402
 from matplotlib.transforms import Bbox  # noqa: E402
 
 from . import config  # noqa: E402
@@ -86,6 +87,10 @@ def load() -> dict:
         "dist": pd.read_csv(p / "sector_rank_distribution.csv", index_col=0),
         "robust": pd.read_csv(p / "robustness_sharpe.csv", index_col=0), "funnel": pd.read_csv(p / "universe_funnel.csv"),
         "summary": json.loads((p / "summary.json").read_text(encoding="utf-8")),
+        "strategies": pd.read_csv(p / "walk_forward_daily_returns.csv", index_col=0, parse_dates=True),
+        "strategy_table": pd.read_csv(p / "walk_forward_summary.csv", index_col="strategy"),
+        "ic": pd.read_csv(p / "walk_forward_ic.csv", index_col=0, parse_dates=True)["information_coefficient"],
+        "adjusted_corr": pd.read_csv(p / "market_adjusted_correlations.csv", index_col=0),
     }
 
 
@@ -255,6 +260,137 @@ def fig_funnel(funnel: pd.DataFrame) -> None:
     _save(fig, "09_universe.png")
 
 
+def fig_alpha_beta(t: pd.DataFrame, summary: dict) -> None:
+    fig, ax = plt.subplots(figsize=(8.2, 6.0))
+    raw = t["alpha_p"] < 0.05
+    adjusted = t["alpha_p_adjusted"] < 0.05
+    colours = [config.NAVY if a else config.AMBER if r else config.GREY for a, r in zip(adjusted, raw, strict=True)]
+    ax.errorbar(t["beta"], t["alpha"] * 100, yerr=1.96 * t["alpha_se"] * 100, fmt="none", ecolor="#C9D1DB", elinewidth=1.3, zorder=1)
+    ax.scatter(t["beta"], t["alpha"] * 100, s=40 + 4 * t["n_companies"], c=colours, edgecolor="white", linewidth=0.7, zorder=3)
+    ax.axhline(0, color="#9AA5B1", lw=0.9)
+    ax.axvline(1, color="#C9D1DB", lw=0.9, ls="--")
+    ax.set_xlabel("Beta: how strongly the sector follows the rest of the market (1 = one for one)")
+    ax.set_ylabel("Alpha: return a year not explained by the market (%)")
+    _label_points(ax, [(r.beta, r.alpha * 100, short(r.sector), "#1F2937" if adjusted[r.Index] or raw[r.Index] else "#5B6575", "normal") for r in t.itertuples()])
+    handles = [plt.Line2D([0], [0], marker="o", ls="", color=c, markersize=7) for c in (config.NAVY, config.AMBER, config.GREY)]
+    ax.legend(handles, ["still significant after allowing for 22 sectors", "significant on its own, not after the correction", "not significant"],
+              loc="lower left", frameon=False, fontsize=8)
+    a = summary["alpha"]
+    on_own = a["alpha_raw_positive"] + a["alpha_raw_negative"]
+    verdict = (f"No alpha holds up once all {len(t)} sectors are tested together" if a["alpha_adjusted_significant"] == 0 and on_own > 0 else
+               f"{a['alpha_adjusted_significant']} of {len(t)} sectors keep a significant alpha after the correction" if a["alpha_adjusted_significant"]
+               else "No sector has an alpha that looks real")
+    sub = (f"{on_own} of {len(t)} look significant on their own (amber). " if on_own else "") + "Bigger dot, more companies. Lines: 95% range"
+    _title(ax, verdict, sub)
+    _save(fig, "10_alpha_and_beta.png", SOURCE + "\nAlpha and beta: weekly returns of each sector against the rest of the market (the market without that sector).")
+
+
+def _out_of_sample_verdict(table: pd.DataFrame) -> str:
+    row = table.loc["winners"]
+    gain = f"{row['sharpe']:.2f} against {table.loc['equal_weight', 'sharpe']:.2f}"
+    if row["vs_equal_p"] < 0.05:
+        return f"Holding last year's best sectors beat equal weighting out of sample ({gain})"
+    if row["sharpe_vs_equal"] > 0:
+        return f"Last year's best sectors beat equal weighting ({gain}), but not by enough to rule out luck"
+    return f"Last year's best sectors did not beat equal weighting ({gain})"
+
+
+def fig_out_of_sample(strategies: pd.DataFrame, table: pd.DataFrame, ic: pd.Series, summary: dict) -> None:
+    fig, (ax, ay) = plt.subplots(1, 2, figsize=(11.0, 4.9), gridspec_kw={"width_ratios": [1.7, 1]}, layout="constrained")
+    fig.get_layout_engine().set(rect=(0, 0.04, 1, 0.96))
+    levels = 100 * (1 + strategies).cumprod()
+    colours = {"equal_weight": config.GREY, "winners": config.NAVY, "losers": config.ORANGE, "min_variance": config.TEAL, "inverse_volatility": config.AMBER,
+               "market": "#333333"}
+    for name in ("equal_weight", "winners", "losers", "min_variance", "market"):
+        ax.plot(levels.index, levels[name], color=colours[name], lw=2.1 if name in ("winners", "min_variance") else 1.5, label=config.STRATEGIES[name],
+                ls="--" if name == "market" else "-")
+    ax.set_yscale("log")
+    ax.set_yticks([100, 200, 400, 800], ["100", "200", "400", "800"])
+    ax.yaxis.set_minor_formatter(NullFormatter())
+    ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=(1, 7)))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %Y"))
+    ax.set_ylabel("Growth of 100 rupees (log scale)")
+    ax.legend(frameon=False, fontsize=8, loc="upper left")
+    ax.set_title(f"Each rule sees only the past {summary['walk_forward']['lookback_months']} months", fontsize=10, pad=8)
+    ay.bar(ic.index, ic.to_numpy(), width=22, color=[config.TEAL if v > 0 else config.ORANGE for v in ic], alpha=0.85)
+    mean = summary["walk_forward"]["ic"]["mean"]
+    ay.axhline(mean, color="#333333", lw=1.2, ls="--")
+    ay.axhline(0, color="#9AA5B1", lw=0.8)
+    ay.text(0.02, 0.03, f"dashed line: average {mean:+.2f} (t = {summary['walk_forward']['ic']['t']:.1f})", transform=ay.transAxes, fontsize=8,
+            bbox={"facecolor": "white", "edgecolor": "none", "pad": 1.5})
+    ay.xaxis.set_major_locator(mdates.YearLocator())
+    ay.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+    ay.set_ylabel("Correlation of the past ranking\nwith the next month's return")
+    ay.set_title("Did the past predict the next month?", fontsize=10, pad=8)
+    fig.suptitle(_out_of_sample_verdict(table), x=0.01, ha="left", fontweight="bold", fontsize=12.5)
+    _save(fig, "11_out_of_sample.png")
+
+
+def fig_rates_rupee(t: pd.DataFrame, summary: dict) -> None:
+    fig, axes = plt.subplots(1, 2, figsize=(10.4, 0.27 * len(t) + 2.0), sharey=True)
+    fig.subplots_adjust(left=0.17, right=0.985, top=0.88, bottom=0.14, wspace=0.06)
+    order = t.sort_values("rate_beta")["sector"].tolist()
+    macro = summary["macro"]
+    for ax, key, label, fdr in [(axes[0], "rate", "per 1 point higher policy rate", macro["rate_fdr"]), (axes[1], "fx", "per 1% weaker rupee", macro["fx_fdr"])]:
+        s = t.set_index("sector").loc[order]
+        y = np.arange(len(s))
+        colours = [config.NAVY if sector in fdr else config.AMBER if p < 0.05 else config.GREY for sector, p in zip(s.index, s[f"{key}_p"], strict=True)]
+        ax.errorbar(s[f"{key}_beta"], y, xerr=1.96 * s[f"{key}_se"], fmt="none", ecolor="#C9D1DB", elinewidth=1.6, zorder=1)
+        ax.scatter(s[f"{key}_beta"], y, c=colours, s=36, zorder=3)
+        ax.axvline(0, color="#9AA5B1", lw=0.9)
+        ax.set_xlabel(f"Extra return (%) {label}")
+        ax.set_title("Interest rates" if key == "rate" else "The rupee", fontsize=10.5, pad=8, loc="left", fontweight="bold")
+    axes[0].set_yticks(np.arange(len(order)), [short(n) for n in order], fontsize=8.5)
+    handles = [plt.Line2D([0], [0], marker="o", ls="", color=c, markersize=7) for c in (config.NAVY, config.AMBER, config.GREY)]
+    fig.legend(handles, [f"still significant after allowing for {len(t)} sectors", "significant on its own only", "not significant"], loc="lower center",
+               bbox_to_anchor=(0.5, 0.03), ncol=3, frameon=False, fontsize=8)
+    rate_n, fx_n = len(macro["rate_fdr"]), len(macro["fx_fdr"])
+    if rate_n + fx_n == 0:
+        verdict = f"No sector reacts clearly to interest rates or the rupee once all {len(t)} are tested together"
+    else:
+        verdict = f"Tested together, {rate_n} of {len(t)} sectors react clearly to interest rates and {fx_n} to the rupee"
+    fig.suptitle(verdict, x=0.01, y=0.985, ha="left", va="top", fontweight="bold", fontsize=12.5)
+    fig.text(0.01, 0.93, f"Monthly returns above cash, controlling for the rest of the market ({macro['months']} months). Lines: 95% range", fontsize=9, color="#5B6575")
+    _save(fig, "12_rates_and_rupee.png")
+
+
+def fig_structure(summary: dict, adjusted: pd.DataFrame) -> None:
+    s = summary["structure"]
+    fig, (ax, ay) = plt.subplots(1, 2, figsize=(11.2, 6.1), gridspec_kw={"width_ratios": [1, 2.1]}, layout="constrained")
+    fig.get_layout_engine().set(rect=(0, 0.04, 1, 0.96))
+    shares = np.array(s["shares"]) * 100
+    ax.bar(np.arange(1, len(shares) + 1), shares, color=[config.NAVY] + [config.GREY] * (len(shares) - 1))
+    for i, v in enumerate(shares, 1):
+        ax.text(i, v + 0.8, f"{v:.0f}%", ha="center", fontsize=8)
+    ax.set_xticks(np.arange(1, len(shares) + 1))
+    ax.set_xlabel("Component (the first is the market)")
+    ax.set_ylabel("Share of all the variation in sector returns (%)")
+    ax.set_title(f"Like {s['effective_bets']:.1f} independent bets, not {len(adjusted)}", fontsize=10.5, loc="left", fontweight="bold", pad=8)
+    names = [short(n) for n in adjusted.index]
+    matrix = adjusted.to_numpy().copy()
+    np.fill_diagonal(matrix, np.nan)                       # a sector's correlation with itself says nothing
+    colours = plt.get_cmap("RdBu_r").copy()
+    colours.set_bad("#F3F4F6")
+    image = ay.imshow(matrix, cmap=colours, vmin=-0.3, vmax=0.3, aspect="auto")
+    fig.colorbar(image, ax=ay, shrink=0.72, pad=0.09, label="Correlation of daily returns after taking out the market")
+    ay.set_xticks(range(len(names)), names, rotation=60, ha="right", fontsize=7.5)
+    ay.set_yticks(range(len(names)), names, fontsize=7.5)
+    edge = 0
+    for letter, group in zip(config.GROUP_LETTERS, s["groups"], strict=False):
+        ay.text(len(names) - 0.35, edge + (len(group) - 1) / 2, letter, ha="left", va="center", fontsize=9, fontweight="bold", color="#1F2937", clip_on=False)
+        edge += len(group)
+        if edge < len(names):
+            ay.axhline(edge - 0.5, color="#1F2937", lw=1.1)
+            ay.axvline(edge - 0.5, color="#1F2937", lw=1.1)
+    for spine in ay.spines.values():
+        spine.set_visible(False)
+    pair = s["strongest_pairs"][0]
+    ay.set_title(f"With the market taken out, the strongest link is\n{short(pair['first'])} and {short(pair['second'])} ({pair['correlation']:.2f})",
+                 fontsize=10.5, loc="left", fontweight="bold", pad=8)
+    fig.suptitle(f"{s['pc1_share'] * 100:.0f}% of the variation in sector returns is one market-wide movement", x=0.01, ha="left", fontweight="bold", fontsize=12.5)
+    _save(fig, "13_sector_structure.png", SOURCE + " Right: groups (A, B, ...) from average-linkage clustering of the correlations.")
+
+
 def make_all() -> None:
     d = load()
     t, market = d["ranked"], d["table"].set_index("sector").loc[MARKET]
@@ -268,4 +404,8 @@ def make_all() -> None:
     fig_robustness(d["robust"], t)
     fig_dividends(t)
     fig_funnel(d["funnel"])
+    fig_alpha_beta(t, d["summary"])
+    fig_out_of_sample(d["strategies"], d["strategy_table"], d["ic"], d["summary"])
+    fig_rates_rupee(t, d["summary"])
+    fig_structure(d["summary"], d["adjusted_corr"])
     print(f"[charts] {len(list(config.FIGURES.glob('*.png')))} figures written")

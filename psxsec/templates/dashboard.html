@@ -41,12 +41,20 @@
   .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:6px 0; }
   footer { color:var(--muted); font-size:.82rem; padding:0 5vw 30px; max-width:1240px; margin:auto; }
   a { color:var(--navy); }
+  .weights { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(190px,100%),1fr)); gap:6px 16px; margin:10px 0 4px; }
+  .weights label { display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:.86rem; }
+  .weights input { width:70px; font:inherit; padding:3px 6px; border:1px solid var(--line); border-radius:6px; background:var(--card); color:var(--ink); text-align:right; }
+  .tint { font-weight:600; }
+  .pill.amber { background:#B8860B; }
+  button.act.on { background:var(--navy); color:var(--card); border-color:var(--navy); }
+  .kpis.small .kpi b { font-size:1.3rem; }
+  ul.tight { margin:6px 0; padding-left:20px; } ul.tight li { margin:3px 0; }
 </style>
 </head>
 <body>
 <header>
   <h1>PSX sector risk and return</h1>
-  <p>Which sectors of the Pakistan Stock Exchange paid best for the risk they carried, over the five years to October 2026. Equal-weighted sector indexes built from every company that trades regularly; dividends included.</p>
+  <p>Which sectors of the Pakistan Stock Exchange paid best for the risk they carried, over the five years to October 2026, and whether the answer is skill or luck, what moves the sectors, and whether the ranking could have been used. Equal-weighted sector indexes built from every company that trades regularly; dividends included.</p>
   <nav role="tablist" id="tabs"></nav>
 </header>
 <main>
@@ -54,6 +62,9 @@
   <section id="table" hidden></section>
   <section id="ups" hidden></section>
   <section id="sure" hidden></section>
+  <section id="risk" hidden></section>
+  <section id="moves" hidden></section>
+  <section id="port" hidden></section>
   <section id="method" hidden></section>
 </main>
 <footer>Companies and sectors: Pakistan Stock Exchange data portal. Prices and dividends: Yahoo Finance. Safe rate: State Bank of Pakistan policy rate. Past performance does not predict future returns; this is analysis, not investment advice.
@@ -65,6 +76,7 @@
   "use strict";
   const D = JSON.parse(document.getElementById("data").textContent);
   const S = D.stats;
+  const ALPHA = S.alpha, MACRO = S.macro, STRUCT = S.structure, WF = S.walk_forward;
   const $ = id => document.getElementById(id);
   const MK = D.marketName, CASH = D.cashName;
   const short = n => D.shortNames[n] || n;
@@ -78,7 +90,7 @@
   const list = a => a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1];
   const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   const ink = dark ? "#E6EAF0" : "#1F2937", grid = dark ? "#2F3A48" : "#E6EAF0";
-  const primary = dark ? "#8FB4DA" : "#1F3B57", marketLine = dark ? "#F1F4F8" : "#333333";      // readable on both themes
+  const primary = dark ? "#5AAEF2" : "#1F3B57", marketLine = dark ? "#F1F4F8" : "#333333";      // readable on both themes, and apart from the grey
   const PALETTE = [primary, "#2A9D8F", "#E76F51", "#E9C46A", "#7B4FA3", "#4C9F70", "#C84B6B", "#3F7CAC", "#B07D2B", "#6C757D"];
   const layout = extra => Object.assign({ margin: { t: 10, r: 14, b: 50, l: 60 }, paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)",
     font: { color: ink, size: 12 }, xaxis: { gridcolor: grid }, yaxis: { gridcolor: grid } }, extra || {});
@@ -86,7 +98,10 @@
   const monthYear = iso => { const d = new Date(iso + "T00:00:00"); return d.toLocaleString("en-GB", { month: "short", year: "numeric" }); };
   const winEnd = monthYear(S.window.end_date), winStart = monthYear(S.window.base_date);
 
-  const tabs = [["answer", "The answer"], ["table", "Sector scorecard"], ["ups", "Ups and downs"], ["sure", "How sure are we?"], ["method", "Method and limits"]];
+  const pv = p => p == null ? "" : p < 0.001 ? "<0.001" : p.toFixed(3);
+  const AMBER = "#E9C46A", GREY = "#9AA5B1", ORANGE = "#E76F51", TEAL = "#2A9D8F";
+  const tabs = [["answer", "The answer"], ["table", "Sector scorecard"], ["ups", "Ups and downs"], ["sure", "How sure are we?"], ["risk", "Risk and alpha"],
+                ["moves", "What moves them"], ["port", "Portfolios"], ["method", "Method and limits"]];
   const rendered = {}, renderers = {};
   tabs.forEach(([id, label]) => {
     const b = document.createElement("button"); b.textContent = label; b.setAttribute("role", "tab"); b.id = "t-" + id;
@@ -102,6 +117,7 @@
   // ---------------------------------------------------------------- the answer
   renderers.answer = function () {
     const top = ranked[0], t3 = ranked.slice(0, 3);
+    const onOwn = ALPHA.alpha_raw_positive + ALPHA.alpha_raw_negative, win = WF.strategies.winners;
     const lead = S.max_p_top1 >= 0.6
       ? `${short(top.sector)} is a fairly clear leader: it comes first in ${pc(top.p_top1, 0)} of the resamples.`
       : `But five years is a short record. ${short(top.sector)} comes first in only ${pc(top.p_top1, 0)} of the resamples, and ${S.n_with_chance_of_first} sectors have at least a 10% chance of finishing first. Treat the top group as a shortlist, not a winner.`;
@@ -117,7 +133,11 @@
       <div class="grid2">
         <div class="card"><h2>Risk and return</h2><p class="sub">Each dot is a sector (bigger dot, more companies). Higher is better; further right is riskier.</p><div id="a-scatter" style="height:500px"></div></div>
         <div class="card"><h2>Return per unit of risk</h2><p class="sub">Sharpe ratio with a 95% range from resampling the days. Dark dot: very likely better than the whole market.</p><div id="a-sharpe" style="height:${Math.max(460, ranked.length * 24 + 90)}px"></div></div>
-      </div>`;
+      </div>
+      <div class="card"><h2>Three questions the ranking leaves open</h2>
+        <p><b>Is it skill or luck?</b> ${onOwn} of ${ranked.length} sectors have an alpha that looks real when tested one at a time (${ALPHA.alpha_raw_positive} positive, ${ALPHA.alpha_raw_negative} negative); ${ALPHA.alpha_adjusted_significant === 0 ? "none keeps it once the test allows for looking at all " + ranked.length : ALPHA.alpha_adjusted_significant + " keep it once the test allows for looking at all " + ranked.length}. <a href="#risk" data-go="risk">Risk and alpha</a></p>
+        <p><b>What moves them?</b> ${pc(STRUCT.pc1_share, 0)} of the variation in sector returns is one market-wide movement, so the ${ranked.length} sectors behave like ${STRUCT.effective_bets.toFixed(1)} independent bets. Tested together, ${MACRO.rate_fdr.length} of ${ranked.length} sectors react clearly to interest rates and ${MACRO.fx_fdr.length} to the rupee. <a href="#moves" data-go="moves">What moves them</a></p>
+        <p><b>Could you have used the ranking?</b> Each month, holding the ${WF.top_sectors} sectors with the best record over the previous ${WF.lookback_months} months ${win.sharpe_vs_equal > 0 ? "beat" : "did not beat"} holding all the sectors equally (Sharpe ${f2(win.sharpe)} against ${f2(WF.strategies.equal_weight.sharpe)})${win.vs_equal_p >= 0.05 ? ", but the gap is small enough that luck could explain it" : ", by more than luck would usually give"}. <a href="#port" data-go="port">Portfolios</a></p></div>`;
     const pts = ranked.concat(small);
     Plotly.newPlot("a-scatter", [
       { type: "scatter", mode: "markers+text", x: pts.map(r => r.volatility * 100), y: pts.map(r => r.cagr * 100), text: pts.map(r => short(r.sector)), textposition: "top right",
@@ -264,6 +284,253 @@
       layout({ xaxis: { side: "top", tickangle: -40, automargin: true, gridcolor: grid }, yaxis: { autorange: "reversed", gridcolor: grid }, margin: { t: 120, r: 10, b: 10, l: 150 } }), cfg);
   };
 
+  // ---------------------------------------------------------------- shared: a table whose columns sort when clicked
+  // cols: [key, heading, cell(row), left-aligned?, sort value(row)?]
+  function sortable(id, cols, data, key, asc) {
+    const value = (c, r) => c[4] ? c[4](r) : r[c[0]];
+    (function draw() {
+      const col = cols.find(c => c[0] === key);
+      const body = data.slice().sort((a, b) => { const x = value(col, a), y = value(col, b); return (typeof x === "string" ? x.localeCompare(y) : (x ?? -1e9) - (y ?? -1e9)) * (asc ? 1 : -1); });
+      $(id).innerHTML = "<tr>" + cols.map(c => `<th class="${c[3] ? "l" : ""}" data-k="${c[0]}">${c[1]}${c[0] === key ? (asc ? " ▲" : " ▼") : ""}</th>`).join("") + "</tr>" +
+        body.map(r => "<tr>" + cols.map(c => `<td class="${c[3] ? "l" : ""}">${c[2](r)}</td>`).join("") + "</tr>").join("");
+      $(id).querySelectorAll("th").forEach(th => th.addEventListener("click", () => { asc = th.dataset.k === key ? !asc : false; key = th.dataset.k; draw(); }));
+    })();
+  }
+  const sgn = (x, d = 2) => (x >= 0 ? "+" : "") + x.toFixed(d);
+  const LOGTICKS = [50, 75, 100, 150, 200, 300, 400, 600, 800, 1200];
+  const DIVERGING = [[0, "#2166AC"], [0.25, "#6FA8D2"], [0.5, dark ? "#2F3A48" : "#F7F7F7"], [0.75, "#E58C6A"], [1, "#B2182B"]];      // blue below zero, red above
+  const corrected = p => p < 0.05 ? `<span class="pill good">${pv(p)}</span>` : pv(p);
+
+  // ---------------------------------------------------------------- risk and alpha
+  renderers.risk = function () {
+    const n = ranked.length, A = ALPHA, top = ranked[0];
+    const onOwn = A.alpha_raw_positive + A.alpha_raw_negative, adj = A.alpha_adjusted_significant;
+    const verdict = adj === 0
+      ? (onOwn ? `${onOwn} of ${n} sectors have an alpha that looks real when tested one at a time, but none keeps it once the test allows for looking at all ${n}.` : `No sector has an alpha that looks real, even when tested one at a time.`)
+      : `${adj} of ${n} sectors keep a significant alpha once the test allows for looking at all ${n}.`;
+    const fdr = ranked.filter(r => r.alpha_q < 0.05).map(r => `${short(r.sector)} (${sg(r.alpha, 0)} a year)`);
+    const fdrNote = fdr.length ? ` On the looser false-discovery-rate rule, which accepts that a small share of findings may be false, ${list(fdr)} ${fdr.length === 1 ? "clears" : "clear"} the bar.` : "";
+    $("risk").innerHTML = `
+      <div class="callout"><b>How to read this.</b> <b>Beta</b> says how strongly a sector follows the rest of the market (1 means one for one). <b>Alpha</b> is the return a year that is left once that is taken out: the part of a sector's record that its ups and downs with the market cannot explain.
+        ${verdict} The best is ${short(A.best_sector)} at ${sg(A.best_alpha, 0)} a year (t = ${A.best_alpha_t.toFixed(1)}; p = ${pv(A.best_alpha_p)} alone and ${pv(A.best_alpha_p_adjusted)} after the correction). Below 0.05 is the usual bar.${fdrNote}</div>
+      <div class="kpis small">
+        <div class="kpi"><b>${f2(A.median_beta)}</b><span>median beta: a typical sector moves about as much as the rest of the market</span></div>
+        <div class="kpi"><b>${pc(A.median_r2, 0)}</b><span>of a typical sector's weekly moves are explained by the rest of the market</span></div>
+        <div class="kpi"><b>${onOwn} then ${adj}</b><span>sectors with a significant alpha: one at a time, then after the correction for ${n}</span></div>
+        <div class="kpi"><b>${f2(A.expected_best_sharpe)}</b><span>the Sharpe ratio the best of ${n} sectors would reach by luck alone. The actual best is ${f2(top.sharpe)}: a deflated Sharpe of ${f2(A.best_dsr)}, where 0.95 would be convincing</span></div>
+      </div>
+      <div class="grid2">
+        <div class="card"><h2>Alpha and beta</h2><p class="sub">Each dot is a sector (bigger dot, more companies) with the 95% range of its alpha; hover for any sector. Weekly returns above cash against the rest of the market, meaning the market without that sector.</p><div id="r-alpha" style="height:540px"></div></div>
+        <div class="card"><h2>Rises and falls</h2><p class="sub">Share of the rest of the market's average gain in the months it rose, and of its average loss in the months it fell, that the sector took part in. Above the line: more of the rises than of the falls. The eight sectors furthest from the line are labelled; hover for the rest.</p><div id="r-capture" style="height:540px"></div></div>
+      </div>
+      <div class="card"><h2>More measures of risk</h2>
+        <p class="sub">Click a column to sort. 'p corrected' allows for looking at all ${n} sectors; 'q' is the looser false-discovery-rate version. Bad-day loss is the average return on the worst 5% of days. Sortino counts only the days that fall short of cash as risk. Deflated Sharpe is the chance that the true Sharpe ratio beats what the best of ${n} sectors could reach by luck.</p>
+        <div style="overflow-x:auto"><table id="r-table"></table></div></div>`;
+
+    const cls = r => r.alpha_p_adjusted < 0.05 ? 0 : r.alpha_p < 0.05 ? 1 : 2;
+    const kinds = [["Still significant after the correction", primary], ["Significant one at a time only", AMBER], ["Not significant", GREY]];
+    const notable = new Set(ranked.slice().sort((a, b) => Math.abs(b.alpha_t) - Math.abs(a.alpha_t)).slice(0, 8).map(r => r.sector));      // label these; the rest show on hover
+    Plotly.newPlot("r-alpha", kinds.map(([name, colour], k) => {
+      const s = ranked.filter(r => cls(r) === k);
+      return { type: "scatter", mode: "markers+text", name, visible: s.length ? true : "legendonly", x: s.map(r => r.beta), y: s.map(r => r.alpha * 100), text: s.map(r => notable.has(r.sector) ? short(r.sector) : ""),
+        textposition: "top right", textfont: { size: 9, color: ink }, error_y: { type: "data", array: s.map(r => 1.96 * r.alpha_se * 100), color: GREY, thickness: 1.2, width: 0 },
+        marker: { size: s.map(r => 8 + 2.4 * Math.sqrt(r.n_companies)), color: colour, line: { color: "#fff", width: 1 } }, customdata: s.map(r => [r.alpha_t, r.alpha_p, r.alpha_p_adjusted, short(r.sector)]),
+        hovertemplate: "<b>%{customdata[3]}</b><br>Beta %{x:.2f}<br>Alpha %{y:+.1f}% a year (t = %{customdata[0]:.1f})<br>p = %{customdata[1]:.3f} alone, %{customdata[2]:.3f} after the correction<extra></extra>" };
+    }), layout({ legend: { orientation: "h", y: -0.16 }, xaxis: { title: "Beta (1 = moves one for one with the rest of the market)", gridcolor: grid, zeroline: false },
+      yaxis: { title: "Alpha: return a year not explained by the market (%)", gridcolor: grid, zeroline: true, zerolinecolor: ink },
+      shapes: [{ type: "line", yref: "paper", y0: 0, y1: 1, x0: 1, x1: 1, line: { color: GREY, width: 1, dash: "dash" } }], margin: { t: 10, r: 14, b: 80, l: 60 } }), cfg);
+
+    const top100 = Math.max(...ranked.map(r => Math.max(r.up_capture, r.down_capture))) * 108;
+    const apart = new Set(ranked.slice().sort((a, b) => Math.abs(b.up_capture - b.down_capture) - Math.abs(a.up_capture - a.down_capture)).slice(0, 8).map(r => r.sector));   // label the sectors furthest from the line
+    Plotly.newPlot("r-capture", [{ type: "scatter", mode: "markers+text", x: ranked.map(r => r.down_capture * 100), y: ranked.map(r => r.up_capture * 100), text: ranked.map(r => apart.has(r.sector) ? short(r.sector) : ""),
+      customdata: ranked.map(r => short(r.sector)), textposition: "top right", textfont: { size: 9, color: ink }, marker: { size: 9, color: primary, line: { color: "#fff", width: 1 } },
+      hovertemplate: "<b>%{customdata}</b><br>%{y:.0f}% of the rises<br>%{x:.0f}% of the falls<extra></extra>" }],
+      layout({ showlegend: false, shapes: [{ type: "line", x0: 0, y0: 0, x1: top100, y1: top100, line: { color: GREY, width: 1, dash: "dash" } }],
+        xaxis: { title: "Share of the market's falls taken (%)", gridcolor: grid, rangemode: "tozero" }, yaxis: { title: "Share of the market's rises taken (%)", gridcolor: grid, rangemode: "tozero" },
+        margin: { t: 10, r: 14, b: 50, l: 60 } }), cfg);
+
+    sortable("r-table", [
+      ["sector", "Sector", r => short(r.sector), true], ["beta", "Beta", r => f2(r.beta)], ["alpha", "Alpha a year", r => sg(r.alpha, 0)], ["alpha_t", "t", r => r.alpha_t.toFixed(1)],
+      ["alpha_p", "p alone", r => r.alpha_p < 0.05 ? `<span class="tint">${pv(r.alpha_p)}</span>` : pv(r.alpha_p)], ["alpha_p_adjusted", "p corrected", r => corrected(r.alpha_p_adjusted)],
+      ["alpha_q", "q, looser rule", r => pv(r.alpha_q)], ["sortino", "Sortino", r => f2(r.sortino)], ["cvar_95", "Bad-day loss", r => pc(r.cvar_95)], ["skew", "Skew", r => f2(r.skew)],
+      ["longest_fall_months", "Longest fall (months)", r => r.longest_fall_months.toFixed(0)], ["up_capture", "Up capture", r => pc(r.up_capture, 0)],
+      ["down_capture", "Down capture", r => pc(r.down_capture, 0)], ["dsr", "Deflated Sharpe", r => f2(r.dsr)]], ranked, "alpha", false);
+  };
+
+  // ---------------------------------------------------------------- what moves the sectors
+  renderers.moves = function () {
+    const n = ranked.length, M = MACRO, T = STRUCT, pair = T.strongest_pairs[0];
+    const effect = (pos, neg, up, down) => [pos.length ? `${list(pos.map(short))} ${up}` : "", neg.length ? `${list(neg.map(short))} ${down}` : ""].filter(Boolean).join("; ");
+    const survive = (fdr) => fdr.length === 0 ? `none survives the correction for testing all ${n}` : `${fdr.length} survive${fdr.length === 1 ? "s" : ""} the correction for testing all ${n} (${list(fdr.map(short))})`;
+    const rateAlone = M.rate_positive.length + M.rate_negative.length, fxAlone = M.fx_positive.length + M.fx_negative.length;
+    $("moves").innerHTML = `
+      <div class="callout"><b>How to read this.</b> Sectors move for three kinds of reason: the market as a whole, outside forces such as interest rates and the rupee, and ties between neighbouring industries.
+        <ul class="tight">
+          <li><b>The market.</b> ${pc(T.pc1_share, 0)} of all the variation in sector returns is one market-wide movement, so the ${n} sectors behave like ${T.effective_bets.toFixed(1)} independent bets. The average correlation between two sectors is ${f2(T.mean_correlation)}.</li>
+          <li><b>Interest rates.</b> Over ${M.months} full months, in ${M.policy_changes} of which the State Bank changed its rate, ${rateAlone ? `${rateAlone} of ${n} sector${rateAlone === 1 ? " shows a rate effect that is" : "s show a rate effect that is"} significant one at a time (${effect(M.rate_positive, M.rate_negative, "did better in months when the rate rose", "did worse in months when the rate rose")}), and ${survive(M.rate_fdr)}.` : "no sector shows a significant rate effect."}</li>
+          <li><b>The rupee.</b> ${fxAlone ? `${fxAlone} of ${n} sector${fxAlone === 1 ? " shows an effect that is" : "s show an effect that is"} significant one at a time (${effect(M.fx_positive, M.fx_negative, "did better in months when the rupee weakened", "did worse in months when the rupee weakened")}), and ${survive(M.fx_fdr)}.` : "No sector shows a significant rupee effect."}</li>
+          <li><b>Neighbours.</b> With the market taken out, the average correlation between two sectors falls to ${f2(T.residual_mean_correlation)}. The strongest link is ${short(pair.first)} with ${short(pair.second)} (${f2(pair.correlation)}).</li></ul></div>
+      <div class="kpis small">
+        <div class="kpi"><b>${pc(T.pc1_share, 0)}</b><span>of the variation in sector returns is one market-wide movement</span></div>
+        <div class="kpi"><b>${T.effective_bets.toFixed(1)}</b><span>independent bets among the ${n} sectors</span></div>
+        <div class="kpi"><b>${f2(T.mean_correlation)} then ${f2(T.residual_mean_correlation)}</b><span>average correlation of two sectors, before and after taking the market out</span></div>
+        <div class="kpi"><b>${pc(M.median_macro_r2, 0)}</b><span>of a sector's monthly return above cash is explained by the market, rates and the rupee together (median)</span></div>
+      </div>
+      <div class="card"><h2>Interest rates and the rupee</h2><p class="sub">Extra return in a month (%), with the rest of the market held fixed: for each percentage point the policy rate rose (left) and each 1% the rupee weakened against the dollar (right). Lines: 95% range. Dark: survives the correction for testing ${n} sectors; amber: significant one at a time only; grey: not significant.</p><div id="m-macro" style="height:${n * 24 + 120}px"></div></div>
+      <div class="grid2">
+        <div class="card"><h2>Mostly one market</h2><p class="sub">Share of the variation in sector returns (%) carried by each principal component. The first is the market.</p><div id="m-pca" style="height:300px"></div>
+          <h2 style="margin-top:14px">Strongest links beyond the market</h2><div style="overflow-x:auto"><table id="m-pairs"></table></div></div>
+        <div class="card"><h2>Groups that move together</h2><p class="sub">Sectors clustered by how correlated they stay after the market is taken out of each. Describes this five-year window, not a fixed classification.</p><div id="m-groups"></div></div>
+      </div>
+      <div class="card"><h2>Who moves together once the market is taken out</h2><p class="sub">Correlation of daily returns after removing what the rest of the market explains. Red: the two sectors still rise and fall together; blue: they tend to offset. Sectors are in cluster order and the letters mark the groups.</p><div id="m-heat" style="height:${n * 24 + 190}px"></div></div>`;
+
+    const o = ranked.slice().sort((a, b) => b.rate_beta - a.rate_beta);
+    const tint = (r, key, fdr) => fdr.includes(r.sector) ? primary : r[key + "_p"] < 0.05 ? AMBER : GREY;
+    const dots = (key, axis, fdr, unit) => ({ type: "scatter", mode: "markers", xaxis: axis, yaxis: "y", x: o.map(r => r[key + "_beta"]), y: o.map(r => short(r.sector)),
+      error_x: { type: "data", array: o.map(r => 1.96 * r[key + "_se"]), color: GREY, thickness: 1.6, width: 0 }, marker: { size: 9, color: o.map(r => tint(r, key, fdr)), line: { color: "#fff", width: 1 } },
+      customdata: o.map(r => [r[key + "_t"], r[key + "_p"], r[key + "_q"]]),
+      hovertemplate: `<b>%{y}</b><br>%{x:+.2f}% ${unit} (t = %{customdata[0]:.1f})<br>p = %{customdata[1]:.3f} alone, %{customdata[2]:.3f} after the correction<extra></extra>` });
+    Plotly.newPlot("m-macro", [dots("rate", "x", M.rate_fdr, "per percentage point of policy rate"), dots("fx", "x2", M.fx_fdr, "per 1% weaker rupee")],
+      layout({ showlegend: false, xaxis: { domain: [0, 0.46], title: "Extra return (%) per point higher policy rate", gridcolor: grid, zeroline: true, zerolinecolor: ink },
+        xaxis2: { domain: [0.54, 1], anchor: "y", title: "Extra return (%) per 1% weaker rupee", gridcolor: grid, zeroline: true, zerolinecolor: ink },
+        yaxis: { autorange: "reversed", gridcolor: grid, automargin: true }, margin: { t: 10, r: 14, b: 54, l: 150 } }), cfg);
+
+    Plotly.newPlot("m-pca", [{ type: "bar", x: T.shares.map((_, i) => String(i + 1)), y: T.shares.map(v => v * 100), marker: { color: T.shares.map((_, i) => i === 0 ? primary : GREY) },
+      text: T.shares.map(v => (v * 100).toFixed(0) + "%"), textposition: "outside", cliponaxis: false, hovertemplate: "Component %{x}: %{y:.1f}%<extra></extra>" }],
+      layout({ showlegend: false, xaxis: { title: "Component", type: "category", gridcolor: grid }, yaxis: { title: "Share (%)", gridcolor: grid, range: [0, T.shares[0] * 100 * 1.15] }, margin: { t: 10, r: 10, b: 46, l: 56 } }), cfg);
+    $("m-pairs").innerHTML = "<tr><th class='l'>First sector</th><th class='l'>Second sector</th><th>Correlation</th></tr>" +
+      T.strongest_pairs.map(p => `<tr><td class="l">${short(p.first)}</td><td class="l">${short(p.second)}</td><td>${f2(p.correlation)}</td></tr>`).join("");
+    $("m-groups").innerHTML = T.groups.map((g, i) => `<p><span class="pill k">${D.structure.letters[i]}</span> ${g.map(short).join(", ")}</p>`).join("");
+
+    const names = D.structure.names.map(short);
+    const shapes = [], notes = [];
+    let start = 0;
+    T.groups.forEach((g, i) => {
+      notes.push({ xref: "x", yref: "y", x: names.length - 0.4, y: start + (g.length - 1) / 2, text: "<b>" + D.structure.letters[i] + "</b>", showarrow: false, xanchor: "left", font: { size: 12, color: ink } });
+      start += g.length;
+      if (start < names.length) {
+        shapes.push({ type: "line", xref: "x", yref: "y", x0: -0.5, x1: names.length - 0.5, y0: start - 0.5, y1: start - 0.5, line: { color: ink, width: 1 } },
+                    { type: "line", xref: "x", yref: "y", y0: -0.5, y1: names.length - 0.5, x0: start - 0.5, x1: start - 0.5, line: { color: ink, width: 1 } });
+      }
+    });
+    Plotly.newPlot("m-heat", [{ type: "heatmap", z: D.structure.matrix.map((row, i) => row.map((v, j) => i === j ? null : v)), x: names, y: names, colorscale: DIVERGING, zmin: -0.3, zmax: 0.3,
+      colorbar: { thickness: 8, len: 0.6, title: "Correlation" }, hoverongaps: false, hovertemplate: "%{y} and %{x}: %{z:.2f}<extra></extra>" }],
+      layout({ shapes, annotations: notes, xaxis: { tickangle: -50, automargin: true, gridcolor: grid }, yaxis: { autorange: "reversed", automargin: true, gridcolor: grid }, margin: { t: 10, r: 70, b: 110, l: 130 } }), cfg);
+  };
+
+  // ---------------------------------------------------------------- portfolios: the out-of-sample test and the builder
+  renderers.port = function () {
+    const n = ranked.length, st = WF.strategies, win = st.winners, eq = st.equal_weight, mv = st.min_variance, w = D.walkForward;
+    const order = ["equal_weight", "winners", "losers", "min_variance", "inverse_volatility", "market"];
+    const sens = WF.sensitivity, ahead = sens.filter(r => r.difference > 0).length, clear = sens.filter(r => r.difference > 0 && r.p < 0.05).length;
+    const from = monthYear(WF.first_month + "-01");
+    $("port").innerHTML = `
+      <div class="callout"><b>How to read this.</b> The ranking is a look back. To see whether it could have been used, a rule is run month by month: on the last day of each month it chooses weights using <i>only</i> the previous ${WF.lookback_months} months, and the portfolio is held through the next month. That gives ${WF.months} months of results, from ${from}, that the rule could not have known in advance. Each rule is compared with holding all ${n} sectors equally.
+        <ul class="tight">
+          <li><b>Best sectors of the past year.</b> Holding the ${WF.top_sectors} sectors with the best past Sharpe ratio gave a Sharpe of ${f2(win.sharpe)} against ${f2(eq.sharpe)} for equal weights (${sg(win.cagr, 0)} a year against ${sg(eq.cagr, 0)}). ${win.vs_equal_p < 0.05 ? `That gap is unlikely to be luck (p = ${pv(win.vs_equal_p)}).` : `${win.sharpe_vs_equal > 0 ? "That gap" : "The result"} is not clearly more than luck could give (p = ${pv(win.vs_equal_p)}; ${pv(win.vs_equal_p_adjusted)} after allowing for five comparisons).`}
+            Across ${sens.length} choices of look-back and number of sectors it was ahead in ${ahead} and clearly ahead in ${clear}. The past ranking pointed the right way in ${pc(WF.ic.share_positive, 0)} of months (average rank correlation ${sgn(WF.ic.mean)}, t = ${WF.ic.t.toFixed(1)}).</li>
+          <li><b>Minimum variance.</b> Weights chosen to make the portfolio as steady as possible gave a volatility of ${pc(mv.volatility, 0)} against ${pc(eq.volatility, 0)} and a Sharpe of ${f2(mv.sharpe)} (p = ${pv(mv.vs_equal_p)} against equal weights; ${pv(mv.vs_equal_p_adjusted)} after allowing for five comparisons).</li>
+          <li><b>Worth remembering.</b> Five years is one history, and the companies are today's survivors, which lifts every rule alike. A rule that did well here may not elsewhere.</li></ul></div>
+      <div class="grid2">
+        <div class="card"><h2>Growth of 100 rupees, out of sample</h2><p class="sub">Weekly, from ${from}. Each rule sees only the previous ${WF.lookback_months} months when it chooses.</p><div id="p-growth" style="height:400px"></div></div>
+        <div class="card"><h2>Did the past predict the next month?</h2><p class="sub">Each bar is a month: the rank correlation between the sectors' Sharpe ratios over the previous ${WF.lookback_months} months and their returns in the month after. Above zero: the past ranking pointed the right way.</p><div id="p-ic" style="height:400px"></div></div>
+      </div>
+      <div class="card"><h2>The rules compared</h2><p class="sub">Click a column to sort. The range and the p-value test the Sharpe ratio against equal weights by resampling the days (2,000 times); 'p corrected' multiplies by the five comparisons made.</p>
+        <div style="overflow-x:auto"><table id="p-table"></table></div></div>
+      <div class="card"><h2>Does the answer depend on the choices?</h2><p class="sub">The best-sectors rule again, with other look-backs and numbers of sectors. The row in bold is the main test.</p>
+        <div style="overflow-x:auto"><table><tr><th class="l">Look-back</th><th>Sectors held</th><th>Months tested</th><th>Sharpe of the rule</th><th>Sharpe of equal weights</th><th>Difference</th><th>p</th><th>Average rank correlation</th></tr>
+        ${sens.map(r => `<tr class="${r.lookback_months === WF.lookback_months && r.top_sectors === WF.top_sectors ? "sel" : ""}"><td class="l">${r.lookback_months} months</td><td>${r.top_sectors}</td><td>${r.months}</td><td>${f2(r.sharpe_winners)}</td><td>${f2(r.sharpe_equal_weight)}</td><td>${sgn(r.difference)}</td><td>${pv(r.p)}</td><td>${sgn(r.mean_information_coefficient)}</td></tr>`).join("")}</table></div></div>
+      <div class="card"><h2>Build a portfolio</h2>
+        <p class="sub">Choose how much of each sector to hold. The weights are scaled to add up to 100% and put back to these weights at the start of every month. The presets were worked out with hindsight from the whole five years, so this shows what diversification does, not what to expect. No trading costs are included.</p>
+        <div class="row"><span class="note">Start from:</span><button class="act" data-preset="equal_weight">Equal weight</button><button class="act" data-preset="best_sharpe">Best ${WF.top_sectors} by Sharpe</button>
+          <button class="act" data-preset="min_variance">Minimum variance</button><button class="act" data-preset="inverse_volatility">Inverse volatility</button><button class="act" id="b-clear">Clear</button></div>
+        <div class="weights" id="b-weights"></div><p class="note" id="b-total"></p></div>
+      <div id="b-out">
+        <div class="kpis small" id="b-kpis"></div>
+        <div class="grid2">
+          <div class="card"><h2>Growth of 100 rupees</h2><p class="sub">Your portfolio against the whole market and cash at the policy rate.</p><div id="b-growth" style="height:360px"></div></div>
+          <div class="card"><h2>Where the weight is and where the risk is</h2><p class="sub">Share of the portfolio's weight and of its day-to-day variation. A sector that carries more risk than weight is the one driving the ups and downs.</p><div id="b-risk" style="height:360px"></div></div>
+        </div></div>`;
+
+    const colourOf = { equal_weight: GREY, winners: primary, losers: ORANGE, min_variance: TEAL, inverse_volatility: AMBER, market: marketLine };
+    Plotly.newPlot("p-growth", order.map(k => ({ x: w.weeks, y: w.levels[k], type: "scatter", mode: "lines", name: w.names[k],
+      line: { color: colourOf[k], width: k === "winners" || k === "min_variance" ? 2.8 : 1.8, dash: k === "market" ? "dash" : "solid" }, hovertemplate: w.names[k] + ": %{y:.0f}<extra></extra>" })),
+      layout({ yaxis: { title: "Growth of 100 (log scale)", type: "log", gridcolor: grid, tickvals: LOGTICKS, ticktext: LOGTICKS.map(String) }, legend: { orientation: "h", y: -0.22 }, margin: { t: 6, r: 12, b: 70, l: 56 } }), cfg);
+    Plotly.newPlot("p-ic", [{ type: "bar", x: w.icDates, y: w.ic, marker: { color: w.ic.map(v => v > 0 ? TEAL : ORANGE) }, hovertemplate: "Chosen at the end of %{x|%b %Y}: %{y:+.2f}<extra></extra>" }],
+      layout({ showlegend: false, yaxis: { title: "Rank correlation", gridcolor: grid, zeroline: true, zerolinecolor: ink },
+        shapes: [{ type: "line", xref: "paper", x0: 0, x1: 1, y0: WF.ic.mean, y1: WF.ic.mean, line: { color: ink, width: 1.2, dash: "dash" } }],
+        annotations: [{ xref: "paper", x: 0.01, y: WF.ic.mean, yshift: 10, text: `average ${sgn(WF.ic.mean)} (t = ${WF.ic.t.toFixed(1)})`, showarrow: false, xanchor: "left", font: { size: 10, color: ink } }],
+        margin: { t: 6, r: 12, b: 40, l: 56 } }), cfg);
+    sortable("p-table", [
+      ["name", "Rule", r => r.key === "winners" || r.key === "min_variance" ? `<b>${r.name}</b>` : r.name, true], ["cagr", "Return a year", r => sg(r.cagr)], ["volatility", "Volatility", r => pc(r.volatility)],
+      ["max_drawdown", "Worst fall", r => pc(r.max_drawdown, 0)], ["sharpe", "Sharpe", r => f2(r.sharpe)], ["sharpe_vs_equal", "Sharpe minus equal weight", r => r.key === "equal_weight" ? "" : sgn(r.sharpe_vs_equal)],
+      ["vs_equal_lo", "95% range", r => r.vs_equal_lo == null ? "" : sgn(r.vs_equal_lo) + " to " + sgn(r.vs_equal_hi)], ["vs_equal_p", "p", r => r.vs_equal_p == null ? "" : pv(r.vs_equal_p)],
+      ["vs_equal_p_adjusted", "p corrected", r => r.vs_equal_p_adjusted == null ? "" : corrected(r.vs_equal_p_adjusted)], ["turnover", "Traded each month", r => r.turnover == null ? "" : pc(r.turnover, 0)]],
+      order.map(k => Object.assign({ key: k, name: w.names[k] }, st[k])), "sharpe", false);
+
+    // ---- the builder: monthly rebalanced, exactly as the Python code does it, from the daily returns in the page
+    const names = D.rankedOrder, N = D.daily.dates.length, years = S.window.years, ppy = N / years, scale = D.daily.scale;
+    const series = k => Float64Array.from(D.daily.returns[k], v => v / scale);
+    const mat = names.map(series), mk = series(MK), cash = Float64Array.from(D.daily.safe), month = D.daily.dates.map(d => d.slice(0, 7));
+    const mean = a => a.reduce((s, v) => s + v, 0) / a.length;
+    const sd = a => { const m = mean(a); return Math.sqrt(a.reduce((s, v) => s + (v - m) * (v - m), 0) / (a.length - 1)); };
+    const held = wt => {
+      const out = new Float64Array(N), cum = new Float64Array(wt.length);
+      let prev = 1, current = "";
+      for (let t = 0; t < N; t++) {
+        if (month[t] !== current) { current = month[t]; cum.fill(1); prev = 1; }
+        let value = 0;
+        for (let i = 0; i < wt.length; i++) { cum[i] *= 1 + mat[i][t]; value += wt[i] * cum[i]; }
+        out[t] = value / prev - 1; prev = value;
+      }
+      return out;
+    };
+    const measure = r => {
+      const level = new Float64Array(N), excess = new Float64Array(N);
+      let cur = 1, peak = 1, worst = 0;
+      for (let t = 0; t < N; t++) { cur *= 1 + r[t]; level[t] = cur * 100; peak = Math.max(peak, cur); worst = Math.min(worst, cur / peak - 1); excess[t] = r[t] - cash[t]; }
+      return { cagr: Math.pow(cur, 1 / years) - 1, volatility: sd(r) * Math.sqrt(ppy), maxDrawdown: worst, sharpe: mean(excess) / sd(excess) * Math.sqrt(ppy), level };
+    };
+    const means = mat.map(mean);
+    const cov = mat.map((a, i) => mat.map((b, j) => { let s = 0; for (let t = 0; t < N; t++) s += (a[t] - means[i]) * (b[t] - means[j]); return s / (N - 1); }));
+    const weekIndex = D.weeks.map(d => { let k = -1; while (k + 1 < N && D.daily.dates[k + 1] <= d) k++; return k; });
+    const weekly = level => weekIndex.map(k => k < 0 ? 100 : +level[k].toFixed(1));
+    const marketMeasure = measure(mk), cashLevel = (() => { const out = new Float64Array(N); let cur = 100; for (let t = 0; t < N; t++) { cur *= 1 + cash[t]; out[t] = cur; } return out; })();
+
+    let amounts = D.presets.equal_weight.map(v => v * 100);               // percentages, as typed
+    $("b-weights").innerHTML = names.map((nm, i) => `<label>${short(nm)}<input type="number" min="0" max="100" step="0.5" data-i="${i}"></label>`).join("");
+    const boxes = [...$("b-weights").querySelectorAll("input")];
+    const kpi = (value, label, versus) => `<div class="kpi"><b>${value}</b><span>${label}${versus ? "<br>" + versus : ""}</span></div>`;
+    function update() {
+      const total = amounts.reduce((s, v) => s + v, 0);
+      $("b-total").textContent = total > 0 ? `Entered total ${total.toFixed(1)}%, scaled to 100%.` : "Enter at least one weight.";
+      $("b-out").hidden = !(total > 0);
+      if (!(total > 0)) return;
+      const wt = amounts.map(v => v / total), r = held(wt), m = measure(r);
+      const cw = cov.map(row => row.reduce((s, c, j) => s + c * wt[j], 0)), variance = wt.reduce((s, x, i) => s + x * cw[i], 0);
+      const risk = wt.map((x, i) => x * cw[i] / variance), effective = 1 / wt.reduce((s, x) => s + x * x, 0);
+      $("b-kpis").innerHTML = kpi(sg(m.cagr), "return a year", `whole market ${sg(marketMeasure.cagr)}`) + kpi(pc(m.volatility), "volatility", `whole market ${pc(marketMeasure.volatility)}`) +
+        kpi(pc(m.maxDrawdown, 0), "worst fall", `whole market ${pc(marketMeasure.maxDrawdown, 0)}`) + kpi(f2(m.sharpe), "Sharpe ratio", `whole market ${f2(marketMeasure.sharpe)}`) +
+        kpi(effective.toFixed(1), "effective number of holdings", `${wt.filter(x => x > 0.0005).length} sectors held`);
+      Plotly.react("b-growth", [{ x: D.weeks, y: weekly(m.level), type: "scatter", mode: "lines", name: "Your portfolio", line: { color: primary, width: 2.8 }, hovertemplate: "Your portfolio: %{y:.0f}<extra></extra>" },
+        { x: D.weeks, y: weekly(marketMeasure.level), type: "scatter", mode: "lines", name: "Whole market", line: { color: ORANGE, width: 1.8 }, hovertemplate: "Whole market: %{y:.0f}<extra></extra>" },
+        { x: D.weeks, y: weekly(cashLevel), type: "scatter", mode: "lines", name: "Cash at the policy rate", line: { color: GREY, width: 1.5, dash: "dash" }, hovertemplate: "Cash: %{y:.0f}<extra></extra>" }],
+        layout({ yaxis: { title: "Growth of 100 (log scale)", type: "log", gridcolor: grid, tickvals: LOGTICKS, ticktext: LOGTICKS.map(String) }, legend: { orientation: "h", y: -0.2 }, margin: { t: 6, r: 12, b: 60, l: 56 } }), cfg);
+      const shown = names.map((nm, i) => i).filter(i => wt[i] > 0.0005).sort((a, b) => wt[b] - wt[a]);
+      $("b-risk").style.height = Math.max(300, shown.length * 26 + 90) + "px";
+      Plotly.react("b-risk", [{ type: "bar", orientation: "h", name: "Weight", y: shown.map(i => short(names[i])), x: shown.map(i => wt[i] * 100), marker: { color: GREY }, hovertemplate: "%{y} weight: %{x:.1f}%<extra></extra>" },
+        { type: "bar", orientation: "h", name: "Share of the variation", y: shown.map(i => short(names[i])), x: shown.map(i => risk[i] * 100), marker: { color: primary }, hovertemplate: "%{y} share of risk: %{x:.1f}%<extra></extra>" }],
+        layout({ barmode: "group", xaxis: { title: "%", gridcolor: grid }, yaxis: { autorange: "reversed", automargin: true, gridcolor: grid }, legend: { orientation: "h", y: -0.12 }, margin: { t: 6, r: 12, b: 60, l: 150 } }), cfg);
+      window.dispatchEvent(new Event("resize"));
+    }
+    const fill = () => boxes.forEach((b, i) => { b.value = amounts[i] ? +amounts[i].toFixed(1) : ""; });
+    boxes.forEach(b => b.addEventListener("input", () => { amounts[+b.dataset.i] = Math.max(0, parseFloat(b.value) || 0); update(); }));
+    $("port").querySelectorAll("[data-preset]").forEach(btn => btn.addEventListener("click", () => { amounts = D.presets[btn.dataset.preset].map(v => v * 100); fill(); update(); }));
+    $("b-clear").addEventListener("click", () => { amounts = names.map(() => 0); fill(); update(); });
+    window.psxBuilder = { held, measure, names };                         // exposed so the numbers can be checked against the Python results in the browser console
+    fill(); update();
+  };
+
   // ---------------------------------------------------------------- method
   renderers.method = function () {
     const q = S.quality;
@@ -279,12 +546,21 @@
         <div class="card"><h2>From every listing to the companies analysed</h2><div id="m-funnel" style="height:320px"></div>
           <h2 style="margin-top:14px">The safe rate: SBP policy rate</h2><p class="sub">Cash is assumed to earn this rate, accrued daily.</p><div id="m-policy" style="height:230px"></div></div>
       </div>
+      <div class="card"><h2>The second layer of analysis</h2><ul class="tight">
+        <li><b>Alpha and beta.</b> Each sector's weekly return above cash is regressed on the weekly return of the rest of the market (every other sector's companies, equal-weighted), with last week's market return included so that shares that trade late are not mistaken for low risk. Standard errors allow for related weeks (Newey and West, 4 lags). Beta is the sum of the two market coefficients; alpha is the intercept, annualised.</li>
+        <li><b>Looking at ${ranked.length} sectors at once.</b> The best of ${ranked.length} will look special by chance, so each p-value is corrected: the weekly data are resampled in blocks (2,000 draws), the largest t-statistic over all ${ranked.length} sectors is recorded each time, and a sector counts only if it beats that distribution (the Romano and Wolf reality check). The deflated Sharpe ratio (Bailey and López de Prado) asks the same of the Sharpe ratio: how often would the best of ${ranked.length} reach this level by luck?</li>
+        <li><b>Interest rates and the rupee.</b> For each full calendar month, a sector's return above cash is regressed on the rest of the market's, the change in the policy rate (percentage points) and the change in rupees per dollar (percent). Standard errors allow for 3 months of dependence, and the false discovery rate (Benjamini and Hochberg) is controlled across the ${ranked.length} sectors.</li>
+        <li><b>The out-of-sample test.</b> On the last day of each month a rule sees only the previous ${WF.lookback_months} months and sets weights for the next. Each rule's Sharpe ratio is compared with that of equal weights by resampling the days (2,000 draws, in blocks of 10), and the p-values are multiplied by the number of comparisons (Bonferroni).</li>
+        <li><b>Structure.</b> Principal components of the sectors' return correlations show how many independent bets there are. The groups come from average-linkage clustering of the correlations that remain after the rest of the market is taken out of each sector.</li>
+        <li><b>The builder.</b> Minimum variance uses a covariance matrix pulled towards a plain target (shrinkage, in the style of Ledoit and Wolf) and weights that cannot be negative. Inverse volatility weights each sector by one over its volatility. Portfolios are put back to their weights every month.</li></ul></div>
       <div class="card"><h2>Limits</h2><ul>
         <li><b>Five years is short.</b> The window spans the policy rate rising to ${S.safe.policy_rate_peak}% and coming back down, and a sector's rank depends on when it was strong. See the year-by-year chart and the first-half and second-half rows.</li>
         <li><b>Only today's listed companies.</b> Companies delisted during the window are missing, which flatters returns. This is probably smaller than with the KSE-100, whose members are chosen for their size and so favour companies that have grown, but it is not zero.</li>
         <li><b>Equal weights.</b> A sector index treats a small company like a large one. An index weighted by company size would differ, and most of the money in the market sits in the largest companies.</li>
         <li><b>Yahoo Finance is not an official source.</b> Dividends it does not record are missing from the returns, so dividend contributions are, if anything, understated. ${q.corrections.events} wrong prices and unadjusted corporate actions, in ${q.corrections.companies} companies, were corrected by fixed rules and are listed in data/processed/price_corrections.csv.</li>
         <li><b>Rupee returns.</b> Rupees per dollar went from ${q.fx.base.toFixed(1)} to ${q.fx.end.toFixed(1)}, so in dollars the whole market returned ${pc(market.usd_cagr)} a year against ${pc(market.cagr)} in rupees.</li>
+        <li><b>Out of sample is not new data.</b> The rules in the Portfolios tab only look at the past when they choose, but the companies are today's survivors and the five years are the only ones there are, so no result there is a forecast. The comparisons between rules are fairer than their absolute levels, which survivorship lifts for all of them.</li>
+        <li><b>Many tests, one history.</b> The second layer estimates many things from the same five years. The corrections limit false findings from looking at many sectors and rules; they cannot make five years longer.</li>
         <li><b>Not advice.</b> This describes the past. It says nothing certain about the future and is not a recommendation to buy or sell anything.</li></ul></div>`;
     const f = D.funnel.slice().reverse();
     Plotly.newPlot("m-funnel", [{ type: "bar", orientation: "h", y: f.map(r => r.step), x: f.map(r => r.companies), marker: { color: primary }, text: f.map(r => r.companies), textposition: "outside", cliponaxis: false,
@@ -294,6 +570,7 @@
       hovertemplate: "%{x}: %{y}%<extra></extra>" }], layout({ yaxis: { title: "Policy rate (%)", gridcolor: grid }, margin: { t: 6, r: 12, b: 40, l: 56 } }), cfg);
   };
 
+  document.addEventListener("click", e => { const a = e.target.closest("[data-go]"); if (a) { e.preventDefault(); show(a.dataset.go); window.scrollTo(0, 0); } });
   const start = location.hash.replace("#", "");
   show(tabs.some(t => t[0] === start) ? start : "answer", true);
 })();

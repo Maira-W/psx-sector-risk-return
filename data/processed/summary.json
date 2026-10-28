@@ -164,6 +164,307 @@
       "n_top_sector_stays_first": 3
     }
   },
+  "alpha": {
+    "expected_best_sharpe": 0.81446687159965,
+    "trials": 22,
+    "weeks": 262,
+    "weeks_per_year": 52.41048209641929,
+    "alpha_raw_positive": 2,
+    "alpha_raw_negative": 3,
+    "alpha_adjusted_significant": 0,
+    "alpha_fdr_significant": 1,
+    "null_largest_t_95": 3.113437669202232,
+    "best_sector": "Fertilizer",
+    "best_alpha": 0.28215103187929,
+    "best_alpha_t": 2.731367301896683,
+    "best_alpha_p": 0.006307213479487039,
+    "best_alpha_p_adjusted": 0.08695652173913043,
+    "best_beta": 0.5894540809208525,
+    "highest_beta_sector": "Textile spinning",
+    "lowest_beta_sector": "Fertilizer",
+    "median_beta": 0.9699435118500075,
+    "median_r2": 0.5336572395815309,
+    "best_dsr_sector": "Fertilizer",
+    "best_dsr": 0.8381958912330026,
+    "n_dsr_95": 0,
+    "lowest_alpha_sector": "Engineering",
+    "lowest_alpha": -0.2063956607161326
+  },
+  "macro": {
+    "months": 59,
+    "policy_changes": 19,
+    "rate_positive": [
+      "Automobile assemblers",
+      "Sugar",
+      "Textile composite"
+    ],
+    "rate_negative": [
+      "Pharmaceuticals"
+    ],
+    "fx_positive": [],
+    "fx_negative": [
+      "Automobile assemblers"
+    ],
+    "rate_fdr": [],
+    "fx_fdr": [
+      "Automobile assemblers"
+    ],
+    "largest_rate_sector": "Textile spinning",
+    "largest_rate_beta": 2.162334981054783,
+    "largest_fx_sector": "Automobile assemblers",
+    "largest_fx_beta": -0.5126917736886673,
+    "median_macro_r2": 0.603107075184421
+  },
+  "walk_forward": {
+    "lookback_months": 12,
+    "top_sectors": 3,
+    "months": 48,
+    "first_month": "2022-11",
+    "strategies": {
+      "equal_weight": {
+        "cagr": 0.39162521212925805,
+        "volatility": 0.2273320354608632,
+        "sharpe": 0.8650741276655975,
+        "max_drawdown": -0.29446013605427346,
+        "turnover": 0.023330907900608856,
+        "sharpe_vs_equal": 0.0,
+        "vs_equal_lo": null,
+        "vs_equal_hi": null,
+        "vs_equal_p": null,
+        "vs_equal_p_adjusted": null
+      },
+      "winners": {
+        "cagr": 0.581187204490824,
+        "volatility": 0.2385851150819838,
+        "sharpe": 1.3724638334557413,
+        "max_drawdown": -0.28131264404570144,
+        "turnover": 0.2050100866101807,
+        "sharpe_vs_equal": 0.5073897057901438,
+        "vs_equal_lo": -0.04958730938878899,
+        "vs_equal_hi": 1.093570025596051,
+        "vs_equal_p": 0.07,
+        "vs_equal_p_adjusted": 0.35000000000000003
+      },
+      "losers": {
+        "cagr": 0.29125262302948296,
+        "volatility": 0.24492229124133333,
+        "sharpe": 0.5134680662306221,
+        "max_drawdown": -0.2706339153443318,
+        "turnover": 0.2748097004688693,
+        "sharpe_vs_equal": -0.3516060614349754,
+        "vs_equal_lo": -0.8381677914220599,
+        "vs_equal_hi": 0.05062898349078099,
+        "vs_equal_p": 0.103,
+        "vs_equal_p_adjusted": 0.515
+      },
+      "min_variance": {
+        "cagr": 0.4961537099245654,
+        "volatility": 0.19355834194684068,
+        "sharpe": 1.354664603854324,
+        "max_drawdown": -0.24985278589928517,
+        "turnover": 0.09179694500204025,
+        "sharpe_vs_equal": 0.4895904761887264,
+        "vs_equal_lo": 0.10167293651337762,
+        "vs_equal_hi": 0.9224360109863139,
+        "vs_equal_p": 0.018,
+        "vs_equal_p_adjusted": 0.09
+      },
+      "inverse_volatility": {
+        "cagr": 0.3888905740333515,
+        "volatility": 0.22118119228707916,
+        "sharpe": 0.8739771222662812,
+        "max_drawdown": -0.29078545123919597,
+        "turnover": 0.026409236421163516,
+        "sharpe_vs_equal": 0.008902994600683667,
+        "vs_equal_lo": -0.04105225167147493,
+        "vs_equal_hi": 0.056598720852949654,
+        "vs_equal_p": 0.685,
+        "vs_equal_p_adjusted": 1.0
+      },
+      "market": {
+        "cagr": 0.3748360223280143,
+        "volatility": 0.22449464775037542,
+        "sharpe": 0.8188910284436363,
+        "max_drawdown": -0.29570360480135616,
+        "turnover": null,
+        "sharpe_vs_equal": -0.04618309922196129,
+        "vs_equal_lo": -0.15291044591558636,
+        "vs_equal_hi": 0.05461938921215543,
+        "vs_equal_p": 0.365,
+        "vs_equal_p_adjusted": 1.0
+      }
+    },
+    "ic": {
+      "mean": 0.07138151703369094,
+      "t": 1.787913156862985,
+      "share_positive": 0.6041666666666666,
+      "months": 48
+    },
+    "sensitivity": [
+      {
+        "lookback_months": 6,
+        "top_sectors": 3,
+        "months": 54,
+        "sharpe_winners": 1.2027185570462566,
+        "sharpe_equal_weight": 0.620240023121381,
+        "difference": 0.5824785339248756,
+        "p": 0.034,
+        "mean_information_coefficient": 0.0650814563858042
+      },
+      {
+        "lookback_months": 6,
+        "top_sectors": 5,
+        "months": 54,
+        "sharpe_winners": 1.0232502814932316,
+        "sharpe_equal_weight": 0.620240023121381,
+        "difference": 0.40301025837185056,
+        "p": 0.042,
+        "mean_information_coefficient": 0.0650814563858042
+      },
+      {
+        "lookback_months": 12,
+        "top_sectors": 3,
+        "months": 48,
+        "sharpe_winners": 1.3724638334557413,
+        "sharpe_equal_weight": 0.8650741276655975,
+        "difference": 0.5073897057901438,
+        "p": 0.07,
+        "mean_information_coefficient": 0.07138151703369094
+      },
+      {
+        "lookback_months": 12,
+        "top_sectors": 5,
+        "months": 48,
+        "sharpe_winners": 1.228833800442157,
+        "sharpe_equal_weight": 0.8650741276655975,
+        "difference": 0.3637596727765595,
+        "p": 0.082,
+        "mean_information_coefficient": 0.07138151703369094
+      },
+      {
+        "lookback_months": 24,
+        "top_sectors": 3,
+        "months": 36,
+        "sharpe_winners": 1.4395010018231114,
+        "sharpe_equal_weight": 1.1512788501983582,
+        "difference": 0.2882221516247532,
+        "p": 0.38,
+        "mean_information_coefficient": 0.04451345755693583
+      },
+      {
+        "lookback_months": 24,
+        "top_sectors": 5,
+        "months": 36,
+        "sharpe_winners": 1.1349561772199772,
+        "sharpe_equal_weight": 1.1512788501983582,
+        "difference": -0.01632267297838097,
+        "p": 0.942,
+        "mean_information_coefficient": 0.04451345755693583
+      }
+    ]
+  },
+  "structure": {
+    "pc1_share": 0.5954046943574484,
+    "pc2_share": 0.0377910583286111,
+    "pc3_share": 0.03126835057144326,
+    "shares": [
+      0.5954046943574484,
+      0.0377910583286111,
+      0.03126835057144326,
+      0.030215959483413365,
+      0.027582951448166474,
+      0.026191366230910156,
+      0.02582945408643134,
+      0.023627911259356895
+    ],
+    "effective_bets": 2.750487312375594,
+    "mean_correlation": 0.5690907113531751,
+    "residual_mean_correlation": -0.037816624748848844,
+    "residual_effective_bets": 19.601081448852245,
+    "strongest_pairs": [
+      {
+        "first": "Oil and gas exploration",
+        "second": "Oil and gas marketing",
+        "correlation": 0.28397942768832485
+      },
+      {
+        "first": "Automobile assemblers",
+        "second": "Automobile parts",
+        "correlation": 0.14333510674853547
+      },
+      {
+        "first": "Oil and gas marketing",
+        "second": "Refinery",
+        "correlation": 0.1378825102696941
+      },
+      {
+        "first": "Commercial banks",
+        "second": "Fertilizer",
+        "correlation": 0.13757459426450142
+      },
+      {
+        "first": "Oil and gas exploration",
+        "second": "Refinery",
+        "correlation": 0.12396671328650422
+      }
+    ],
+    "groups": [
+      [
+        "Sugar",
+        "Investment banks and securities",
+        "Textile spinning"
+      ],
+      [
+        "Cement",
+        "Engineering",
+        "Textile composite",
+        "Chemicals",
+        "Glass and ceramics",
+        "Paper and packaging"
+      ],
+      [
+        "Insurance",
+        "Power generation and distribution",
+        "Commercial banks",
+        "Fertilizer"
+      ],
+      [
+        "Transport",
+        "Pharmaceuticals",
+        "Automobile assemblers",
+        "Automobile parts",
+        "Technology and communication",
+        "Food and personal care",
+        "Refinery",
+        "Oil and gas exploration",
+        "Oil and gas marketing"
+      ]
+    ],
+    "order": [
+      "Sugar",
+      "Investment banks and securities",
+      "Textile spinning",
+      "Cement",
+      "Engineering",
+      "Textile composite",
+      "Chemicals",
+      "Glass and ceramics",
+      "Paper and packaging",
+      "Insurance",
+      "Power generation and distribution",
+      "Commercial banks",
+      "Fertilizer",
+      "Transport",
+      "Pharmaceuticals",
+      "Automobile assemblers",
+      "Automobile parts",
+      "Technology and communication",
+      "Food and personal care",
+      "Refinery",
+      "Oil and gas exploration",
+      "Oil and gas marketing"
+    ]
+  },
   "quality": {
     "raw": {
       "rows": 579383,

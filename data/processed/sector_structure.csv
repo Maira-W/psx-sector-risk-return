@@ -1,0 +1,23 @@
+sector,group,component_1,component_2
+Sugar,0,0.15038,0.65828
+Investment banks and securities,0,0.20524,0.24507
+Textile spinning,0,0.18049,0.54659
+Cement,1,0.23147,-0.11395
+Engineering,1,0.23617,-0.03501
+Textile composite,1,0.22067,-0.00400
+Chemicals,1,0.23538,-0.03919
+Glass and ceramics,1,0.22528,-0.00496
+Paper and packaging,1,0.22676,-0.01350
+Insurance,2,0.18343,0.13614
+Power generation and distribution,2,0.19601,0.01467
+Commercial banks,2,0.21062,-0.11034
+Fertilizer,2,0.18904,-0.07180
+Transport,3,0.18488,-0.03256
+Pharmaceuticals,3,0.22306,-0.17065
+Automobile assemblers,3,0.22015,-0.03763
+Automobile parts,3,0.22466,-0.17281
+Technology and communication,3,0.24180,0.02724
+Food and personal care,3,0.24247,-0.01217
+Refinery,3,0.20063,-0.16185
+Oil and gas exploration,3,0.20301,-0.24350
+Oil and gas marketing,3,0.23086,-0.08918

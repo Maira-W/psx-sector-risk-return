@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from psxsec import analysis, config, metrics
+from psxsec import advanced, analysis, config, metrics, stats
 
 
 def test_the_universe_matches_the_manifest_and_the_sector_list(universe, manifest):
@@ -118,6 +118,68 @@ def test_price_corrections_listed_for_review_really_are_beyond_the_rules():
         assert ((fixed["price_move_pct"] >= up - 0.01) | (fixed["price_move_pct"] <= down + 0.01)).all()
         assert not fixed.duplicated(["symbol", "date"]).any()
         assert fixed["treatment"].str.startswith(("bad price", "price return set to zero")).all()
+
+
+def test_market_model_results_can_be_recomputed_from_the_committed_returns(sectors, daily, summary):
+    rest = pd.read_csv(config.PROCESSED / "market_excluding_sector_daily_returns.csv", index_col=0, parse_dates=True)
+    safe = daily["Safe return (policy rate)"]
+    ranked = sectors[sectors["ranked"]]
+    weekly_sector, weekly_safe = analysis.weekly(daily[list(ranked["sector"])], safe)
+    weekly_rest, _ = analysis.weekly(rest[list(ranked["sector"])], safe)
+    weeks_per_year = len(weekly_safe) / summary["window"]["years"]
+    for r in ranked.itertuples():
+        fit = stats.market_model(weekly_sector[r.sector] - weekly_safe, weekly_rest[r.sector] - weekly_safe, config.HAC_LAGS_WEEKLY)
+        assert fit["beta"] == pytest.approx(r.beta, abs=1e-4) and fit["alpha"] * weeks_per_year == pytest.approx(r.alpha, abs=1e-4), r.sector
+        assert fit["alpha_t"] == pytest.approx(r.alpha_t, abs=1e-3), r.sector
+    assert (ranked["alpha_p_adjusted"] >= ranked["alpha_p"] - 1e-9).all() and ranked[["alpha_p", "alpha_q", "alpha_p_adjusted", "dsr", "psr_zero"]].apply(
+        lambda column: column.between(0, 1).all()).all()
+    assert (ranked["cvar_95"] <= ranked["var_95"]).all() and (ranked["var_95"] < 0).all()
+    assert summary["alpha"]["alpha_adjusted_significant"] == int((ranked["alpha_p_adjusted"] < 0.05).sum())
+    assert summary["alpha"]["trials"] == len(ranked) and summary["alpha"]["expected_best_sharpe"] > 0
+
+
+def test_macro_sensitivities_can_be_recomputed_from_the_monthly_table(sectors, summary):
+    frame = pd.read_csv(config.PROCESSED / "macro_monthly.csv", index_col="month")
+    betas = advanced.macro_betas(frame)
+    ranked = sectors[sectors["ranked"]].set_index("sector")
+    assert set(betas.index) == set(ranked.index) and len(frame) == summary["macro"]["months"]
+    for column in ("rate_beta", "rate_t", "fx_beta", "fx_t", "macro_market_beta"):
+        assert betas[column].reindex(ranked.index).to_numpy() == pytest.approx(ranked[column].to_numpy(), abs=1e-4), column
+    assert not frame.isna().any().any() and (frame["d_policy_rate_pp"] != 0).sum() == summary["macro"]["policy_changes"]
+    assert set(summary["macro"]["rate_fdr"]) <= set(summary["macro"]["rate_positive"]) | set(summary["macro"]["rate_negative"])
+
+
+def test_out_of_sample_results_can_be_recomputed_from_the_daily_returns(summary, daily):
+    strategies = pd.read_csv(config.PROCESSED / "walk_forward_daily_returns.csv", index_col=0, parse_dates=True)
+    table = pd.read_csv(config.PROCESSED / "walk_forward_summary.csv", index_col="strategy")
+    safe = daily["Safe return (policy rate)"].loc[strategies.index]
+    ppy = len(daily) / summary["window"]["years"]
+    assert list(table.index) == list(config.STRATEGIES)
+    assert strategies.index[0].to_period("M") == pd.Period(summary["walk_forward"]["first_month"]) and strategies.index[-1] == daily.index[-1]
+    assert len(set(strategies.index.to_period("M"))) == summary["walk_forward"]["months"]
+    for name, row in table.iterrows():
+        returns = strategies[name]
+        assert metrics.sharpe(returns - safe, ppy) == pytest.approx(row["sharpe"], abs=1e-4), name
+        assert metrics.annualised_return(returns, len(returns) / ppy) == pytest.approx(row["cagr"], abs=1e-4), name
+        assert metrics.volatility(returns, ppy) == pytest.approx(row["volatility"], abs=1e-4), name
+    assert strategies["market"].to_numpy() == pytest.approx(daily["Whole market"].loc[strategies.index].to_numpy(), abs=1e-6)
+    assert table.loc["equal_weight", "sharpe_vs_equal"] == 0 and (table["vs_equal_p_adjusted"].dropna() >= table["vs_equal_p"].dropna() - 1e-9).all()
+    sensitivity = pd.read_csv(config.PROCESSED / "walk_forward_sensitivity.csv")
+    assert len(sensitivity) == (len(config.LOOKBACK_CHECKS) + 1) * (len(config.TOP_CHECKS) + 1) and sensitivity["p"].between(0, 1).all()
+    ic = pd.read_csv(config.PROCESSED / "walk_forward_ic.csv", index_col=0)["information_coefficient"]
+    assert len(ic) == summary["walk_forward"]["ic"]["months"] and ic.between(-1, 1).all()
+
+
+def test_structure_and_presets_are_complete_and_valid(sectors, summary):
+    ranked = set(sectors.loc[sectors["ranked"], "sector"])
+    structure = pd.read_csv(config.PROCESSED / "sector_structure.csv")
+    assert set(structure["sector"]) == ranked and structure["group"].nunique() == config.CLUSTERS
+    assert sum(len(g) for g in summary["structure"]["groups"]) == len(ranked)
+    assert summary["structure"]["pc1_share"] > summary["structure"]["pc2_share"] > 0 and summary["structure"]["effective_bets"] > 1
+    corr = pd.read_csv(config.PROCESSED / "market_adjusted_correlations.csv", index_col=0)
+    assert set(corr.index) == ranked and (corr.to_numpy().diagonal().round(6) == 1).all() and (corr.to_numpy() == corr.to_numpy().T).all()
+    presets = pd.read_csv(config.PROCESSED / "portfolio_presets.csv", index_col="portfolio")
+    assert set(presets.columns) == ranked and presets.sum(axis=1).to_numpy() == pytest.approx(1.0, abs=1e-6) and (presets >= -1e-9).all().all()
 
 
 def test_manifest_records_the_prices_it_describes(manifest):

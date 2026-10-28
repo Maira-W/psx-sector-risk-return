@@ -220,6 +220,11 @@ def run() -> None:
                          "holiday_rows_dropped": int(prices["date"].nunique() - len(prices["date"].drop_duplicates()[lambda s: s.isin(days)]))}
 
     quality["fx"] = fx_rates(base, dates[-1])
+    fx_path = config.RAW / config.FX_FILE
+    if fx_path.exists():                      # the rupee's daily rate on every market day, for the macro model
+        fx = pd.read_csv(fx_path, index_col=0, parse_dates=True)["rupees_per_dollar"].dropna()
+        daily_fx = fx.reindex(fx.index.union(m["close"].index)).ffill().reindex(m["close"].index)
+        daily_fx.rename_axis("date").to_csv(config.INTERIM / "fx_rate.csv.gz", compression="gzip", lineterminator="\n")
     operating = universe[~universe["sector_code"].isin(config.NOT_OPERATING)]
     diag = diagnostics(m, operating)
     qualifying = diag.loc[diag["status"] == "qualifies", "symbol"].tolist()

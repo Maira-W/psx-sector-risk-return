@@ -132,6 +132,116 @@ robust'''
 ROBUST_RANKS = '''sharpes = pd.read_csv(P / "robustness_sharpe.csv", index_col=0).loc[ranked["sector"]]
 sharpes.rank(ascending=False, method="min").astype("Int64")'''
 
+MARKET_MODEL = '''from psxsec import config, stats  # noqa: E402
+
+# Recompute the best sector's beta and alpha from its weekly returns against the rest of the market, and check them against the results table.
+rest = pd.read_csv(P / "market_excluding_sector_daily_returns.csv", index_col=0, parse_dates=True)
+best = summary["alpha"]["best_sector"]
+week_sector, week_safe = analysis.weekly(daily[[best]], safe)
+week_rest, _ = analysis.weekly(rest[[best]], safe)
+fit = stats.market_model((week_sector[best] - week_safe).to_numpy(), (week_rest[best] - week_safe).to_numpy(), config.HAC_LAGS_WEEKLY)
+weeks_per_year = len(week_safe) / years
+stored = table.set_index("sector").loc[best]
+check = pd.DataFrame({"recomputed here": {"beta": fit["beta"], "alpha a year": fit["alpha"] * weeks_per_year, "t of alpha": fit["alpha_t"]},
+                      "in the results table": {"beta": stored["beta"], "alpha a year": stored["alpha"], "t of alpha": stored["alpha_t"]}})
+assert np.allclose(check["recomputed here"], check["in the results table"], atol=1e-3), check
+print(best)
+check'''
+
+ALPHA_TABLE = '''columns = ["sector", "beta", "alpha", "alpha_t", "alpha_p", "alpha_p_adjusted", "dsr"]
+skill = ranked[columns].sort_values("alpha_p").rename(columns={"alpha": "alpha a year", "alpha_t": "t", "alpha_p": "p alone",
+                                                              "alpha_p_adjusted": "p corrected", "dsr": "deflated Sharpe"})
+skill.reset_index(drop=True).head(8)  # the eight strongest cases; 'p corrected' allows for having looked at every ranked sector'''
+
+ALPHA_PLOT = '''alone, corrected = int((ranked["alpha_p"] < 0.05).sum()), int((ranked["alpha_p_adjusted"] < 0.05).sum())
+colour = np.where(ranked["alpha_p_adjusted"] < 0.05, "#1F3B57", np.where(ranked["alpha_p"] < 0.05, "#E9C46A", "#9AA5B1"))
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.errorbar(ranked["beta"], ranked["alpha"] * 100, yerr=1.96 * ranked["alpha_se"] * 100, fmt="none", ecolor="#C9D1DB", zorder=1)
+ax.scatter(ranked["beta"], ranked["alpha"] * 100, c=colour, s=40, zorder=3)
+for _, r_ in ranked.iterrows():
+    if r_["alpha_p"] < 0.05:
+        ax.annotate(r_["sector"], (r_["beta"], r_["alpha"] * 100), xytext=(5, 4), textcoords="offset points", fontsize=8)
+ax.axhline(0, color="grey", lw=0.8)
+ax.set_xlabel("beta (1 = moves one for one with the rest of the market)")
+ax.set_ylabel("alpha (% a year)")
+ax.set_title(f"{alone} sectors have a significant alpha on their own (amber or dark); {corrected} after the correction (dark)", fontsize=10)
+plt.show()'''
+
+DEFLATED = '''a = summary["alpha"]
+print(f"With no skill, the best of {a['trials']} sectors would be expected to reach a Sharpe ratio of about {a['expected_best_sharpe']:.2f}; "
+      f"the best actual one is {ranked.loc[0, 'sharpe']:.2f}.")
+print(f"Deflated Sharpe ratio of {a['best_dsr_sector']}: {a['best_dsr']:.2f} (0.95 would be convincing); {a['n_dsr_95']} sectors reach it.")'''
+
+STRUCTURE = '''from psxsec import portfolios  # noqa: E402
+
+sectors = ranked["sector"].tolist()
+components = portfolios.principal_components(daily[sectors].sub(safe, axis=0))
+st = summary["structure"]
+assert np.isclose(components["share"][0], st["pc1_share"], atol=1e-4) and np.isclose(components["effective_bets"], st["effective_bets"], atol=1e-3)
+print(f"The first component carries {components['share'][0]:.0%} of the variation, so the {len(sectors)} sectors behave like "
+      f"{components['effective_bets']:.1f} independent bets.")
+plt.bar(range(1, 9), components["share"][:8] * 100, color=["#1F3B57"] + ["#9AA5B1"] * 7)
+plt.xlabel("component (the first is the market)")
+plt.ylabel("share of the variation (%)")
+plt.show()'''
+
+GROUPS = '''pd.DataFrame({"group": [config.GROUP_LETTERS[i] for i in range(len(st["groups"]))], "sectors": [", ".join(g) for g in st["groups"]]})'''
+
+MACRO = '''macro_columns = ["sector", "rate_beta", "rate_p", "rate_q", "fx_beta", "fx_p", "fx_q"]
+macro = ranked[macro_columns].assign(best_p=ranked[["rate_p", "fx_p"]].min(axis=1)).sort_values("best_p").head(6).drop(columns="best_p")
+macro.rename(columns={"rate_beta": "% per point of policy rate", "fx_beta": "% per 1% weaker rupee", "rate_q": "rate p corrected", "fx_q": "rupee p corrected",
+                      "rate_p": "rate p", "fx_p": "rupee p"}).reset_index(drop=True)'''
+
+WALK = '''# Run the "best sectors of the past year" rule again from the committed daily returns and check it against the stored result.
+wf = summary["walk_forward"]
+again = portfolios.walk_forward(daily[sectors], safe, {"winners": portfolios.top_sharpe_rule(wf["top_sectors"])}, wf["lookback_months"],
+                                pd.Timestamp(summary["window"]["base_date"]))
+stored = pd.read_csv(P / "walk_forward_daily_returns.csv", index_col=0, parse_dates=True)
+assert np.allclose(again["returns"]["winners"], stored["winners"], atol=1e-5)
+print(f"{wf['months']} months tested, from {stored.index[0].date()}; the rule reproduces the stored returns")
+ax = (100 * (1 + stored).cumprod()).plot(figsize=(9, 4.5), logy=True)
+ax.set_ylabel("growth of 100 rupees (log scale)")
+plt.show()'''
+
+WALK_TABLE = '''pd.read_csv(P / "walk_forward_summary.csv", index_col="strategy")[["cagr", "volatility", "max_drawdown", "sharpe", "sharpe_vs_equal",
+                                                                "vs_equal_lo", "vs_equal_hi", "vs_equal_p", "vs_equal_p_adjusted"]]'''
+
+
+def _second(s: dict) -> dict:
+    """The sentences of the second layer, worded by the same code that writes the documents."""
+    import pandas as pd
+
+    from . import docs
+    table = pd.read_csv(config.PROCESSED / "sector_summary.csv", dtype={"sector_code": str})
+    ranked = table[table["ranked"]].sort_values("sharpe", ascending=False).reset_index(drop=True)
+    return docs.second_layer(ranked, table[table["sector"] == "Whole market"].iloc[0], s["top_sharpe"], s)
+
+
+def skill_text(s: dict) -> str:
+    v = _second(s)
+    return ("## 8. Skill or luck?\n\nA sector can rank high because it moves with a rising market, or because it carries little of the market's risk. "
+            "Each sector's weekly return above cash is set against the weekly return of the rest of the market (every company outside that sector): "
+            "**beta** is how strongly it follows that market and **alpha** is the return a year that is left over. "
+            f"{v['beta_verdict']}\n\n**{v['alpha_head']}** {v['alpha_detail']} The best of {s['alpha']['trials']} sectors looks good by chance, so the p-values are "
+            f"corrected for having looked at all of them (with no real alpha anywhere, the largest t-statistic among {s['alpha']['trials']} would still exceed "
+            f"{v['null_t']:.2f} one time in twenty). {v['fdr_note']}")
+
+
+def moves_text(s: dict) -> str:
+    v = _second(s)
+    return ("## 9. What moves the sectors?\n\n" + v["structure_verdict"] + " " + v["macro_verdict"] +
+            "\n\nThe groups come from clustering the correlations that remain after the market is taken out of each sector; they describe these five years and are "
+            "not a classification. The last table shows the sectors with a significant interest-rate or rupee effect when tested one at a time, with the p-value "
+            "corrected for testing every sector.")
+
+
+def walk_text(s: dict) -> str:
+    v, w = _second(s), s["walk_forward"]
+    return (f"## 10. Could the ranking have been used?\n\nOn the last day of each month a rule sees only the previous {w['lookback_months']} months and chooses the weights "
+            f"for the next. That gives {w['months']} months of results, from {w['first_month']}, that the rule could not have known in advance. **{v['oos_head']}** "
+            f"Holding the {w['top_sectors']} sectors with the best past Sharpe ratio gave a Sharpe ratio of {v['win_sharpe']:.2f} against {v['eq_sharpe']:.2f} for equal "
+            f"weights (p = {v['win_p']:.3f}; {v['win_padj']:.3f} after allowing for five comparisons). {v['ic_verdict']} {v['mv_verdict']}")
+
 
 def cells() -> list[tuple[str, str]]:
     s = json.loads((config.PROCESSED / "summary.json").read_text(encoding="utf-8"))
@@ -145,12 +255,15 @@ def cells() -> list[tuple[str, str]]:
 
 **Short answer.** By Sharpe ratio the leading sector is **{top['sector']}** ({top['sharpe']:.2f}, 95% range {top['lo']:.2f} to {top['hi']:.2f}) against {s['market']['sharpe']:.2f} for the whole market. It comes first in {_pc(top['p_top1'], 0)} of resampled histories, so the top group is a shortlist, not a winner.
 
+**Beyond the ranking.** Sections 8 to 10 ask whether the leaders earned their record by skill or by luck, what moves the sectors, and whether the ranking could have been used.
+
 This notebook uses only the results committed in `data/processed`, so it runs without downloading anything. The full pipeline (`python -m psxsec all`) rebuilds them from the raw prices. Nothing here is investment advice."""
     fx, market = s["quality"]["fx"], s["market"]
-    limits = (f"## 8. Limits\n\n- Five years is short: the window spans the policy rate rising to {s['safe']['policy_rate_peak']:g}% and coming back down, "
+    limits = (f"## 11. Limits\n\n- Five years is short: the window spans the policy rate rising to {s['safe']['policy_rate_peak']:g}% and coming back down, "
               "and a sector's rank depends on when it was strong.\n"
               "- Only companies listed today are included; companies that were delisted are missing, which flatters returns.\n"
               "- Equal weights give small companies the same say as large ones.\n"
+              "- The walk-forward test looks forward in time only: the companies are today's survivors and there is one history, so no result is a forecast.\n"
               "- Yahoo Finance is not an official source; dividends it does not record are missing.\n"
               f"- Returns are in rupees. Rupees per dollar went from {fx['base']:.1f} to {fx['end']:.1f}; in dollars the whole market returned "
               f"{_pc(market['usd_cagr'])} a year against {_pc(market['cagr'])} in rupees.\n"
@@ -176,6 +289,18 @@ This notebook uses only the results committed in `data/processed`, so it runs wi
         ("markdown", "## 7. Do other choices change the answer?\n\nThe analysis was repeated using only KSE-100 companies, looser and tighter trading rules, rebalancing every day, weekly instead of daily returns, dropping each sector's best company, leaving out companies whose prices were corrected, the typical company instead of the average, each half of the window, and trimming three months from either end. 'Rank correlation' is 1 when a choice gives the same order as the main result."),
         ("code", ROBUST),
         ("code", ROBUST_RANKS),
+        ("markdown", skill_text(s)),
+        ("code", MARKET_MODEL),
+        ("code", ALPHA_TABLE),
+        ("code", ALPHA_PLOT),
+        ("code", DEFLATED),
+        ("markdown", moves_text(s)),
+        ("code", STRUCTURE),
+        ("code", GROUPS),
+        ("code", MACRO),
+        ("markdown", walk_text(s)),
+        ("code", WALK),
+        ("code", WALK_TABLE),
         ("markdown", limits),
     ]
 
