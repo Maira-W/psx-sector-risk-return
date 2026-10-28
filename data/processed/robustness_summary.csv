@@ -1,0 +1,13 @@
+choice,kind,sectors_compared,rank_correlation,top3_in_common,top_tested,same_top_sector,main_top_sector_still_top3
+KSE-100 companies only,method,11,0.9818,3,True,True,True
+Must trade on 80% of days,method,22,0.8792,3,True,True,True
+Must trade on 95% of days,method,21,0.9961,3,True,True,True
+Without companies with price corrections,method,17,0.9730,3,False,False,False
+Rebalanced every day,method,22,0.9673,3,True,True,True
+Weekly returns,method,22,0.9898,3,True,True,True
+Without each sector's best company,method,22,0.9616,3,True,True,True
+Typical company (median),method,22,0.9255,2,True,True,True
+First half of the window,period,22,0.8261,2,True,True,True
+Second half of the window,period,22,0.6047,1,True,False,False
+Start 3 months later,period,22,0.9819,3,True,True,True
+End 3 months earlier,period,22,0.9684,3,True,True,True

@@ -1,0 +1,211 @@
+{
+  "window": {
+    "base_date": "2021-10-27",
+    "end_date": "2026-10-27",
+    "market_days": 1227,
+    "years": 4.999,
+    "year_edges": [
+      "2021-10-27",
+      "2022-10-27",
+      "2023-10-27",
+      "2024-10-25",
+      "2025-10-27",
+      "2026-10-27"
+    ]
+  },
+  "n_companies": 209,
+  "n_sectors_ranked": 22,
+  "min_sector_stocks": 4,
+  "n_sectors_unranked": 6,
+  "unranked_sectors": [
+    "Leather and tanneries",
+    "Modarabas",
+    "Apparel",
+    "Textile weaving",
+    "Tobacco",
+    "Cable and electrical goods"
+  ],
+  "safe": {
+    "cagr": 0.1632070259302787,
+    "policy_rate_start": 7.25,
+    "policy_rate_end": 12.0,
+    "policy_rate_peak": 22.0
+  },
+  "market": {
+    "total_return": 1.9241569293580572,
+    "cagr": 0.2394207963893018,
+    "usd_cagr": 0.13019225286670078,
+    "volatility": 0.22249840136066854,
+    "sharpe": 0.39685176463631167,
+    "max_drawdown": -0.3181898632263599,
+    "dividend_points": 0.050064854280272186,
+    "sharpe_lo": -0.5670517419425604,
+    "sharpe_hi": 1.4263618464136696
+  },
+  "top_sharpe": [
+    {
+      "sector": "Fertilizer",
+      "sharpe": 1.2520695818472962,
+      "lo": 0.3553679818287934,
+      "hi": 2.1954213348764466,
+      "cagr": 0.5609753789340395,
+      "volatility": 0.2628696806483782,
+      "max_drawdown": -0.32425251961112345,
+      "p_top1": 0.5375,
+      "p_top3": 0.8465,
+      "n": 4
+    },
+    {
+      "sector": "Commercial banks",
+      "sharpe": 1.0178030415120296,
+      "lo": -0.013513942696715409,
+      "hi": 2.0230226359346153,
+      "cagr": 0.4194980026470596,
+      "volatility": 0.2194406802583003,
+      "max_drawdown": -0.24097206387940107,
+      "p_top1": 0.177,
+      "p_top3": 0.6435,
+      "n": 16
+    },
+    {
+      "sector": "Power generation and distribution",
+      "sharpe": 0.8677987130978867,
+      "lo": -0.1551125081746194,
+      "hi": 1.886988720984996,
+      "cagr": 0.3919166155560343,
+      "volatility": 0.24028904788909808,
+      "max_drawdown": -0.31070559431858524,
+      "p_top1": 0.1295,
+      "p_top3": 0.443,
+      "n": 11
+    },
+    {
+      "sector": "Oil and gas exploration",
+      "sharpe": 0.7149237158767692,
+      "lo": -0.12454110788041343,
+      "hi": 1.50597601938974,
+      "cagr": 0.35197430147583764,
+      "volatility": 0.2565886408471638,
+      "max_drawdown": -0.30730066169136916,
+      "p_top1": 0.0315,
+      "p_top3": 0.2465,
+      "n": 4
+    },
+    {
+      "sector": "Automobile assemblers",
+      "sharpe": 0.6503294299823605,
+      "lo": -0.34553344894496324,
+      "hi": 1.6359122959650676,
+      "cagr": 0.32852691959880476,
+      "volatility": 0.2544539556734447,
+      "max_drawdown": -0.2883747219344073,
+      "p_top1": 0.034,
+      "p_top3": 0.1965,
+      "n": 8
+    }
+  ],
+  "bottom_sharpe": [
+    {
+      "sector": "Glass and ceramics",
+      "sharpe": -0.22702337285746474,
+      "lo": -1.1678069153700872,
+      "hi": 0.6899586321320738,
+      "cagr": 0.048661201265804754,
+      "volatility": 0.28197870427200844,
+      "max_drawdown": -0.42808632401215496,
+      "n": 6
+    },
+    {
+      "sector": "Automobile parts",
+      "sharpe": -0.27832413545133194,
+      "lo": -1.1938673759222471,
+      "hi": 0.697901323424739,
+      "cagr": 0.031087720143787356,
+      "volatility": 0.28643213247391225,
+      "max_drawdown": -0.5209220556111767,
+      "n": 6
+    },
+    {
+      "sector": "Engineering",
+      "sharpe": -0.32122457392245846,
+      "lo": -1.2341113353382909,
+      "hi": 0.5589123151318237,
+      "cagr": 0.009448926569011196,
+      "volatility": 0.30095785787479173,
+      "max_drawdown": -0.5642516516107926,
+      "n": 12
+    }
+  ],
+  "best_cagr": "Fertilizer",
+  "lowest_vol": "Commercial banks",
+  "shallowest_drawdown": "Commercial banks",
+  "deepest_drawdown": "Textile spinning",
+  "n_clearly_above_market": 2,
+  "n_clearly_below_market": 5,
+  "n_with_chance_of_first": 3,
+  "max_p_top1": 0.5375,
+  "top_sector": "Fertilizer",
+  "robustness": {
+    "n_choices": 12,
+    "method": {
+      "n": 8,
+      "median_rank_correlation": 0.9701446784247296,
+      "min_rank_correlation": 0.8791643139469226,
+      "n_tested": 7,
+      "n_top_sector_stays_top3": 7,
+      "n_top_sector_stays_first": 7
+    },
+    "period": {
+      "n": 4,
+      "median_rank_correlation": 0.8972332015810277,
+      "min_rank_correlation": 0.6047430830039525,
+      "n_tested": 4,
+      "n_top_sector_stays_top3": 3,
+      "n_top_sector_stays_first": 3
+    }
+  },
+  "quality": {
+    "raw": {
+      "rows": 579383,
+      "symbols": 435,
+      "first_date": "2021-08-02",
+      "last_date": "2026-10-27",
+      "invalid_adjusted_close": [
+        "PHDL"
+      ]
+    },
+    "window": {
+      "base_date": "2021-10-27",
+      "first_return": "2021-10-28",
+      "end_date": "2026-10-27",
+      "market_days": 1227,
+      "years": 4.999,
+      "market_days_per_year": 245.4,
+      "holiday_rows_dropped": 78
+    },
+    "fx": {
+      "base": 174.5,
+      "end": 276.75,
+      "rupee_change": 0.5859598853868195
+    },
+    "cross_check": {
+      "companies_compared": 209,
+      "excluded": [],
+      "days_agreeing_pct": 99.98206229064547,
+      "dividend_events": 990,
+      "gap_median_points": 0.10558104208095997,
+      "gap_over_5_points": 14,
+      "gap_max_points": 53.711462744217364,
+      "gap_max_company": "FHAM"
+    },
+    "corrections": {
+      "events": 110,
+      "companies": 70,
+      "bad_prices": 11,
+      "beyond_limit": 99,
+      "jump_ratio": 1.15,
+      "jump_rupees": 1.05
+    },
+    "dividends_moved_to_next_market_day": 10
+  }
+}

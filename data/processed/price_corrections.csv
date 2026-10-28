@@ -1,0 +1,111 @@
+symbol,company,date,treatment,price_move_pct
+ADMM,Artistic Denim Mills Limited,2026-04-30,price return set to zero (beyond the daily limit),-19.0
+AGL,Agritech Limited,2024-03-26,price return set to zero (beyond the daily limit),15.16
+AGSML,Abdullah Shah Ghazi Sugar Mills Limited,2026-01-02,price return set to zero (beyond the daily limit),21.03
+AHL,Arif Habib Limited,2024-10-29,price return set to zero (beyond the daily limit),-63.22
+AKBL,Askari Bank Limited,2023-03-10,price return set to zero (beyond the daily limit),15.62
+ASC,Al Shaheer Corporation Limited,2025-10-08,price return set to zero (beyond the daily limit),21.03
+BAFL,Bank Alfalah Limited,2026-04-09,price return set to zero (beyond the daily limit),-50.5
+BCL,Bolan Castings Limited,2024-03-26,price return set to zero (beyond the daily limit),15.57
+BECO,Beco Steel Limited,2025-09-24,price return set to zero (beyond the daily limit),20.69
+BECO,Beco Steel Limited,2025-10-08,price return set to zero (beyond the daily limit),21.01
+BECO,Beco Steel Limited,2025-11-04,bad price for 1 day(s) replaced,-89.92
+BECO,Beco Steel Limited,2025-11-06,price return set to zero (beyond the daily limit),-90.04
+BERG,Berger Paints Pakistan Limited,2026-08-19,price return set to zero (beyond the daily limit),21.0
+BUXL,Buxly Paints Limited,2026-08-19,price return set to zero (beyond the daily limit),21.0
+BUXL,Buxly Paints Limited,2026-08-21,price return set to zero (beyond the daily limit),33.1
+CLOV,Clover Pakistan Limited,2025-02-27,price return set to zero (beyond the daily limit),-21.77
+CLOV,Clover Pakistan Limited,2026-04-09,price return set to zero (beyond the daily limit),-90.29
+CLOV,Clover Pakistan Limited,2026-04-30,price return set to zero (beyond the daily limit),-13.7
+CLVL,Cordoba Logistics & Ventures Limited,2023-07-31,price return set to zero (beyond the daily limit),25.05
+CLVL,Cordoba Logistics & Ventures Limited,2026-08-21,price return set to zero (beyond the daily limit),33.11
+CLVL,Cordoba Logistics & Ventures Limited,2026-10-09,price return set to zero (beyond the daily limit),-13.23
+CPHL,Citi Pharma Ltd.,2024-10-10,price return set to zero (beyond the daily limit),15.0
+CPPL,Cherat Packaging Limited,2026-08-19,price return set to zero (beyond the daily limit),15.98
+CRTM,The Crescent Textile Mills Limited,2025-06-18,price return set to zero (beyond the daily limit),17.41
+CSAP,Crescent Steel & Allied Products Limited,2025-01-02,price return set to zero (beyond the daily limit),15.27
+CSIL,Crescent Star Insurance Limited,2025-09-24,price return set to zero (beyond the daily limit),-14.79
+CSIL,Crescent Star Insurance Limited,2026-01-02,price return set to zero (beyond the daily limit),21.32
+CSIL,Crescent Star Insurance Limited,2026-01-07,price return set to zero (beyond the daily limit),-20.4
+CTM,Colony Textile Mills Limited,2026-01-02,price return set to zero (beyond the daily limit),19.21
+DFML,Dewan Farooque Motors Limited,2026-05-07,price return set to zero (beyond the daily limit),21.03
+DSIL,D.S. Industries Limited,2026-05-07,price return set to zero (beyond the daily limit),25.13
+DWSM,Dewan Sugar Mills Limited,2026-05-07,price return set to zero (beyond the daily limit),24.88
+ESBL,Escorts Investment Bank Limited,2025-01-02,price return set to zero (beyond the daily limit),35.64
+ESBL,Escorts Investment Bank Limited,2026-01-02,price return set to zero (beyond the daily limit),18.9
+ESBL,Escorts Investment Bank Limited,2026-04-30,price return set to zero (beyond the daily limit),-19.02
+ESBL,Escorts Investment Bank Limited,2026-05-07,price return set to zero (beyond the daily limit),20.98
+FCSC,First Capital Securities Corporation,2025-10-08,price return set to zero (beyond the daily limit),54.5
+FCSC,First Capital Securities Corporation,2026-01-02,price return set to zero (beyond the daily limit),21.48
+FECTC,Fecto Cement Limited,2025-06-18,price return set to zero (beyond the daily limit),20.01
+FHAM,First Habib Modaraba,2023-10-13,price return set to zero (beyond the daily limit),15.58
+FHAM,First Habib Modaraba,2024-04-16,price return set to zero (beyond the daily limit),101.5
+FNEL,First National Equities Limited,2025-10-08,price return set to zero (beyond the daily limit),18.93
+FNEL,First National Equities Limited,2026-01-22,price return set to zero (beyond the daily limit),-89.8
+HINOON,Highnoon Laboratories Limited,2023-04-19,price return set to zero (beyond the daily limit),16.28
+HTL,Hi-Tech Lubricants Limited,2026-04-30,price return set to zero (beyond the daily limit),-16.03
+HUMNL,Hum Network Limited,2022-11-07,price return set to zero (beyond the daily limit),21.09
+IBLHL,IBL HealthCare Limited,2025-09-29,price return set to zero (beyond the daily limit),-16.07
+ICIBL,Invest Capital Investment Bank Limited,2026-07-14,price return set to zero (beyond the daily limit),436.12
+IMAGE,Image Pakistan Limited,2024-03-01,price return set to zero (beyond the daily limit),-16.07
+ITTEFAQ,Ittefaq Iron Industries Limited,2025-01-02,price return set to zero (beyond the daily limit),26.77
+ITTEFAQ,Ittefaq Iron Industries Limited,2025-09-24,price return set to zero (beyond the daily limit),18.34
+JLICL,Jubilee Life Insurance Company Limited,2026-08-17,price return set to zero (beyond the daily limit),-34.02
+JLICL,Jubilee Life Insurance Company Limited,2026-08-19,price return set to zero (beyond the daily limit),19.81
+KOHC,Kohat Cement Company Limited,2025-08-12,bad price for 2 day(s) replaced,-79.86
+KOHC,Kohat Cement Company Limited,2025-08-18,price return set to zero (beyond the daily limit),-78.88
+KOHP,Kohinoor Power Company Limited,2025-09-24,price return set to zero (beyond the daily limit),16.77
+KOHP,Kohinoor Power Company Limited,2026-10-09,price return set to zero (beyond the daily limit),20.98
+KTML,Kohinoor Textile Mills Limited,2025-09-02,bad price for 2 day(s) replaced,-79.27
+KTML,Kohinoor Textile Mills Limited,2025-09-08,price return set to zero (beyond the daily limit),-79.86
+LCI,Lucky Core Industries Limited,2025-06-02,bad price for 2 day(s) replaced,-80.05
+LCI,Lucky Core Industries Limited,2025-07-10,price return set to zero (beyond the daily limit),-80.06
+LUCK,Lucky Cement Limited,2025-02-26,bad price for 3 day(s) replaced,-79.95
+LUCK,Lucky Cement Limited,2025-04-10,price return set to zero (beyond the daily limit),-79.48
+MACFL,MACPAC Films Limited,2025-06-18,price return set to zero (beyond the daily limit),21.01
+MACFL,MACPAC Films Limited,2026-04-30,price return set to zero (beyond the daily limit),22.9
+MACFL,MACPAC Films Limited,2026-08-19,price return set to zero (beyond the daily limit),15.15
+MACFL,MACPAC Films Limited,2026-10-09,price return set to zero (beyond the daily limit),21.0
+MARI,Mari Energies Limited,2024-09-05,price return set to zero (beyond the daily limit),-89.04
+MDTL,Media Times Limited,2026-01-02,price return set to zero (beyond the daily limit),52.08
+MERIT,Merit Packaging Limited,2025-06-18,price return set to zero (beyond the daily limit),21.02
+MTL,Millat Tractors Limited,2025-01-02,price return set to zero (beyond the daily limit),16.34
+MTL,Millat Tractors Limited,2026-05-18,price return set to zero (beyond the daily limit),-51.0
+MTL,Millat Tractors Limited,2026-06-01,price return set to zero (beyond the daily limit),99.37
+MTL,Millat Tractors Limited,2026-06-10,price return set to zero (beyond the daily limit),-50.11
+NBP,National Bank of Pakistan,2026-04-30,price return set to zero (beyond the daily limit),-13.2
+NCL,Nishat Chunian Limited,2022-08-04,price return set to zero (beyond the daily limit),-22.14
+NPL,Nishat Power Limited,2025-10-17,price return set to zero (beyond the daily limit),17.08
+OBOY,Oilboy Energy Limited,2022-01-12,price return set to zero (beyond the daily limit),285.64
+OCTOPUS,Octopus Digital Limited,2024-10-10,price return set to zero (beyond the daily limit),-18.99
+PAKRI,Pakistan Reinsurance Company Limited,2026-01-02,price return set to zero (beyond the daily limit),15.25
+PCAL,Pakistan Cables Limited,2025-09-24,price return set to zero (beyond the daily limit),21.0
+PICT,Pakistan International Container,2026-04-30,price return set to zero (beyond the daily limit),19.04
+PICT,Pakistan International Container,2026-08-21,price return set to zero (beyond the daily limit),-13.95
+PIL,PICIC Insurance Limited,2025-10-08,price return set to zero (beyond the daily limit),19.86
+PKGP,Pakgen Power Limited,2025-06-18,price return set to zero (beyond the daily limit),-19.0
+PNSC,Pakistan National Shipping Corporation,2024-10-10,price return set to zero (beyond the daily limit),-27.42
+PSX,Pakistan Stock Exchange Limited,2025-01-02,price return set to zero (beyond the daily limit),21.01
+PTC,Pakistan Telecommunication Company Ltd,2024-10-10,price return set to zero (beyond the daily limit),20.5
+QUICE,Quice Food Industries Limited,2026-01-02,price return set to zero (beyond the daily limit),20.99
+SKRS,Sakrand Sugar Mills Limited,2026-04-30,price return set to zero (beyond the daily limit),-13.41
+SPL,Sitara Peroxide Limited,2026-04-30,price return set to zero (beyond the daily limit),33.09
+SPL,Sitara Peroxide Limited,2026-10-09,price return set to zero (beyond the daily limit),21.02
+SRVI,Service Industries Limited,2026-08-11,price return set to zero (beyond the daily limit),-90.08
+SYS,Systems Limited,2025-04-09,bad price for 3 day(s) replaced,-80.62
+SYS,Systems Limited,2025-05-19,price return set to zero (beyond the daily limit),-50.36
+SYS,Systems Limited,2025-05-27,price return set to zero (beyond the daily limit),-59.51
+THCCL,Thatta Cement Company Limited,2025-07-01,bad price for 2 day(s) replaced,-80.24
+THCCL,Thatta Cement Company Limited,2025-07-07,price return set to zero (beyond the daily limit),-80.16
+TPLT,TPL Trakker Limited,2026-01-02,price return set to zero (beyond the daily limit),21.02
+TSPL,Tri-Star Power Limited,2026-06-04,price return set to zero (beyond the daily limit),19.03
+UBL,United Bank Limited,2025-04-28,bad price for 1 day(s) replaced,-52.71
+UBL,United Bank Limited,2025-06-10,bad price for 2 day(s) replaced,-50.02
+UBL,United Bank Limited,2025-06-17,bad price for 2 day(s) replaced,-50.11
+UBL,United Bank Limited,2025-06-24,price return set to zero (beyond the daily limit),-47.91
+UNIC,The United Insurance Company,2025-04-07,price return set to zero (beyond the daily limit),-18.06
+UNIC,The United Insurance Company,2026-03-11,price return set to zero (beyond the daily limit),-14.18
+WTL,Worldcall Telecom Limited,2026-07-20,bad price for 1 day(s) replaced,-90.0
+WTL,Worldcall Telecom Limited,2026-07-28,price return set to zero (beyond the daily limit),-90.32
+WTL,Worldcall Telecom Limited,2026-08-07,price return set to zero (beyond the daily limit),908.2
+YOUW,Yousaf Weaving Mills Limited,2026-04-30,price return set to zero (beyond the daily limit),-21.44

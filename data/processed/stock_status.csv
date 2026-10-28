@@ -1,0 +1,539 @@
+symbol,company,sector_code,sector,in_kse100,history_share,traded_share,status
+786,786 Investments Limited,0813,Investment banks and securities,False,0.9414,0.7726,prices missing on too many days
+AABS,Al-Abbas Sugar Mills Limited,0826,Sugar,False,1.0,0.8435,traded on too few days
+AAL,Agro Allianz Limited,0830,Textile spinning,False,1.0,0.0,traded on too few days
+AASM,Al-Abid Silk Mills Limited,0827,Synthetic and rayon,False,0.0,0.0,no prices on Yahoo Finance
+AATM,Ali Asghar Textile Mills Limited,0830,Textile spinning,False,1.0,0.4784,traded on too few days
+ABL,Allied Bank Limited,0807,Commercial banks,True,1.0,0.9666,qualifies
+ABOT,Abbott Laboratories (Pakistan) Limited,0823,Pharmaceuticals,True,1.0,0.987,qualifies
+ABSON,Abson Industries Limited,0822,Paper and packaging,False,0.0,0.0,no prices on Yahoo Finance
+ACPL,Attock Cement Pakistan Limited,0804,Cement,False,1.0,0.9984,qualifies
+ADAMS,Adam Sugar Mills Limited,0826,Sugar,False,1.0,0.8256,traded on too few days
+ADMM,Artistic Denim Mills Limited,0829,Textile composite,False,1.0,0.934,qualifies
+AGHA,Agha Steel Ind.Ltd,0808,Engineering,False,0.9992,0.9976,qualifies
+AGIC,Askari General Insurance Company Limited,0812,Insurance,False,1.0,0.8965,traded on too few days
+AGIL,Agriauto Industries Limited,0802,Automobile parts,False,1.0,0.8843,traded on too few days
+AGL,Agritech Limited,0809,Fertilizer,False,1.0,0.9992,qualifies
+AGP,AGP Limited,0823,Pharmaceuticals,True,1.0,0.9886,qualifies
+AGSML,Abdullah Shah Ghazi Sugar Mills Limited,0826,Sugar,False,1.0,0.9601,qualifies
+AGTL,Al-Ghazi Tractors Limited,0801,Automobile assemblers,False,1.0,0.9837,qualifies
+AHCL,Arif Habib Corporation Limited,0809,Fertilizer,True,0.0,0.0,no prices on Yahoo Finance
+AHL,Arif Habib Limited,0813,Investment banks and securities,False,1.0,0.9943,qualifies
+AHTM,Ahmad Hassan Textile Mills Limited,0829,Textile composite,False,1.0,0.3252,traded on too few days
+AICL,Adamjee Insurance Company Limited,0812,Insurance,True,1.0,0.9886,qualifies
+AIRLINK,Air Link Communication Limited,0828,Technology and communication,True,0.9992,0.9976,qualifies
+AKBL,Askari Bank Limited,0807,Commercial banks,True,1.0,0.9967,qualifies
+AKDHL,AKD Hospitality Limited,0818,Miscellaneous,False,0.9992,0.8582,traded on too few days
+AKDSL,AKD Securities Limited,0813,Investment banks and securities,False,0.8445,0.687,listed after the start of the window
+AKGL,Al-Khair Gadoon Limited,0818,Miscellaneous,False,1.0,0.4051,traded on too few days
+ALAC,Askari Life Assurance Company Limited,0812,Insurance,False,1.0,0.7702,traded on too few days
+ALIFE,Adamjee Life Assurance Company Limited,0812,Insurance,False,0.9243,0.8093,listed after the start of the window
+ALNRS,Al-Noor Sugar Mills Limited,0826,Sugar,False,1.0,0.7123,traded on too few days
+ALTN,Altern Energy Limited,0824,Power generation and distribution,False,0.0,0.0,no prices on Yahoo Finance
+AMBL,Apna Microfinance Bank Limited,0813,Investment banks and securities,False,1.0,0.4588,traded on too few days
+AMSL,Al-Mal Securities & Services Limited,0813,Investment banks and securities,False,0.0,0.0,no prices on Yahoo Finance
+AMTEX,Amtex Limited,0830,Textile spinning,False,1.0,0.4768,traded on too few days
+ANL,Azgard Nine Limited,0829,Textile composite,False,1.0,0.9984,qualifies
+ANNT,Annoor Textile Mills Limited,0830,Textile spinning,False,0.0,0.0,no prices on Yahoo Finance
+ANSM,Ansari Sugar Mills Limited,0826,Sugar,False,1.0,0.238,traded on too few days
+ANTM,AN Textile Mills Limited,0829,Textile composite,False,1.0,0.4906,traded on too few days
+APL,Attock Petroleum Limited,0821,Oil and gas marketing,True,1.0,0.9967,qualifies
+APOT,Apollo Textile Mills Limited,0830,Textile spinning,False,0.0,0.0,no prices on Yahoo Finance
+ARCTM,Arctic Textile Mills Limited,0830,Textile spinning,False,0.9992,0.7082,traded on too few days
+ARMG,ARM Green Industries Limited,0813,Investment banks and securities,False,0.0,0.0,no prices on Yahoo Finance
+ARPAK,Arpak International Investments Ltd.,0818,Miscellaneous,False,1.0,0.3578,traded on too few days
+ARPL,Archroma Pakistan Limited,0805,Chemicals,False,1.0,0.965,qualifies
+ARUJ,Aruj Industries Limited,0829,Textile composite,False,1.0,0.6365,traded on too few days
+ASC,Al Shaheer Corporation Limited,0810,Food and personal care,False,1.0,0.9976,qualifies
+ASHT,Ashfaq Textile Mills Limited,0831,Textile weaving,False,1.0,0.577,traded on too few days
+ASIC,Asia Insurance Company Limited,0812,Insurance,False,1.0,0.2486,traded on too few days
+ASL,Aisha Steel Mills Limited,0808,Engineering,False,1.0,0.9976,qualifies
+ASTL,Amreli Steels Limited,0808,Engineering,False,1.0,0.9976,qualifies
+ASTM,Asim Textile Mills Limited,0830,Textile spinning,False,1.0,0.868,traded on too few days
+ATBA,Atlas Battery Limited,0802,Automobile parts,False,1.0,0.9967,qualifies
+ATIL,Atlas Insurance Limited,0812,Insurance,False,1.0,0.846,traded on too few days
+ATLH,Atlas Honda Limited,0801,Automobile assemblers,True,1.0,0.9226,qualifies
+ATRL,Attock Refinery Limited,0825,Refinery,True,1.0,0.9967,qualifies
+AVN,Avanceon Limited,0828,Technology and communication,False,0.0,0.0,no prices on Yahoo Finance
+AWTX,Allawasaya Tex. & Finishing Mills Ltd,0830,Textile spinning,False,1.0,0.0815,traded on too few days
+AZMT,Azmat Textile Mills Limited,0830,Textile spinning,False,0.0,0.0,no prices on Yahoo Finance
+BAFL,Bank Alfalah Limited,0807,Commercial banks,True,1.0,0.9959,qualifies
+BAFS,Baba Farid Sugar Mills Limited,0826,Sugar,False,1.0,0.3293,traded on too few days
+BAHL,Bank AL Habib Limited,0807,Commercial banks,True,1.0,0.9984,qualifies
+BAPL,Bawany Air Products Limited,0805,Chemicals,False,1.0,0.8207,traded on too few days
+BAPLR1,Bawany Air Products LimitedRight,0805,Chemicals,False,0.0,0.0,no prices on Yahoo Finance
+BATA,Bata Pakistan Limited,0816,Leather and tanneries,False,1.0,0.8305,traded on too few days
+BBFL,Big Bird Foods Limited,0810,Food and personal care,False,0.0,0.0,no prices on Yahoo Finance
+BCL,Bolan Castings Limited,0808,Engineering,False,1.0,0.965,qualifies
+BECO,Beco Steel Limited,0808,Engineering,False,0.9992,0.9756,qualifies
+BELA,Bela Automotives Limited,0802,Automobile parts,False,1.0,0.5249,traded on too few days
+BERG,Berger Paints Pakistan Limited,0805,Chemicals,False,1.0,0.9878,qualifies
+BFAGRO,Barkat Frisian Agro Limited,0810,Food and personal care,False,0.0,0.0,no prices on Yahoo Finance
+BFBIO,BF Biosciences Limited,0823,Pharmaceuticals,False,0.0,0.0,no prices on Yahoo Finance
+BFMOD,B.F. Modaraba,0819,Modarabas,False,1.0,0.5909,traded on too few days
+BGL,Baluchistan Glass Limited,0811,Glass and ceramics,False,1.0,0.9992,qualifies
+BHAT,Bhanero Textile Mills Limited,0829,Textile composite,False,1.0,0.4955,traded on too few days
+BIFO,Biafo Industries Limited,0805,Chemicals,False,1.0,0.9845,qualifies
+BIIC,Business & Industrial Insurance Company,0812,Insurance,False,0.0,0.0,no prices on Yahoo Finance
+BIPL,BankIslami Pakistan Limited,0807,Commercial banks,False,1.0,0.9976,qualifies
+BLUEX,Blue-Ex Limited,0833,Transport,False,0.0,0.0,no prices on Yahoo Finance
+BML,Bank Makramah Limited,0807,Commercial banks,True,0.0,0.0,no prices on Yahoo Finance
+BNL,Bunnys Limited,0810,Food and personal care,False,0.0,0.0,no prices on Yahoo Finance
+BNWM,Bannu Woollen Mills Limited,0835,Woollen,True,1.0,0.8174,traded on too few days
+BOK,The Bank of Khyber,0807,Commercial banks,False,1.0,0.881,traded on too few days
+BOP,The Bank of Punjab,0807,Commercial banks,True,1.0,0.9992,qualifies
+BPL,Burshane LPG (Pakistan) Limited,0821,Oil and gas marketing,False,1.0,0.7506,traded on too few days
+BRRG,B.R.R Guardian Limited,0838,Property,False,0.0,0.0,no prices on Yahoo Finance
+BTL,Blessed Textiles Limited,0829,Textile composite,False,1.0,0.6381,traded on too few days
+BUXL,Buxly Paints Limited,0805,Chemicals,False,1.0,0.9291,qualifies
+BWCL,Bestway Cement Limited,0804,Cement,True,1.0,0.9943,qualifies
+BWHL,Baluchistan Wheels Limited,0802,Automobile parts,False,1.0,0.8321,traded on too few days
+CCM,Crescent Cotton Mills Limited,0830,Textile spinning,False,1.0,0.4923,traded on too few days
+CENI,Century Insurance Company Limited,0812,Insurance,False,1.0,0.7278,traded on too few days
+CENIR,Century Insurance Company Limited Right,0812,Insurance,False,0.0,0.0,no prices on Yahoo Finance
+CEPB,Century Paper & Board Mills Limited,0822,Paper and packaging,False,1.0,0.9959,qualifies
+CFL,Crescent Fibres Limited,0830,Textile spinning,False,1.0,0.3496,traded on too few days
+CHAS,Chashma Sugar Mills Limited,0826,Sugar,False,1.0,0.7115,traded on too few days
+CHBL,Chenab Limited,0829,Textile composite,False,1.0,0.4776,traded on too few days
+CHCC,Cherat Cement Company Limited,0804,Cement,True,1.0,0.9992,qualifies
+CJPL,Crescent Jute Products Limited,0814,Jute,False,1.0,0.4776,traded on too few days
+CLOV,Clover Pakistan Limited,0810,Food and personal care,False,1.0,0.9919,qualifies
+CLVL,Cordoba Logistics & Ventures Limited,0833,Transport,False,0.9992,0.9576,qualifies
+CNERGY,Cnergyico PK  Limited,0825,Refinery,True,0.9992,0.9976,qualifies
+COLG,Colgate-Palmolive (Pakistan) Limited,0810,Food and personal care,True,1.0,0.9576,qualifies
+CPHL,Citi Pharma Ltd.,0823,Pharmaceuticals,True,0.9992,0.9984,qualifies
+CPPL,Cherat Packaging Limited,0822,Paper and packaging,False,1.0,0.9788,qualifies
+CRTM,The Crescent Textile Mills Limited,0829,Textile composite,False,1.0,0.9902,qualifies
+CSAP,Crescent Steel & Allied Products Limited,0808,Engineering,False,1.0,0.9935,qualifies
+CSIL,Crescent Star Insurance Limited,0812,Insurance,False,1.0,0.9959,qualifies
+CTM,Colony Textile Mills Limited,0830,Textile spinning,False,1.0,0.9764,qualifies
+CWHC,Crestwell Healthcare Limited,0823,Pharmaceuticals,False,0.0,0.0,no prices on Yahoo Finance
+DAAG,Data Agro Limited,0805,Chemicals,False,1.0,0.7156,traded on too few days
+DADX,Dadex Eternit Limited,0808,Engineering,False,1.0,0.6952,traded on too few days
+DBCI,Dadabhoy Cement Industries Limited,0804,Cement,False,1.0,0.4768,traded on too few days
+DBSL,Dadabhoy Sack Limited,0822,Paper and packaging,False,0.0,0.0,no prices on Yahoo Finance
+DCL,Dewan Cement Limited,0804,Cement,False,1.0,1.0,qualifies
+DCTL,Dadabhoy Construction Technology Limited,0818,Miscellaneous,False,0.0,0.0,no prices on Yahoo Finance
+DEL,Dawood Equities Limited,0813,Investment banks and securities,False,1.0,0.9601,qualifies
+DFML,Dewan Farooque Motors Limited,0801,Automobile assemblers,False,1.0,0.9992,qualifies
+DFSM,Dewan Farooque Spinning Mills Limited,0830,Textile spinning,False,1.0,0.9959,qualifies
+DGKC,D.G. Khan Cement Company Limited,0804,Cement,True,1.0,0.9984,qualifies
+DIIL,Diamond Industries Limited,0818,Miscellaneous,False,1.0,0.3716,traded on too few days
+DINT,Din Textile Mills Limited,0830,Textile spinning,False,1.0,0.414,traded on too few days
+DKTM,Dewan Khalid Textile Mills Limited,0830,Textile spinning,False,0.0,0.0,no prices on Yahoo Finance
+DLL,Dawood Lawrencepur Limited,0813,Investment banks and securities,False,1.0,0.7441,traded on too few days
+DMC,D.M. Corporation Limited.,0830,Textile spinning,False,0.0,0.0,no prices on Yahoo Finance
+DMTM,Dewan Mushtaq Textile Mills Limited,0830,Textile spinning,False,0.9992,0.1989,traded on too few days
+DNCC,Dandot Cement Company Limited,0804,Cement,False,1.0,0.8134,traded on too few days
+DOL,Descon Oxychem Limited,0805,Chemicals,False,1.0,0.9992,qualifies
+DSFL,Dewan Salman Fibre Limited,0827,Synthetic and rayon,False,0.0,0.0,no prices on Yahoo Finance
+DSIL,D.S. Industries Limited,0830,Textile spinning,False,1.0,0.9935,qualifies
+DSL,Dost Steels Limited,0808,Engineering,False,1.0,0.9992,qualifies
+DWAE,Dewan Automotive Engineering Limited,0802,Automobile parts,False,1.0,0.4776,traded on too few days
+DWSM,Dewan Sugar Mills Limited,0826,Sugar,False,1.0,0.9144,qualifies
+DWTM,Dewan Textile Mills Limited,0830,Textile spinning,False,1.0,0.5925,traded on too few days
+DYNO,Dynea Pakistan Limited,0805,Chemicals,False,1.0,0.9242,qualifies
+ECOP,Ecopack Limited,0818,Miscellaneous,False,1.0,0.9234,qualifies
+EFERT,Engro Fertilizers Limited,0809,Fertilizer,True,1.0,0.9992,qualifies
+EFUG,EFU General Insurance Limited,0812,Insurance,False,1.0,0.7579,traded on too few days
+EFUL,EFU Life Assurance Limited,0812,Insurance,False,1.0,0.8068,traded on too few days
+EFULR,EFU Life Assurance Limited Right,0812,Insurance,False,0.0,0.0,no prices on Yahoo Finance
+ELCM,Elahi Cotton Mills Limited,0830,Textile spinning,False,1.0,0.4051,traded on too few days
+ELSM,Ellcot Spinning Mills Limited,0830,Textile spinning,False,0.9992,0.6365,traded on too few days
+EMCO,Emco Industries Limited,0803,Cable and electrical goods,False,0.9992,0.7865,traded on too few days
+ENGL,English Leasing Limited,0815,Leasing companies,False,0.0,0.0,no prices on Yahoo Finance
+ENGROH,Engro Holdings Limited,0813,Investment banks and securities,True,0.0,0.0,no prices on Yahoo Finance
+EPCL,Engro Polymer & Chemicals Limited,0805,Chemicals,False,1.0,0.9976,qualifies
+EPQL,Engro Powergen Qadirpur Limited,0824,Power generation and distribution,False,1.0,0.9984,qualifies
+ESBL,Escorts Investment Bank Limited,0813,Investment banks and securities,False,1.0,0.9487,qualifies
+EWIC,East West Insurance Company Limited,0812,Insurance,False,1.0,0.2241,traded on too few days
+EXIDE,Exide Pakistan Limited,0802,Automobile parts,False,1.0,0.9837,qualifies
+FABL,Faysal Bank Limited,0807,Commercial banks,True,1.0,0.9976,qualifies
+FAEL,Fatima Enterprises Limited,0830,Textile spinning,False,0.0,0.0,no prices on Yahoo Finance
+FANM,First Al-Noor Modaraba,0819,Modarabas,False,1.0,0.5729,traded on too few days
+FASM,Faisal Spinning Mills Limited,0829,Textile composite,False,1.0,0.5933,traded on too few days
+FATIMA,Fatima Fertilizer Company Limited,0809,Fertilizer,True,1.0,0.9976,qualifies
+FCCL,Fauji Cement Company Limited,0804,Cement,True,1.0,0.9992,qualifies
+FCEL,First Capital Equities Limited,0813,Investment banks and securities,False,0.9992,0.4067,traded on too few days
+FCEPL,Frieslandcampina Engro Pakistan Limited,0810,Food and personal care,False,1.0,0.9992,qualifies
+FCIBL,First Credit and Investment Bank Limited,0813,Investment banks and securities,False,1.0,0.6137,traded on too few days
+FCL,Fast Cables Limited,0803,Cable and electrical goods,False,0.0,0.0,no prices on Yahoo Finance
+FCONM,First Constellation Modaraba,0819,Modarabas,False,0.0,0.0,no prices on Yahoo Finance
+FCSC,First Capital Securities Corporation,0813,Investment banks and securities,False,1.0,0.9967,qualifies
+FDPL,First Dawood Properties Limited,0813,Investment banks and securities,False,0.9992,0.9927,qualifies
+FECM,First Elite Capital Modaraba,0819,Modarabas,False,1.0,0.8631,traded on too few days
+FECTC,Fecto Cement Limited,0804,Cement,False,1.0,0.9014,qualifies
+FEM,First Equity Modaraba,0819,Modarabas,False,1.0,0.6634,traded on too few days
+FEROZ,Ferozsons Laboratories Limited,0823,Pharmaceuticals,False,1.0,0.9967,qualifies
+FFC,Fauji Fertilizer Company Limited,0809,Fertilizer,True,1.0,0.9992,qualifies
+FFL,Fauji Foods Limited,0810,Food and personal care,True,1.0,1.0,qualifies
+FFLM,First Fidelity Leasing Modaraba,0819,Modarabas,False,1.0,0.5941,traded on too few days
+FHAM,First Habib Modaraba,0819,Modarabas,True,1.0,0.9609,qualifies
+FIBLM,First IBL Modaraba,0819,Modarabas,False,1.0,0.5868,traded on too few days
+FIL,Fateh Industries Limited,0816,Leather and tanneries,False,1.0,0.3374,traded on too few days
+FIM,First Investec Modaraba,0819,Modarabas,False,0.0,0.0,no prices on Yahoo Finance
+FIMM,First Imrooz Modaraba,0819,Modarabas,False,1.0,0.3521,traded on too few days
+FLYNG,Flying Cement Company Limited,0804,Cement,False,1.0,0.9976,qualifies
+FML,Feroze1888 Mills Limited,0829,Textile composite,False,1.0,0.8085,traded on too few days
+FNBM,First National Bank Modaraba,0819,Modarabas,False,0.0,0.0,no prices on Yahoo Finance
+FNEL,First National Equities Limited,0813,Investment banks and securities,False,1.0,0.9984,qualifies
+FPJM,First Punjab Modaraba,0819,Modarabas,False,1.0,0.8517,traded on too few days
+FPRM,First Paramount Modaraba,0819,Modarabas,False,1.0,0.6707,traded on too few days
+FRCL,Frontier Ceramics Limited,0811,Glass and ceramics,False,1.0,0.6373,traded on too few days
+FRSM,Faran Sugar Mills Limited,0826,Sugar,False,1.0,0.7498,traded on too few days
+FSWL,Fateh Sports Wear Limited,0829,Textile composite,False,1.0,0.3203,traded on too few days
+FTHM,Fateh Textile Mills Limited,0829,Textile composite,False,0.0,0.0,no prices on Yahoo Finance
+FTMM,First Treet Manufacturing Modaraba,0819,Modarabas,False,1.0,0.815,traded on too few days
+FTSM,First Tri-Star Modaraba,0819,Modarabas,False,1.0,0.5786,traded on too few days
+FZCM,Fazal Cloth Mills Limited,0829,Textile composite,False,1.0,0.7531,traded on too few days
+GADT,Gadoon Textile Mills Limited,0830,Textile spinning,True,1.0,0.8289,traded on too few days
+GAL,Ghandhara Automobiles Limited,0801,Automobile assemblers,True,0.0,0.0,no prices on Yahoo Finance
+GAMON,Gammon Pakistan Limited,0818,Miscellaneous,False,1.0,0.8134,traded on too few days
+GATI,Gatron (Industries) Limited,0827,Synthetic and rayon,False,1.0,0.8411,traded on too few days
+GATM,Gul Ahmed Textile Mills Limited,0829,Textile composite,False,1.0,0.9984,qualifies
+GCIL,Ghani Chemical Industries Limited,0805,Chemicals,False,0.785,0.7848,listed after the start of the window
+GCWL,Ghani Chemworld Limited,0805,Chemicals,False,0.0,0.0,no prices on Yahoo Finance
+GCWLPRS,Ghani Chemworld Limited(PRS),0805,Chemicals,False,0.0,0.0,no prices on Yahoo Finance
+GDL,Ghani Dairies Limited,0810,Food and personal care,False,0.0,0.0,no prices on Yahoo Finance
+GEMBCEM,Burj Clean Energy Modaraba(GEM),0819,Modarabas,False,0.0,0.0,no prices on Yahoo Finance
+GEMMEL,Mughal Energy Limited(GEM),0824,Power generation and distribution,False,0.0,0.0,no prices on Yahoo Finance
+GEMNETS,Nets International Communication Limited,0828,Technology and communication,False,0.0,0.0,no prices on Yahoo Finance
+GEMPACRA,The Pakistan Credit Rating Agency Ltd,0818,Miscellaneous,False,0.0,0.0,no prices on Yahoo Finance
+GEMPAPL,Pak Agro Packaging Limited(GEM),0822,Paper and packaging,False,0.9121,0.3651,listed after the start of the window
+GFIL,Ghazi Fabrics International Limited,0829,Textile composite,False,1.0,0.8557,traded on too few days
+GGGL,Ghani Global Glass Limited,0811,Glass and ceramics,False,1.0,0.9992,qualifies
+GGL,Ghani Global Holdings Limited,0805,Chemicals,False,1.0,0.9976,qualifies
+GHGL,Ghani Glass Limited,0811,Glass and ceramics,True,1.0,0.9992,qualifies
+GHNI,Ghandhara Industries Limited,0801,Automobile assemblers,True,1.0,0.9984,qualifies
+GIL,Good Luck Industries Ltd.,0810,Food and personal care,False,1.0,0.0,traded on too few days
+GLAXO,GlaxoSmithKline Pakistan Limited,0823,Pharmaceuticals,True,1.0,0.9967,qualifies
+GLOT,Globe Textile Mills Limited,0830,Textile spinning,False,0.0,0.0,no prices on Yahoo Finance
+GOC,GOC (Pak) Limited.,0818,Miscellaneous,False,1.0,0.577,traded on too few days
+GRYL,Grays Leasing Limited,0815,Leasing companies,False,1.0,0.6381,traded on too few days
+GSPM,Gulshan Spinning Mills Limited,0830,Textile spinning,False,1.0,0.4743,traded on too few days
+GTYR,Ghandhara Tyre & Rubber Company Limited,0802,Automobile parts,False,1.0,0.9976,qualifies
+GUSM,Gulistan Spinning Mills Limited,0830,Textile spinning,False,1.0,0.4556,traded on too few days
+GUTM,Gulistan Textile Mills Limited,0830,Textile spinning,False,0.0,0.0,no prices on Yahoo Finance
+GVGL,Ghani Value Glass Limited,0811,Glass and ceramics,False,1.0,0.978,qualifies
+GWLC,Gharibwal Cement Limited,0804,Cement,False,1.0,0.9796,qualifies
+HABSM,Habib Sugar Mills Limited,0826,Sugar,False,1.0,0.9291,qualifies
+HADC,Haydari Construction Company Limited,0818,Miscellaneous,False,0.0,0.0,no prices on Yahoo Finance
+HAEL,Hala Enterprises Limited,0829,Textile composite,False,1.0,0.815,traded on too few days
+HAFL,Hafiz Limited,0829,Textile composite,False,1.0,0.3464,traded on too few days
+HAJT,Hajra Textile Mills Limited,0830,Textile spinning,False,0.0,0.0,no prices on Yahoo Finance
+HALEON,Haleon Pakistan Limited,0823,Pharmaceuticals,True,0.9992,0.9829,qualifies
+HASCOL,Hascol Petroleum Limited,0821,Oil and gas marketing,False,1.0,0.9984,qualifies
+HATM,Hamid Textile Mills Limited,0829,Textile composite,False,0.0,0.0,no prices on Yahoo Finance
+HBL,Habib Bank Limited,0807,Commercial banks,True,1.0,0.9984,qualifies
+HCAR,Honda Atlas Cars (Pakistan) Limited,0801,Automobile assemblers,True,1.0,0.9992,qualifies
+HICL,Habib Insurance Company Limited,0812,Insurance,False,1.0,0.7946,traded on too few days
+HINO,Hinopak Motors Limited,0801,Automobile assemblers,False,1.0,0.8916,traded on too few days
+HINOON,Highnoon Laboratories Limited,0823,Pharmaceuticals,True,1.0,0.9959,qualifies
+HIRAT,Hira Textile Mills Limited,0830,Textile spinning,False,1.0,0.9535,qualifies
+HKKT,Hakkim Textile Mills Limited,0831,Textile weaving,False,0.0,0.0,no prices on Yahoo Finance
+HMB,Habib Metropolitan Bank Limited,0807,Commercial banks,True,1.0,0.9894,qualifies
+HMIM,Haji Mohammad Ismail Mills Limited,0830,Textile spinning,False,0.0,0.0,no prices on Yahoo Finance
+HPL,Hoechst Pakistan Limited,0823,Pharmaceuticals,False,0.9992,0.8183,traded on too few days
+HRPL,Habib Rice Product Limited.,0826,Sugar,False,1.0,0.7205,traded on too few days
+HSPI,Huffaz Seamless Pipe Industries Limited,0808,Engineering,False,1.0,0.2526,traded on too few days
+HTL,Hi-Tech Lubricants Limited,0821,Oil and gas marketing,False,1.0,0.9992,qualifies
+HUBC,The Hub Power Company Limited,0824,Power generation and distribution,True,0.0,0.0,no prices on Yahoo Finance
+HUMNL,Hum Network Limited,0828,Technology and communication,False,1.0,0.9992,qualifies
+HUSI,Husein Industries Limited,0838,Property,False,1.0,0.5827,traded on too few days
+HWQS,Haseeb Waqas Sugar Mills Limited,0826,Sugar,False,1.0,0.6936,traded on too few days
+IBFL,Ibrahim Fibres Limited,0827,Synthetic and rayon,True,1.0,0.7017,traded on too few days
+IBLHL,IBL HealthCare Limited,0823,Pharmaceuticals,False,1.0,0.9894,qualifies
+ICCI,ICC Industries Limited,0831,Textile weaving,False,1.0,0.4719,traded on too few days
+ICIBL,Invest Capital Investment Bank Limited,0813,Investment banks and securities,False,1.0,0.9976,qualifies
+ICL,Ittehad Chemicals Limted,0805,Chemicals,False,1.0,0.9739,qualifies
+IDEAL,Ideal Dynamics Limited,0830,Textile spinning,False,0.0,0.0,no prices on Yahoo Finance
+IDRT,Idrees Textile Mills Limited,0830,Textile spinning,False,1.0,0.4825,traded on too few days
+IDYM,Indus Dyeing & Manufacturing Co. Limited,0830,Textile spinning,False,1.0,0.9829,qualifies
+IGIHL,IGI Holdings Limited,0812,Insurance,False,1.0,0.9584,qualifies
+IGIL,IGI Life Insurance Limited,0812,Insurance,False,1.0,0.7571,traded on too few days
+ILP,Interloop Limited,0829,Textile composite,True,1.0,0.9992,qualifies
+IMAGE,Image Pakistan Limited,0839,Apparel,True,0.9992,0.9984,qualifies
+IML,Imperial  Limited,0813,Investment banks and securities,False,0.9992,0.7042,traded on too few days
+IMS,Intermarket Securities Limited,0813,Investment banks and securities,False,0.0,0.0,no prices on Yahoo Finance
+INDU,Indus Motor Company Limited,0801,Automobile assemblers,True,1.0,0.9976,qualifies
+INIL,International Industries Limited,0808,Engineering,True,1.0,0.9992,qualifies
+INKL,International Knitwear Limited,0839,Apparel,False,1.0,0.5151,traded on too few days
+IPAK,International Packaging Films Limited,0822,Paper and packaging,False,0.0,0.0,no prices on Yahoo Finance
+ISIL,Ismail Industries Limited,0810,Food and personal care,False,1.0,0.5852,traded on too few days
+ISL,International Steels Limited,0808,Engineering,True,1.0,0.9992,qualifies
+ITANZ,Itanz Technologies Limited,0828,Technology and communication,False,0.0,0.0,no prices on Yahoo Finance
+ITTEFAQ,Ittefaq Iron Industries Limited,0808,Engineering,False,1.0,0.9976,qualifies
+JATM,J.A. Textile Mills Limited,0830,Textile spinning,False,1.0,0.7645,traded on too few days
+JDMT,Janana De Malucho Textile Mills Limited,0830,Textile spinning,False,1.0,0.8044,traded on too few days
+JDWS,JDW Sugar Mills Limited,0826,Sugar,True,1.0,0.7677,traded on too few days
+JGICL,Jubilee General Insurance Company Ltd.,0812,Insurance,False,0.9992,0.8199,traded on too few days
+JKSM,J.K. Spinning Mills Limited,0830,Textile spinning,False,1.0,0.599,traded on too few days
+JLICL,Jubilee Life Insurance Company Limited,0812,Insurance,False,1.0,0.9315,qualifies
+JSBL,JS Bank Limited,0807,Commercial banks,False,1.0,0.9788,qualifies
+JSCL,Jahangir Siddiqui & Co. Ltd.,0813,Investment banks and securities,False,1.0,0.9984,qualifies
+JSGCL,JS Global Capital Limited,0813,Investment banks and securities,False,1.0,0.6813,traded on too few days
+JSIL,JS Investments Limited,0813,Investment banks and securities,False,1.0,0.7001,traded on too few days
+JSML,Jauharabad Sugar Mills Limited,0826,Sugar,False,1.0,0.8932,traded on too few days
+JUBS,Jubilee Spinning & Weaving Mills Ltd.,0829,Textile composite,False,1.0,0.8036,traded on too few days
+JVDC,Javedan Corporation Limited,0838,Property,True,1.0,0.6601,traded on too few days
+KAKL,Kaiser Arts & Krafts Limited,0829,Textile composite,False,0.0,0.0,no prices on Yahoo Finance
+KAPCO,Kot Addu Power Company Limited,0824,Power generation and distribution,True,1.0,0.9984,qualifies
+KCL,Karam Ceramics Limited,0811,Glass and ceramics,False,1.0,0.3374,traded on too few days
+KEL,K-Electric Limited,0824,Power generation and distribution,True,1.0,0.9992,qualifies
+KHTC,Khyber Tobacco Company Limited,0832,Tobacco,False,1.0,0.9495,qualifies
+KHYT,Khyber Textile Mills Limited,0829,Textile composite,False,1.0,0.4515,traded on too few days
+KML,Kohinoor Mills Limited,0829,Textile composite,False,1.0,0.6691,traded on too few days
+KOHC,Kohat Cement Company Limited,0804,Cement,True,1.0,0.9984,qualifies
+KOHE,Kohinoor Energy Limited,0824,Power generation and distribution,False,1.0,0.9984,qualifies
+KOHP,Kohinoor Power Company Limited,0824,Power generation and distribution,False,1.0,0.9185,qualifies
+KOHTM,Kohat Textile Mills Limited,0830,Textile spinning,False,0.9992,0.6699,traded on too few days
+KOIL,Kohinoor Industries Limited,0829,Textile composite,False,1.0,0.9454,qualifies
+KOSM,Kohinoor Spinning Mills Limited,0830,Textile spinning,False,1.0,0.9992,qualifies
+KPUS,Khairpur Sugar Mills Limited,0826,Sugar,False,1.0,0.5403,traded on too few days
+KSBP,KSB Pumps Company Limited,0808,Engineering,False,1.0,0.9315,qualifies
+KSTM,Khalid Siraj Textile Mills Limited,0830,Textile spinning,False,1.0,0.4694,traded on too few days
+KTML,Kohinoor Textile Mills Limited,0829,Textile composite,True,1.0,0.9715,qualifies
+LCI,Lucky Core Industries Limited,0805,Chemicals,True,0.9992,0.9821,qualifies
+LEUL,Leather Up Limited,0816,Leather and tanneries,False,1.0,0.8207,traded on too few days
+LIVEN,Liven Pharma Limited,0823,Pharmaceuticals,False,0.0,0.0,no prices on Yahoo Finance
+LOADS,Loads Limited,0802,Automobile parts,False,1.0,0.9984,qualifies
+LOTCHEM,Lotte Chemical Pakistan Limited,0805,Chemicals,True,1.0,0.9984,qualifies
+LPGL,Leiner Pak Gelatine Limited,0805,Chemicals,False,1.0,0.7441,traded on too few days
+LPL,Lalpir Power Limited,0824,Power generation and distribution,False,1.0,0.9984,qualifies
+LSECL,LSE Capital Limited.,0813,Investment banks and securities,False,0.4805,0.48,listed after the start of the window
+LSEFSL,LSE Financial Services Limited.,0813,Investment banks and securities,False,0.4772,0.4743,listed after the start of the window
+LSEFSLR,LSE Financial Services Limited Right,0813,Investment banks and securities,False,0.0,0.0,no prices on Yahoo Finance
+LSEVL,LSE Ventures Limited,0813,Investment banks and securities,False,0.0,0.0,no prices on Yahoo Finance
+LUCK,Lucky Cement Limited,0804,Cement,True,1.0,0.9935,qualifies
+MACFL,MACPAC Films Limited,0822,Paper and packaging,False,1.0,0.9487,qualifies
+MACTER,Macter International Limited,0823,Pharmaceuticals,False,1.0,0.661,traded on too few days
+MARI,Mari Energies Limited,0820,Oil and gas exploration,True,1.0,0.9992,qualifies
+MCB,MCB Bank Limited,0807,Commercial banks,True,1.0,0.9984,qualifies
+MCBIM,MCB Investment Management Limited.,0813,Investment banks and securities,False,0.9992,0.8737,traded on too few days
+MDTL,Media Times Limited,0828,Technology and communication,False,1.0,0.9984,qualifies
+MEBL,Meezan Bank Limited,0807,Commercial banks,True,1.0,0.9984,qualifies
+MEHT,Mehmood Textile Mills Limited,0829,Textile composite,False,1.0,0.6496,traded on too few days
+MERIT,Merit Packaging Limited,0822,Paper and packaging,False,1.0,0.9756,qualifies
+MFFL,Mitchells Fruit Farms Limited,0810,Food and personal care,False,1.0,0.9764,qualifies
+MFL,Matco Foods Limited,0810,Food and personal care,False,1.0,0.9804,qualifies
+MFTM,Mohammad Farooq Textile Mills Limited,0829,Textile composite,False,0.0,0.0,no prices on Yahoo Finance
+MIRKS,Mirpurkhas Sugar Mills Limited,0826,Sugar,False,1.0,0.8093,traded on too few days
+MLCF,Maple Leaf Cement Factory Limited,0804,Cement,True,1.0,0.9992,qualifies
+MOHE,Mohib Exports Limited,0831,Textile weaving,False,0.0,0.0,no prices on Yahoo Finance
+MQTM,Maqbool Textile Mills Limited,0830,Textile spinning,False,1.0,0.4189,traded on too few days
+MRNS,Mehran Sugar Mills Limited,0826,Sugar,False,1.0,0.9397,qualifies
+MSCL,Metropolitan Steel Corporation Limited,0808,Engineering,False,1.0,0.6235,traded on too few days
+MSOT,Masood Textile Mills Limited,0839,Apparel,False,1.0,0.7009,traded on too few days
+MTL,Millat Tractors Limited,0801,Automobile assemblers,True,1.0,0.9992,qualifies
+MUBT,Mubarak Textile Mills Limited,0829,Textile composite,False,0.0,0.0,no prices on Yahoo Finance
+MUGHAL,Mughal Iron & Steel Industries Limited,0808,Engineering,False,1.0,0.9992,qualifies
+MUGHALC,Mughal Iron & Steel Industries Ltd(C),0808,Engineering,False,0.0,0.0,no prices on Yahoo Finance
+MUREB,Murree Brewery Company Limited,0810,Food and personal care,True,1.0,0.8892,traded on too few days
+MWMP,Mandviwala Mauser Plastic Industries,0818,Miscellaneous,False,1.0,0.4776,traded on too few days
+NAFL,National Fibres Limited,0827,Synthetic and rayon,False,0.0,0.0,no prices on Yahoo Finance
+NAGC,Nagina Cotton Mills Limited,0830,Textile spinning,False,1.0,0.599,traded on too few days
+NATF,National Foods Limited,0810,Food and personal care,True,1.0,0.9992,qualifies
+NATM,Nadeem Textile Mills Limited,0830,Textile spinning,False,1.0,0.0465,traded on too few days
+NBP,National Bank of Pakistan,0807,Commercial banks,True,1.0,0.9992,qualifies
+NCL,Nishat Chunian Limited,0829,Textile composite,False,1.0,1.0,qualifies
+NCML,Nazir Cotton Mills Limited,0830,Textile spinning,False,1.0,0.8264,traded on too few days
+NCPL,Nishat Chunian Power Limited,0824,Power generation and distribution,True,1.0,0.9992,qualifies
+NESTLE,Nestle Pakistan Limited,0810,Food and personal care,True,1.0,0.8753,traded on too few days
+NETSOL,NetSol Technologies Limited,0828,Technology and communication,False,1.0,1.0,qualifies
+NEXT,Next Capital Limited,0813,Investment banks and securities,False,1.0,0.8851,traded on too few days
+NICL,Nimir Industrial Chemicals Limited,0805,Chemicals,False,1.0,0.8753,traded on too few days
+NINA,Nina Industries Limited,0829,Textile composite,False,0.0,0.0,no prices on Yahoo Finance
+NMFL,Nirala MSR Foods Limited,0810,Food and personal care,False,0.0,0.0,no prices on Yahoo Finance
+NML,Nishat Mills Limited,0829,Textile composite,True,1.0,1.0,qualifies
+NONS,Noon Sugar Mills Limited,0826,Sugar,False,0.9992,0.5795,traded on too few days
+NPL,Nishat Power Limited,0824,Power generation and distribution,True,1.0,1.0,qualifies
+NRL,National Refinery Limited,0825,Refinery,False,1.0,0.9992,qualifies
+NRSL,Nimir Resins Limited,0805,Chemicals,False,1.0,0.9976,qualifies
+NSRM,The National Silk & Rayon Mills Limited,0827,Synthetic and rayon,False,1.0,0.4368,traded on too few days
+OBOY,Oilboy Energy Limited,0821,Oil and gas marketing,False,0.9992,0.9544,qualifies
+OCTOPUS,Octopus Digital Limited,0828,Technology and communication,False,0.9992,0.9992,qualifies
+OGDC,Oil & Gas Development Company Limited,0820,Oil and gas exploration,True,1.0,0.9992,qualifies
+OLPL,OLP Financial Services Pakistan Limited,0813,Investment banks and securities,False,1.0,0.9821,qualifies
+OLPM,OLP Modaraba,0819,Modarabas,False,0.9992,0.9038,qualifies
+OML,Olympia Mills Limited,0818,Miscellaneous,False,1.0,0.542,traded on too few days
+ORM,Orient Rental Mod,0819,Modarabas,False,1.0,0.7229,traded on too few days
+OTSU,Otsuka Pakistan Limited,0823,Pharmaceuticals,False,1.0,0.8386,traded on too few days
+PABC,Pakistan Aluminium Beverage Cans Limited,0818,Miscellaneous,False,0.9992,0.9984,qualifies
+PACE,Pace (Pakistan) Limited,0838,Property,False,1.0,0.6927,traded on too few days
+PAEL,Pak Elektron Limited,0803,Cable and electrical goods,True,1.0,1.0,qualifies
+PAKD,Pak Datacom Limited,0828,Technology and communication,False,1.0,0.9535,qualifies
+PAKL,Pak Leather Crafts Limited,0816,Leather and tanneries,False,1.0,0.5143,traded on too few days
+PAKOXY,Pakistan Oxygen Limited,0805,Chemicals,False,1.0,0.9764,qualifies
+PAKQATAR,Pak Qatar Family Takaful Limited,0812,Insurance,False,0.0,0.0,no prices on Yahoo Finance
+PAKRI,Pakistan Reinsurance Company Limited,0812,Insurance,False,1.0,0.9788,qualifies
+PAKT,Pakistan Tobacco Company Limited,0832,Tobacco,True,1.0,0.8533,traded on too few days
+PASL,Pervez Ahmed Consultancy Services Ltd.,0813,Investment banks and securities,False,1.0,1.0,qualifies
+PASM,Paramount Spinning Mills Limited,0829,Textile composite,False,1.0,0.4768,traded on too few days
+PCAL,Pakistan Cables Limited,0803,Cable and electrical goods,False,1.0,0.9739,qualifies
+PECO,Pakistan Engineering Company Limited,0808,Engineering,False,1.0,0.6161,traded on too few days
+PGLC,Pak-Gulf Leasing Company Limited,0815,Leasing companies,True,1.0,0.7865,traded on too few days
+PHDL,Pakistan Hotels Developers Limited,0818,Miscellaneous,False,1.0,0.4931,traded on too few days
+PIAHCLA,PIA Holding Company Limited,0813,Investment banks and securities,False,0.4805,0.48,listed after the start of the window
+PIAHCLB,PIA Holding Company LimitedB,0813,Investment banks and securities,False,0.4813,0.4319,listed after the start of the window
+PIBTL,Pakistan International Bulk Terminal,0833,Transport,True,1.0,0.9992,qualifies
+PICL,Pakistan Industrial & Commercial Leasing,0815,Leasing companies,False,0.0,0.0,no prices on Yahoo Finance
+PICT,Pakistan International Container,0833,Transport,False,1.0,0.9992,qualifies
+PIL,PICIC Insurance Limited,0812,Insurance,False,1.0,0.9739,qualifies
+PIM,Popular Islamic Modaraba,0819,Modarabas,False,1.0,0.6618,traded on too few days
+PINL,Premier Insurance Limited,0812,Insurance,False,1.0,0.7783,traded on too few days
+PIOC,Pioneer Cement Limited,0804,Cement,True,1.0,0.9984,qualifies
+PKGI,The Pakistan General Insurance Co. Ltd.,0812,Insurance,False,1.0,0.7808,traded on too few days
+PKGP,Pakgen Power Limited,0824,Power generation and distribution,False,1.0,0.9446,qualifies
+PKGS,Packages Limited,0822,Paper and packaging,True,1.0,0.9861,qualifies
+PMRS,The Premier Sugar Mills,0826,Sugar,False,1.0,0.3553,traded on too few days
+PNSC,Pakistan National Shipping Corporation,0833,Transport,False,1.0,0.9967,qualifies
+POL,Pakistan Oilfields Limited,0820,Oil and gas exploration,True,1.0,0.9984,qualifies
+POML,Punjab Oil Mills Limited,0834,Vanaspati and allied,False,1.0,0.7816,traded on too few days
+POWER,Power Cement Limited,0804,Cement,True,1.0,0.9992,qualifies
+PPL,Pakistan Petroleum Limited,0820,Oil and gas exploration,True,1.0,0.9992,qualifies
+PPP,Pakistan Paper Products Limited,0822,Paper and packaging,False,1.0,0.7506,traded on too few days
+PPVC,Pakistan PVC Limited,0805,Chemicals,False,1.0,0.6202,traded on too few days
+PQGTL,Pak Qatar General Takaful Limited,0812,Insurance,False,0.0,0.0,no prices on Yahoo Finance
+PREMA,At-Tahur Limited,0810,Food and personal care,False,1.0,0.9984,qualifies
+PRET,Premium Textile Mills Limited,0830,Textile spinning,False,1.0,0.7123,traded on too few days
+PRIB,Prudential Investment Bank Limited,0813,Investment banks and securities,False,0.0,0.0,no prices on Yahoo Finance
+PRIC,Progressive Insurance Company Limited,0812,Insurance,False,0.0,0.0,no prices on Yahoo Finance
+PRL,Pakistan Refinery Limited,0825,Refinery,False,1.0,0.9992,qualifies
+PRWM,Prosperity Weaving Mills Limited,0831,Textile weaving,False,1.0,0.6569,traded on too few days
+PSEL,Pakistan Services Limited,0818,Miscellaneous,True,1.0,0.7017,traded on too few days
+PSO,Pakistan State Oil Company Limited,0821,Oil and gas marketing,True,1.0,0.9992,qualifies
+PSX,Pakistan Stock Exchange Limited,0813,Investment banks and securities,True,1.0,0.9992,qualifies
+PSYL,Pakistan Synthetics Limited,0827,Synthetic and rayon,False,1.0,0.7563,traded on too few days
+PTC,Pakistan Telecommunication Company Ltd,0828,Technology and communication,True,1.0,1.0,qualifies
+PTL,Panther Tyres Ltd.,0802,Automobile parts,False,0.9992,0.9992,qualifies
+QTECH,Quantum Data Technologies Limited,0828,Technology and communication,False,0.0,0.0,no prices on Yahoo Finance
+QUET,Quetta Textile Mills Limited,0829,Textile composite,False,1.0,0.7253,traded on too few days
+QUICE,Quice Food Industries Limited,0810,Food and personal care,False,1.0,0.9951,qualifies
+REDCO,Redco Textiles Limited,0829,Textile composite,False,1.0,0.7531,traded on too few days
+REGAL,Regal Ceramics Limited,0811,Glass and ceramics,False,0.0,0.0,no prices on Yahoo Finance
+REWM,Reliance Weaving Mills Limited,0829,Textile composite,False,1.0,0.7433,traded on too few days
+RICL,Reliance Insurance Company Limited,0812,Insurance,False,1.0,0.74,traded on too few days
+RMPL,Rafhan Maize Products Company Limited,0810,Food and personal care,False,1.0,0.7522,traded on too few days
+RPL,Roshan Packages Limited,0822,Paper and packaging,False,1.0,1.0,qualifies
+RUBY,Ruby Textile Mills Limited,0830,Textile spinning,False,1.0,0.7294,traded on too few days
+RUPL,Rupali Polyester Limited,0827,Synthetic and rayon,False,1.0,0.8688,traded on too few days
+SAIF,Saif Textile Mills Limited,0830,Textile spinning,False,1.0,0.8598,traded on too few days
+SANE,Salman Noman Enterprises Limited,0830,Textile spinning,False,1.0,0.0676,traded on too few days
+SANSM,Sanghar Sugar Mills Limited,0826,Sugar,False,1.0,0.5387,traded on too few days
+SAPT,Sapphire Textile Mills Limited,0829,Textile composite,False,1.0,0.7229,traded on too few days
+SARC,Sardar Chemical Industries Limited,0805,Chemicals,False,1.0,0.63,traded on too few days
+SASML,Sindh Abadgars Sugar Mills Limited,0826,Sugar,False,1.0,0.5363,traded on too few days
+SAZEW,Sazgar Engineering Works Limited,0801,Automobile assemblers,True,1.0,0.9992,qualifies
+SBL,Samba Bank Limited,0807,Commercial banks,False,1.0,0.8093,traded on too few days
+SCBPL,Standard Chartered Bank (Pak) Ltd,0807,Commercial banks,True,1.0,0.965,qualifies
+SCHT,Schon Textiles Limited,0829,Textile composite,False,0.0,0.0,no prices on Yahoo Finance
+SDOT,Sadoon Textile Industries Limited,0831,Textile weaving,False,0.0,0.0,no prices on Yahoo Finance
+SEARL,The Searle Company Limited,0823,Pharmaceuticals,True,1.0,0.9992,qualifies
+SEL,Sitara Energy Limited,0824,Power generation and distribution,False,1.0,0.599,traded on too few days
+SELECT,Select Technologies Limited,0828,Technology and communication,False,0.0,0.0,no prices on Yahoo Finance
+SEPL,Security Papers Limited,0822,Paper and packaging,False,1.0,0.965,qualifies
+SERT,Service Industries Textiles Limited,0830,Textile spinning,False,1.0,0.7327,traded on too few days
+SFAT,Safa Textiles Limited,0829,Textile composite,False,0.0,0.0,no prices on Yahoo Finance
+SFL,Sapphire Fibres Limited,0829,Textile composite,False,1.0,0.727,traded on too few days
+SGABL,SG.Allied Businesses Limited,0827,Synthetic and rayon,False,1.0,0.0,traded on too few days
+SGF,Service GlobalFootwear Limited,0816,Leather and tanneries,False,0.9992,0.9976,qualifies
+SHCI,Shaffi Chemical Industries Limited,0805,Chemicals,False,0.0,0.0,no prices on Yahoo Finance
+SHCM,Shadman Cotton Mills Limited,0830,Textile spinning,False,1.0,0.4572,traded on too few days
+SHDT,Shadab Textile Mills Limited,0830,Textile spinning,False,1.0,0.762,traded on too few days
+SHEZ,Shezan International Limited,0810,Food and personal care,False,1.0,0.9242,qualifies
+SHFA,Shifa International Hospitals Limited,0818,Miscellaneous,True,1.0,0.969,qualifies
+SHJS,Shahtaj Sugar Mills Limited,0826,Sugar,False,1.0,0.6642,traded on too few days
+SHNI,Shaheen Insurance Company Limited,0812,Insurance,False,1.0,0.8313,traded on too few days
+SHSML,Shahmurad Sugar Mills Limited,0826,Sugar,False,1.0,0.8663,traded on too few days
+SIBL,Security Investment Bank Limited,0813,Investment banks and securities,False,1.0,0.608,traded on too few days
+SIEM,Siemens (Pakistan) Engineering,0803,Cable and electrical goods,False,1.0,0.8712,traded on too few days
+SINDM,Sindh Modaraba,0819,Modarabas,False,1.0,0.6936,traded on too few days
+SITC,Sitara Chemical Industries Limited,0805,Chemicals,False,1.0,0.8647,traded on too few days
+SKRS,Sakrand Sugar Mills Limited,0826,Sugar,False,1.0,0.9641,qualifies
+SLCL,Security Leasing Corporation Limited,0815,Leasing companies,False,0.0,0.0,no prices on Yahoo Finance
+SLGL,Secure Logistics-Trax Group Limited,0833,Transport,False,0.0,0.0,no prices on Yahoo Finance
+SLL,SME Leasing Limited,0815,Leasing companies,False,1.0,0.2649,traded on too few days
+SLM,Service Long March Tyres Limited,0802,Automobile parts,False,0.0,0.0,no prices on Yahoo Finance
+SLYT,Sally Textile Mills Limited,0830,Textile spinning,False,1.0,0.5053,traded on too few days
+SMCPL,Safe Mix Concrete Limited,0804,Cement,False,1.0,0.8321,traded on too few days
+SML,Shakarganj Limited,0826,Sugar,False,1.0,0.6161,traded on too few days
+SNAI,Sana Industries Limited,0830,Textile spinning,False,1.0,0.6178,traded on too few days
+SNBL,Soneri Bank Limited,0807,Commercial banks,False,1.0,0.978,qualifies
+SNGP,Sui Northern Gas Pipelines Limited,0821,Oil and gas marketing,True,1.0,0.9984,qualifies
+SOYASUP,Agro Processors & Atmospheric Gases Ltd,0810,Food and personal care,False,0.0,0.0,no prices on Yahoo Finance
+SPAC1,LSE SPAC-I Limited,0813,Investment banks and securities,False,0.0,0.0,no prices on Yahoo Finance
+SPAC2,LSE SPAC-II Limited,0813,Investment banks and securities,False,0.0,0.0,no prices on Yahoo Finance
+SPCL,Saudi Pak Consultancy Company Limited,0815,Leasing companies,False,0.0,0.0,no prices on Yahoo Finance
+SPEL,SPEL Limited,0822,Paper and packaging,False,1.0,0.9902,qualifies
+SPL,Sitara Peroxide Limited,0805,Chemicals,False,1.0,0.9788,qualifies
+SPSL,Sitara Petroleum Service Limited,0821,Oil and gas marketing,False,0.0,0.0,no prices on Yahoo Finance
+SPWL,Saif Power Limited,0824,Power generation and distribution,False,1.0,0.9992,qualifies
+SRVI,Service Industries Limited,0816,Leather and tanneries,True,1.0,0.9902,qualifies
+SSGC,Sui Southern Gas Company Limited,0821,Oil and gas marketing,True,1.0,0.9992,qualifies
+SSIC,Silver Star Insurance Company Limited,0812,Insurance,False,0.0,0.0,no prices on Yahoo Finance
+SSML,Saritow Spinning Mills Limited,0830,Textile spinning,False,1.0,0.8859,traded on too few days
+SSOM,S.S.Oil Mills Limited,0834,Vanaspati and allied,True,0.9992,0.7408,traded on too few days
+STCL,Shabbir Tiles & Ceramics Limited,0811,Glass and ceramics,False,1.0,0.9967,qualifies
+STJT,Shahtaj Textile Limited,0831,Textile weaving,False,1.0,0.7156,traded on too few days
+STL,Supernet Technologies Limited,0828,Technology and communication,False,0.0,0.0,no prices on Yahoo Finance
+STLR,Supernet Technologies Limited.(Right),0828,Technology and communication,False,0.0,0.0,no prices on Yahoo Finance
+STML,Shams Textile Mills Limited,0829,Textile composite,False,1.0,0.5493,traded on too few days
+STPL,Siddiqsons Tin Plate Limited,0818,Miscellaneous,False,1.0,0.9984,qualifies
+STYLERS,Stylers International Limited,0839,Apparel,False,0.5472,0.5232,listed after the start of the window
+SUHJ,Suhail Jute Mills Limited,0814,Jute,False,1.0,0.3961,traded on too few days
+SURAJ,Suraj Ghee Industries Limited,0834,Vanaspati and allied,False,0.0,0.0,no prices on Yahoo Finance
+SURC,Suraj Cotton Mills Limited,0829,Textile composite,False,1.0,0.6479,traded on too few days
+SUTM,Sunrays Textile Mills Limited,0830,Textile spinning,False,1.0,0.7824,traded on too few days
+SWL,Standard Worldwide Limited,0812,Insurance,False,0.0,0.0,no prices on Yahoo Finance
+SYM,Symmetry Group Limited,0828,Technology and communication,False,0.6262,0.6153,listed after the start of the window
+SYS,Systems Limited,0828,Technology and communication,True,1.0,0.9959,qualifies
+SZTM,Shahzad Textile Mills Limited,0830,Textile spinning,False,0.9992,0.3268,traded on too few days
+TAJT,Taj Textile Mills Limited,0829,Textile composite,False,0.0,0.0,no prices on Yahoo Finance
+TATM,Tata Textile Mills Limited,0830,Textile spinning,False,1.0,0.8394,traded on too few days
+TBL,Treet Battery Limited.,0802,Automobile parts,False,0.0,0.0,no prices on Yahoo Finance
+TCORP,Tariq Corporation Limited,0826,Sugar,False,0.9992,0.6153,traded on too few days
+TELE,Telecard Limited,0828,Technology and communication,False,1.0,0.9984,qualifies
+TGL,Tariq Glass Industries Limited,0811,Glass and ceramics,True,1.0,0.9984,qualifies
+THALL,Thal Limited,0802,Automobile parts,True,1.0,0.9772,qualifies
+THCCL,Thatta Cement Company Limited,0804,Cement,True,1.0,0.9894,qualifies
+TICL,The Thal Industries Corporation Limited,0826,Sugar,False,1.0,0.7253,traded on too few days
+TISL,Tasdeeq Information Services Limited,0818,Miscellaneous,False,0.0,0.0,no prices on Yahoo Finance
+TOMCL,The Organic Meat Company Limited,0810,Food and personal care,False,1.0,0.9992,qualifies
+TOWL,Towellers Limited,0829,Textile composite,False,1.0,0.9193,qualifies
+TPL,TPL Corp Limited,0828,Technology and communication,False,1.0,0.9992,qualifies
+TPLI,TPL Insurance Limited,0812,Insurance,False,0.0855,0.0856,listed after the start of the window
+TPLL,TPL Life Insurance Limited,0812,Insurance,False,0.0,0.0,no prices on Yahoo Finance
+TPLP,TPL Properties Limited,0838,Property,False,1.0,0.6919,traded on too few days
+TPLT,TPL Trakker Limited,0828,Technology and communication,False,1.0,0.9674,qualifies
+TREET,Treet Corporation Limited,0810,Food and personal care,False,1.0,0.9992,qualifies
+TRG,TRG Pakistan Limited,0828,Technology and communication,True,1.0,0.9992,qualifies
+TRIBL,Trust Investment Bank Limited,0813,Investment banks and securities,False,0.0,0.0,no prices on Yahoo Finance
+TRIPF,Tri-Pack Films Limited,0818,Miscellaneous,False,1.0,0.9152,qualifies
+TRSM,Trust Modaraba,0819,Modarabas,False,1.0,0.7017,traded on too few days
+TSBL,Trust Securities & Brokerage Limited,0813,Investment banks and securities,False,1.0,0.4931,traded on too few days
+TSML,Tandlianwala Sugar Mills Limited,0826,Sugar,False,1.0,0.5558,traded on too few days
+TSPL,Tri-Star Power Limited,0824,Power generation and distribution,False,1.0,0.9845,qualifies
+UBDL,United Brands Limited,0818,Miscellaneous,False,1.0,0.8183,traded on too few days
+UBL,United Bank Limited,0807,Commercial banks,True,1.0,0.9976,qualifies
+UCAPM,Unicap Modaraba,0819,Modarabas,False,1.0,0.8998,traded on too few days
+UDLI,UDL International Limited,0818,Miscellaneous,False,0.3681,0.3643,listed after the start of the window
+UDPL,United Distributors Pakistan Limited,0818,Miscellaneous,False,1.0,0.5762,traded on too few days
+UNIC,The United Insurance Company,0812,Insurance,False,1.0,0.9242,qualifies
+UNITY,Unity Foods Limited,0810,Food and personal care,False,1.0,0.9984,qualifies
+UPFL,Unilever Pakistan Foods Limited,0810,Food and personal care,True,1.0,0.6911,traded on too few days
+USMT,Usman Textile Mills Limited,0829,Textile composite,False,0.0,0.0,no prices on Yahoo Finance
+UVIC,The Universal Insurance Company Limited,0812,Insurance,False,1.0,0.696,traded on too few days
+WAFI,Wafi Energy Pakistan Limited,0821,Oil and gas marketing,False,0.0,0.0,no prices on Yahoo Finance
+WAHDAT,Wahdat Poultry Farm Limited,0810,Food and personal care,False,0.0,0.0,no prices on Yahoo Finance
+WAHN,Wah Noble Chemicals Limited,0805,Chemicals,False,1.0,0.8142,traded on too few days
+WASL,Wasl Mobility Modaraba,0819,Modarabas,False,0.0,0.0,no prices on Yahoo Finance
+WAVES,Waves Corporation Limited,0803,Cable and electrical goods,False,1.0,0.9976,qualifies
+WAVESAPP,Waves Home Appliances Limited,0803,Cable and electrical goods,False,0.9992,0.6936,traded on too few days
+WTL,Worldcall Telecom Limited,0828,Technology and communication,False,1.0,0.9976,qualifies
+YOUW,Yousaf Weaving Mills Limited,0831,Textile weaving,True,1.0,0.9984,qualifies
+ZAHID,Zahidjee Textile Mills Limited,0829,Textile composite,False,1.0,0.6634,traded on too few days
+ZAL,Zarea Limited,0828,Technology and communication,False,0.0,0.0,no prices on Yahoo Finance
+ZELP,Zeal Pak Cement Factory Limited,0804,Cement,False,0.0,0.0,no prices on Yahoo Finance
+ZIL,ZIL Limited,0810,Food and personal care,False,0.9992,0.6879,traded on too few days
+ZTL,Zephyr Textiles Limited,0831,Textile weaving,False,0.9992,0.6936,traded on too few days
+ZUMA,Zuma Resources Limited,0828,Technology and communication,False,0.0,0.0,no prices on Yahoo Finance
