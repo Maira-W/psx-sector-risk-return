@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSX sector risk and return</title>
+<script src="__PLOTLY__" charset="utf-8"></script>
+<style>
+  :root { --navy:#1F3B57; --teal:#2A9D8F; --orange:#E76F51; --ink:#1F2937; --muted:#5B6575; --line:#D9DEE5; --wash:#F3F5F8; --card:#fff; }
+  @media (prefers-color-scheme: dark) { :root { --ink:#E6EAF0; --muted:#A5B0BF; --line:#2F3A48; --wash:#161C24; --card:#1D2530; --navy:#8FB4DA; } }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:"Segoe UI",system-ui,Arial,sans-serif; color:var(--ink); background:var(--wash); line-height:1.45; }
+  header { background:#1F3B57; color:#fff; padding:18px 5vw 0; }
+  header h1 { margin:0; font-size:1.55rem; }
+  header p { margin:4px 0 12px; color:#C9D6E4; font-size:.95rem; max-width:64rem; }
+  nav { display:flex; gap:4px; flex-wrap:wrap; }
+  nav button { border:0; background:transparent; color:#C9D6E4; padding:9px 14px; font:inherit; cursor:pointer; border-radius:8px 8px 0 0; }
+  nav button[aria-selected="true"] { background:var(--wash); color:var(--navy); font-weight:600; }
+  main { padding:18px 5vw 40px; max-width:1240px; margin:auto; }
+  section[hidden] { display:none; }
+  .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-bottom:16px; }
+  .kpi { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; }
+  .kpi b { display:block; font-size:1.55rem; color:var(--navy); }
+  .kpi span { color:var(--muted); font-size:.85rem; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-bottom:16px; }
+  .card h2 { margin:0 0 4px; font-size:1.1rem; } .card p.sub { margin:0 0 8px; color:var(--muted); font-size:.9rem; }
+  .grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr)); gap:16px; }
+  .grid2 > .card { min-width:0; }
+  table { width:100%; border-collapse:collapse; font-size:.88rem; }
+  th, td { padding:6px 8px; border-bottom:1px solid var(--line); text-align:right; } th:first-child, td:first-child, th.l, td.l { text-align:left; }
+  th { color:var(--muted); font-weight:600; cursor:pointer; white-space:nowrap; }
+  tr.pick { cursor:pointer; } tr.pick:hover td { background:var(--wash); } tr.sel td { background:var(--wash); font-weight:600; }
+  tr.dim td { color:var(--muted); }
+  .pill { display:inline-block; padding:1px 8px; border-radius:99px; font-size:.75rem; color:#fff; background:#8A94A3; }
+  .pill.good { background:var(--teal); } .pill.bad { background:var(--orange); } .pill.k { background:var(--navy); }
+  select, button.act { font:inherit; padding:6px 10px; border:1px solid var(--line); border-radius:8px; background:var(--card); color:var(--ink); cursor:pointer; }
+  .note { color:var(--muted); font-size:.85rem; }
+  .callout { border-left:4px solid var(--teal); background:var(--card); padding:10px 14px; border-radius:0 8px 8px 0; margin-bottom:16px; }
+  .checks { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:4px 12px; margin:8px 0 6px; font-size:.88rem; }
+  .checks label { display:flex; gap:6px; align-items:center; cursor:pointer; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:6px 0; }
+  footer { color:var(--muted); font-size:.82rem; padding:0 5vw 30px; max-width:1240px; margin:auto; }
+  a { color:var(--navy); }
+</style>
+</head>
+<body>
+<header>
+  <h1>PSX sector risk and return</h1>
+  <p>Which sectors of the Pakistan Stock Exchange paid best for the risk they carried, over the five years to October 2026. Equal-weighted sector indexes built from every company that trades regularly; dividends included.</p>
+  <nav role="tablist" id="tabs"></nav>
+</header>
+<main>
+  <section id="answer"></section>
+  <section id="table" hidden></section>
+  <section id="ups" hidden></section>
+  <section id="sure" hidden></section>
+  <section id="method" hidden></section>
+</main>
+<footer>Companies and sectors: Pakistan Stock Exchange data portal. Prices and dividends: Yahoo Finance. Safe rate: State Bank of Pakistan policy rate. Past performance does not predict future returns; this is analysis, not investment advice.
+  Code, memo and method: <a href="https://github.com/Maira-W/psx-sector-risk-return">github.com/Maira-W/psx-sector-risk-return</a>. MIT licence.</footer>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+(function () {
+  "use strict";
+  const D = JSON.parse(document.getElementById("data").textContent);
+  const S = D.stats;
+  const $ = id => document.getElementById(id);
+  const MK = D.marketName, CASH = D.cashName;
+  const short = n => D.shortNames[n] || n;
+  const rows = D.sectors;
+  const market = rows.find(r => r.sector === MK);
+  const ranked = rows.filter(r => r.ranked).sort((a, b) => b.sharpe - a.sharpe);
+  const small = rows.filter(r => !r.ranked && r.sector !== MK);
+  const pc = (x, d = 1) => (x * 100).toFixed(d) + "%";
+  const sg = (x, d = 1) => (x >= 0 ? "+" : "") + (x * 100).toFixed(d) + "%";
+  const f2 = x => x.toFixed(2);
+  const list = a => a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1];
+  const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const ink = dark ? "#E6EAF0" : "#1F2937", grid = dark ? "#2F3A48" : "#E6EAF0";
+  const primary = dark ? "#8FB4DA" : "#1F3B57", marketLine = dark ? "#F1F4F8" : "#333333";      // readable on both themes
+  const PALETTE = [primary, "#2A9D8F", "#E76F51", "#E9C46A", "#7B4FA3", "#4C9F70", "#C84B6B", "#3F7CAC", "#B07D2B", "#6C757D"];
+  const layout = extra => Object.assign({ margin: { t: 10, r: 14, b: 50, l: 60 }, paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)",
+    font: { color: ink, size: 12 }, xaxis: { gridcolor: grid }, yaxis: { gridcolor: grid } }, extra || {});
+  const cfg = { displayModeBar: false, responsive: true };
+  const monthYear = iso => { const d = new Date(iso + "T00:00:00"); return d.toLocaleString("en-GB", { month: "short", year: "numeric" }); };
+  const winEnd = monthYear(S.window.end_date), winStart = monthYear(S.window.base_date);
+
+  const tabs = [["answer", "The answer"], ["table", "Sector scorecard"], ["ups", "Ups and downs"], ["sure", "How sure are we?"], ["method", "Method and limits"]];
+  const rendered = {}, renderers = {};
+  tabs.forEach(([id, label]) => {
+    const b = document.createElement("button"); b.textContent = label; b.setAttribute("role", "tab"); b.id = "t-" + id;
+    b.addEventListener("click", () => show(id)); $("tabs").appendChild(b);
+  });
+  function show(id, quiet) {
+    tabs.forEach(([t]) => { $(t).hidden = t !== id; $("t-" + t).setAttribute("aria-selected", t === id); });
+    if (!rendered[id]) { renderers[id](); rendered[id] = true; }
+    if (!quiet) history.replaceState(null, "", "#" + id);
+    window.dispatchEvent(new Event("resize"));
+  }
+
+  // ---------------------------------------------------------------- the answer
+  renderers.answer = function () {
+    const top = ranked[0], t3 = ranked.slice(0, 3);
+    const lead = S.max_p_top1 >= 0.6
+      ? `${short(top.sector)} is a fairly clear leader: it comes first in ${pc(top.p_top1, 0)} of the resamples.`
+      : `But five years is a short record. ${short(top.sector)} comes first in only ${pc(top.p_top1, 0)} of the resamples, and ${S.n_with_chance_of_first} sectors have at least a 10% chance of finishing first. Treat the top group as a shortlist, not a winner.`;
+    $("answer").innerHTML = `
+      <div class="kpis">
+        <div class="kpi"><b>${S.n_companies}</b><span>companies that trade regularly, in ${S.n_sectors_ranked} ranked sectors</span></div>
+        <div class="kpi"><b>${pc(market.cagr)} a year</b><span>whole market, with a worst fall of ${pc(market.max_drawdown, 0)}</span></div>
+        <div class="kpi"><b>${pc(S.safe.cagr)} a year</b><span>cash earning the State Bank's policy rate</span></div>
+        <div class="kpi"><b>${short(top.sector)}</b><span>best return per unit of risk (Sharpe ${f2(top.sharpe)}; whole market ${f2(market.sharpe)})</span></div>
+      </div>
+      <div class="callout"><b>In short.</b> From ${winStart} to ${winEnd}, the sectors with the best return for the risk were
+        <b>${list(t3.map(r => short(r.sector) + " (" + f2(r.sharpe) + ")"))}</b>, against ${f2(market.sharpe)} for the whole market. ${S.n_clearly_above_market} sector${S.n_clearly_above_market === 1 ? " is" : "s are"} very likely better than the whole market and ${S.n_clearly_below_market} very likely worse. ${lead}</div>
+      <div class="grid2">
+        <div class="card"><h2>Risk and return</h2><p class="sub">Each dot is a sector (bigger dot, more companies). Higher is better; further right is riskier.</p><div id="a-scatter" style="height:500px"></div></div>
+        <div class="card"><h2>Return per unit of risk</h2><p class="sub">Sharpe ratio with a 95% range from resampling the days. Dark dot: very likely better than the whole market.</p><div id="a-sharpe" style="height:${Math.max(460, ranked.length * 24 + 90)}px"></div></div>
+      </div>`;
+    const pts = ranked.concat(small);
+    Plotly.newPlot("a-scatter", [
+      { type: "scatter", mode: "markers+text", x: pts.map(r => r.volatility * 100), y: pts.map(r => r.cagr * 100), text: pts.map(r => short(r.sector)), textposition: "top right",
+        textfont: { size: 10, color: ink }, marker: { size: pts.map(r => 8 + 1.2 * Math.sqrt(r.n_companies) * 2), color: pts.map(r => r.ranked ? r.sharpe : null), colorscale: "Viridis",
+        showscale: true, colorbar: { title: "Sharpe", thickness: 10, len: 0.6 }, line: { color: "#fff", width: 1 }, opacity: 0.9 },
+        customdata: pts.map(r => [r.n_companies, r.sharpe, r.max_drawdown]),
+        hovertemplate: "<b>%{text}</b><br>Return %{y:.1f}% a year<br>Volatility %{x:.1f}%<br>Sharpe %{customdata[1]:.2f}<br>Worst fall %{customdata[2]:.0%}<br>%{customdata[0]} companies<extra></extra>" },
+      { type: "scatter", mode: "markers+text", x: [market.volatility * 100], y: [market.cagr * 100], text: ["Whole market"], textposition: "bottom right",
+        textfont: { color: "#E76F51", size: 11 }, marker: { symbol: "diamond", size: 14, color: "#E76F51", line: { color: "#fff", width: 1 } }, hoverinfo: "skip" }],
+      layout({ showlegend: false, shapes: [{ type: "line", xref: "paper", x0: 0, x1: 1, y0: S.safe.cagr * 100, y1: S.safe.cagr * 100, line: { color: "#2A9D8F", width: 1.4, dash: "dot" } }],
+        annotations: [{ xref: "paper", x: 0.01, y: S.safe.cagr * 100, yshift: 10, text: "cash at the policy rate", showarrow: false, font: { size: 10, color: "#2A9D8F" } }],
+        xaxis: { title: "Risk: annual volatility (%)", gridcolor: grid, rangemode: "tozero" }, yaxis: { title: "Return: compound annual growth (%)", gridcolor: grid }, margin: { t: 10, r: 10, b: 50, l: 56 } }), cfg);
+    const s = ranked.slice().reverse();
+    Plotly.newPlot("a-sharpe", [
+      { type: "scatter", mode: "markers", y: s.map(r => short(r.sector)), x: s.map(r => r.sharpe),
+        error_x: { type: "data", symmetric: false, array: s.map(r => r.sharpe_hi - r.sharpe), arrayminus: s.map(r => r.sharpe - r.sharpe_lo), color: "#9AA5B1", thickness: 2 },
+        marker: { size: 9, color: s.map(r => r.p_beats_market >= 0.95 ? primary : "#9AA5B1") },
+        hovertemplate: "<b>%{y}</b><br>Sharpe %{x:.2f}<extra></extra>" }],
+      layout({ showlegend: false, xaxis: { title: "Sharpe ratio", gridcolor: grid, zeroline: true, zerolinecolor: ink },
+        shapes: [{ type: "line", yref: "paper", y0: 0, y1: 1, x0: market.sharpe, x1: market.sharpe, line: { color: "#E76F51", width: 1.5, dash: "dash" } }],
+        annotations: [{ yref: "paper", x: market.sharpe, y: 1.0, text: "whole market", showarrow: false, xanchor: "left", font: { size: 10, color: "#E76F51" } }],
+        margin: { t: 14, r: 14, b: 46, l: 150 } }), cfg);
+  };
+
+  // ---------------------------------------------------------------- scorecard
+  let chosen = null;
+  renderers.table = function () {
+    $("table").innerHTML = `
+      <div class="card"><h2>Every sector</h2>
+        <p class="sub">Click a column to sort and a row to see its companies. A sector needs at least ${S.min_sector_stocks} qualifying companies to be ranked; smaller ones are listed in grey. 'Chance of top 3' comes from resampling the days 2,000 times.</p>
+        <div style="overflow-x:auto"><table id="stable"></table></div></div>
+      <div id="detail"></div>`;
+    const cols = [
+      ["sector", "Sector", r => short(r.sector), true], ["n_companies", "Companies", r => r.n_companies], ["cagr", "Return a year", r => sg(r.cagr)],
+      ["volatility", "Volatility", r => pc(r.volatility)], ["max_drawdown", "Worst fall", r => pc(r.max_drawdown, 0)], ["sharpe", "Sharpe", r => f2(r.sharpe)],
+      ["sharpe_lo", "95% range", r => r.sharpe_lo == null ? "" : f2(r.sharpe_lo) + " to " + f2(r.sharpe_hi)],
+      ["p_top3", "Chance of top 3", r => r.p_top3 == null ? "" : pc(r.p_top3, 0)],
+      ["p_beats_market", "Better than market?", r => r.p_beats_market == null ? "" : r.p_beats_market >= 0.95 ? '<span class="pill good">very likely</span>' : r.p_beats_market <= 0.05 ? '<span class="pill bad">very unlikely</span>' : '<span class="pill">unclear</span>', true],
+      ["dividend_points", "From dividends", r => sg(r.dividend_points)]];
+    let key = "sharpe", asc = false;
+    function draw() {
+      const part = rows => rows.slice().sort((a, b) => (typeof a[key] === "string" ? a[key].localeCompare(b[key]) : (a[key] ?? -1e9) - (b[key] ?? -1e9)) * (asc ? 1 : -1));
+      const body = part(ranked).concat(part(small)).concat([market]);
+      $("stable").innerHTML = "<tr>" + cols.map(c => `<th class="${c[3] ? "l" : ""}" data-k="${c[0]}">${c[1]}${c[0] === key ? (asc ? " ▲" : " ▼") : ""}</th>`).join("") + "</tr>" +
+        body.map(r => `<tr class="pick ${r.ranked ? "" : "dim"} ${chosen === r.sector ? "sel" : ""}" data-s="${r.sector}">` + cols.map(c => `<td class="${c[3] ? "l" : ""}">${c[2](r)}</td>`).join("") + "</tr>").join("");
+      $("stable").querySelectorAll("th").forEach(th => th.addEventListener("click", () => { const k = th.dataset.k; asc = k === key ? !asc : false; key = k; draw(); }));
+      $("stable").querySelectorAll("tr.pick").forEach(tr => tr.addEventListener("click", () => { chosen = tr.dataset.s; draw(); detail(); }));
+    }
+    function detail() {
+      if (!chosen) { $("detail").innerHTML = ""; return; }
+      const r = rows.find(x => x.sector === chosen);
+      const mine = D.stocks.filter(s => s.sector === chosen).sort((a, b) => b.sharpe - a.sharpe);
+      const years = [1, 2, 3, 4, 5].map(k => r["year" + k]);
+      $("detail").innerHTML = `
+        <div class="card"><h2>${r.sector}</h2>
+          <p class="sub">${r.n_companies} companies${r.n_in_kse100 ? ", " + r.n_in_kse100 + " of them in the KSE-100" : ""}. Growth of 100 rupees invested at the start, dividends reinvested.
+            Worst fall ${pc(r.max_drawdown, 0)} (${monthYear(r.peak_date)} to ${monthYear(r.trough_date)}${r.recovery_date ? ", recovered " + monthYear(r.recovery_date) : ", not yet recovered"}).
+            Return by year: ${years.map(v => sg(v, 0)).join(", ")}. In US dollars: ${sg(r.usd_cagr)} a year (${sg(r.cagr)} in rupees).</p>
+          <div id="d-growth" style="height:340px"></div></div>
+        <div class="card"><h2>Companies in ${short(r.sector)}</h2><p class="sub">Each company's own five-year record; a company that did well alone does not make the sector index do well.</p>
+          <div style="overflow-x:auto"><table><tr><th class="l">Symbol</th><th class="l">Company</th><th>Return a year</th><th>Volatility</th><th>Worst fall</th><th>Sharpe</th><th>Traded on</th><th class="l">KSE-100</th></tr>
+          ${mine.map(s => `<tr><td class="l">${s.symbol}</td><td class="l">${s.company}</td><td>${sg(s.cagr)}</td><td>${pc(s.volatility)}</td><td>${pc(s.max_drawdown, 0)}</td><td>${f2(s.sharpe)}</td><td>${pc(s.traded_share, 0)} of days</td><td class="l">${s.in_kse100 ? '<span class="pill k">yes</span>' : ""}</td></tr>`).join("")}</table></div></div>`;
+      const line = (name, label, colour, dash, width) => ({ x: D.weeks, y: D.levels[name], type: "scatter", mode: "lines", name: label, line: { color: colour, width, dash },
+        hovertemplate: label + ": %{y:.0f}<extra></extra>" });
+      Plotly.newPlot("d-growth", [line(chosen, short(chosen), primary, "solid", 2.6), line(MK, "Whole market", "#E76F51", "solid", 1.8), line(CASH, "Cash at the policy rate", "#9AA5B1", "dash", 1.5)],
+        layout({ yaxis: { title: "Growth of 100 (log scale)", type: "log", gridcolor: grid }, legend: { orientation: "h", y: -0.18 }, margin: { t: 6, r: 14, b: 50, l: 60 } }), cfg);
+      $("detail").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+    draw();
+  };
+
+  // ---------------------------------------------------------------- ups and downs
+  renderers.ups = function () {
+    $("ups").innerHTML = `
+      <div class="card"><h2>Compare sectors</h2><p class="sub">Tick the sectors to compare. The whole market and cash are always shown.</p>
+        <div class="row"><button class="act" id="u-top">Top 3 by Sharpe</button><button class="act" id="u-bottom">Bottom 3</button><button class="act" id="u-clear">Clear</button>
+          <label class="note"><input type="checkbox" id="u-log" checked> log scale</label></div>
+        <div class="checks" id="u-checks"></div></div>
+      <div class="grid2">
+        <div class="card"><h2>Growth of 100 rupees</h2><p class="sub">Weekly, dividends reinvested, from ${winStart}.</p><div id="u-growth" style="height:380px"></div></div>
+        <div class="card"><h2>Falls from the last peak</h2><p class="sub">How far below its previous high each index was, by week.</p><div id="u-dd" style="height:380px"></div></div>
+      </div>
+      <div class="grid2">
+        <div class="card"><h2>Year by year</h2><p class="sub">Return in each twelve-month period of the window, %.</p><div id="u-years" style="height:${Math.max(420, ranked.length * 22 + 90)}px"></div></div>
+        <div class="card"><h2>Who moves together</h2><p class="sub">Correlation of daily returns. Darker means the two sectors rise and fall together, so owning both diversifies less.</p><div id="u-corr" style="height:${Math.max(420, ranked.length * 22 + 130)}px"></div></div>
+      </div>`;
+    let picked = new Set(ranked.slice(0, 3).map(r => r.sector));
+    $("u-checks").innerHTML = ranked.map((r, i) => `<label><input type="checkbox" value="${r.sector}"> <span style="color:${PALETTE[i % PALETTE.length]}">●</span> ${short(r.sector)}</label>`).join("");
+    const boxes = [...$("u-checks").querySelectorAll("input")];
+    const sync = () => boxes.forEach(b => { b.checked = picked.has(b.value); });
+    function lines() {
+      const names = ranked.map(r => r.sector).filter(n => picked.has(n));
+      const colour = n => PALETTE[ranked.findIndex(r => r.sector === n) % PALETTE.length];
+      const tr = (src, n, label, c, dash, w) => ({ x: D.weeks, y: src[n], type: "scatter", mode: "lines", name: label, line: { color: c, width: w, dash }, hovertemplate: label + ": %{y:.0f}<extra></extra>" });
+      const growth = names.map(n => tr(D.levels, n, short(n), colour(n), "solid", 2.2)).concat([tr(D.levels, MK, "Whole market", marketLine, "solid", 2.4), tr(D.levels, CASH, "Cash", "#9AA5B1", "dash", 1.5)]);
+      const dd = names.map(n => tr(D.drawdowns, n, short(n), colour(n), "solid", 1.8)).concat([tr(D.drawdowns, MK, "Whole market", marketLine, "solid", 2.2)]);
+      Plotly.react("u-growth", growth, layout({ yaxis: { title: "Growth of 100", type: $("u-log").checked ? "log" : "linear", gridcolor: grid }, legend: { orientation: "h", y: -0.2 }, margin: { t: 6, r: 12, b: 50, l: 56 } }), cfg);
+      Plotly.react("u-dd", dd.map(t => Object.assign(t, { hovertemplate: t.name + ": %{y:.0f}%<extra></extra>" })), layout({ yaxis: { title: "Below previous peak (%)", gridcolor: grid }, showlegend: false, margin: { t: 6, r: 12, b: 50, l: 56 } }), cfg);
+    }
+    boxes.forEach(b => b.addEventListener("change", () => { b.checked ? picked.add(b.value) : picked.delete(b.value); lines(); }));
+    $("u-top").addEventListener("click", () => { picked = new Set(ranked.slice(0, 3).map(r => r.sector)); sync(); lines(); });
+    $("u-bottom").addEventListener("click", () => { picked = new Set(ranked.slice(-3).map(r => r.sector)); sync(); lines(); });
+    $("u-clear").addEventListener("click", () => { picked = new Set(); sync(); lines(); });
+    $("u-log").addEventListener("change", lines);
+    sync(); lines();
+
+    const order = ranked.slice().reverse();
+    Plotly.newPlot("u-years", [{ type: "heatmap", z: order.map(r => [1, 2, 3, 4, 5].map(k => r["year" + k] * 100)), x: [1, 2, 3, 4, 5].map(k => "Year " + k + "\nto " + monthYear(S.window.year_edges[k])),
+      y: order.map(r => short(r.sector)), colorscale: "RdYlGn", zmid: 0, zmin: -50, zmax: 150, showscale: false, texttemplate: "%{z:+.0f}", textfont: { size: 11, color: "#1F2937" },
+      hovertemplate: "%{y}<br>%{x}: %{z:+.1f}%<extra></extra>" }],
+      layout({ xaxis: { side: "top", gridcolor: grid }, yaxis: { gridcolor: grid }, margin: { t: 40, r: 10, b: 10, l: 150 } }), cfg);
+    const names = D.corr.names.map(short);
+    Plotly.newPlot("u-corr", [{ type: "heatmap", z: D.corr.matrix, x: names, y: names, colorscale: "Blues", zmin: 0, zmax: 1, colorbar: { thickness: 8, len: 0.5 },
+      hovertemplate: "%{y} and %{x}: %{z:.2f}<extra></extra>" }],
+      layout({ xaxis: { tickangle: -50, automargin: true, gridcolor: grid }, yaxis: { autorange: "reversed", automargin: true, gridcolor: grid }, margin: { t: 10, r: 10, b: 110, l: 130 } }), cfg);
+  };
+
+  // ---------------------------------------------------------------- how sure
+  renderers.sure = function () {
+    const rm = S.robustness.method, rp = S.robustness.period;
+    $("sure").innerHTML = `
+      <div class="callout"><b>How to read this.</b> Five years is one history. If the same days had come in a different order, the ranking could have been different. To see how much, the days were resampled 2,000 times (in blocks of about 10, to keep short streaks together) and the sectors re-ranked each time.
+        Then the whole analysis was repeated in ${rm.n} other ways (who is included, how the index is built, how returns are measured) and for ${rp.n} other sets of dates. For the method choices the ranking agrees with the main one at a median rank correlation of ${f2(rm.median_rank_correlation)} (lowest ${f2(rm.min_rank_correlation)}), and the top sector stays in the top three in ${rm.n_top_sector_stays_top3} of the ${rm.n_tested} in which it is included.
+        For the dates the median is ${f2(rp.median_rank_correlation)} and the lowest ${f2(rp.min_rank_correlation)}${rp.min_rank_correlation < 0.8 ? ": the order depends on when each sector was strong" : ""}.</div>
+      <div class="grid2">
+        <div class="card"><h2>Where each sector is likely to finish</h2><p class="sub">95% range of positions (1 = best Sharpe ratio) across the resamples. Label: how often the sector came first.</p><div id="s-rank" style="height:${Math.max(460, ranked.length * 24 + 90)}px"></div></div>
+        <div class="card"><h2>What happens to the ranking under other choices</h2><p class="sub">Rank by Sharpe ratio (1 = best). Blank where a sector has too few companies under that choice.</p><div id="s-robust" style="height:${Math.max(460, ranked.length * 24 + 190)}px"></div></div>
+      </div>
+      <div class="card"><h2>The choices, one by one</h2>
+        <div style="overflow-x:auto"><table><tr><th class="l">Choice</th><th class="l">Kind</th><th>Sectors compared</th><th>Rank correlation with the main result</th><th>Top-3 sectors in common</th><th class="l">Main top sector</th></tr>
+        ${D.robustSummary.map(r => `<tr><td class="l">${r.choice}</td><td class="l">${r.kind}</td><td>${r.sectors_compared}</td><td>${r.rank_correlation == null ? "" : f2(r.rank_correlation)}</td><td>${r.top3_in_common} of 3</td>
+          <td class="l">${!r.top_tested ? '<span class="pill">not in this analysis</span>' : r.same_top_sector ? '<span class="pill good">still first</span>' : r.main_top_sector_still_top3 ? '<span class="pill">still top 3</span>' : '<span class="pill bad">falls out of the top 3</span>'}</td></tr>`).join("")}</table></div>
+        <p class="note">Rank correlation: 1 means the same order, 0 means no relation, -1 the reverse. The first-half and second-half rows show whether the leaders of one period led the next.</p></div>`;
+    const s = ranked.slice().sort((a, b) => b.rank_median - a.rank_median);
+    Plotly.newPlot("s-rank", [{ type: "scatter", mode: "markers+text", y: s.map(r => short(r.sector)), x: s.map(r => r.rank_median),
+      error_x: { type: "data", symmetric: false, array: s.map(r => r.rank_hi - r.rank_median), arrayminus: s.map(r => r.rank_median - r.rank_lo), color: "#9AA5B1", thickness: 3 },
+      marker: { size: 9, color: primary }, text: s.map(r => pc(r.p_top1, 0) + " first"), textposition: "middle right", textfont: { size: 9, color: ink },
+      hovertemplate: "<b>%{y}</b><br>median position %{x}<extra></extra>" }],
+      layout({ showlegend: false, xaxis: { title: "Position (1 = best)", range: [0, ranked.length + 4], gridcolor: grid }, margin: { t: 10, r: 14, b: 46, l: 150 } }), cfg);
+    const order = ranked.map(r => r.sector), choices = D.robust.choices;
+    const z = order.map(n => D.robust.ranks[D.rankedOrder.indexOf(n)]);
+    Plotly.newPlot("s-robust", [{ type: "heatmap", z, x: choices.map(c => c.replace(" of the window", "").replace("Without each sector's best company", "Without best company")), y: order.map(short),
+      colorscale: "YlGnBu", reversescale: true, zmin: 1, zmax: ranked.length, showscale: false, texttemplate: "%{z}", textfont: { size: 10 }, hovertemplate: "%{y}<br>%{x}: rank %{z}<extra></extra>" }],
+      layout({ xaxis: { side: "top", tickangle: -40, automargin: true, gridcolor: grid }, yaxis: { autorange: "reversed", gridcolor: grid }, margin: { t: 120, r: 10, b: 10, l: 150 } }), cfg);
+  };
+
+  // ---------------------------------------------------------------- method
+  renderers.method = function () {
+    const q = S.quality;
+    $("method").innerHTML = `
+      <div class="grid2">
+        <div class="card"><h2>How this was made</h2><ol>
+          <li><b>Who is in it.</b> Every company in the KSE All Share Index, with its sector, from the Pakistan Stock Exchange data portal. Investment funds, ETFs and property trusts are left out.</li>
+          <li><b>Prices.</b> Daily prices and dividends from Yahoo Finance. Holidays, which Yahoo lists as days with no trading, are dropped (${S.window.market_days.toLocaleString("en-US")} market days remain). Wrong prices and one-day jumps beyond the exchange's daily limit (unadjusted bonus issues, splits and data errors) are corrected by fixed rules.</li>
+          <li><b>Who qualifies.</b> A company needs a price on nearly every market day of the five years and must have traded on at least 90% of them. This removes stocks whose price barely moves because few trades happen, which can make them look safer than they are.</li>
+          <li><b>Sector indexes.</b> Equal amounts of each qualifying company in the sector, put back to equal at the start of every month, with dividends included. Sectors with fewer than ${S.min_sector_stocks} qualifying companies are listed but not ranked. "Miscellaneous" is a catch-all and is not ranked.</li>
+          <li><b>Measures.</b> Compound annual return; volatility (annualised standard deviation of daily returns); worst fall from a peak; Sharpe ratio, the average daily return above cash divided by its standard deviation, scaled to a year. Cash earns the State Bank's policy rate (${S.safe.policy_rate_start}% at the start, ${S.safe.policy_rate_peak}% at the peak, ${S.safe.policy_rate_end}% at the end).</li>
+          <li><b>How sure.</b> A block bootstrap of the days (2,000 resamples) gives a 95% range for each Sharpe ratio and each sector's position, then the analysis is repeated under ${S.robustness.n_choices} other choices.</li></ol></div>
+        <div class="card"><h2>From every listing to the companies analysed</h2><div id="m-funnel" style="height:320px"></div>
+          <h2 style="margin-top:14px">The safe rate: SBP policy rate</h2><p class="sub">Cash is assumed to earn this rate, accrued daily.</p><div id="m-policy" style="height:230px"></div></div>
+      </div>
+      <div class="card"><h2>Limits</h2><ul>
+        <li><b>Five years is short.</b> The window spans the policy rate rising to ${S.safe.policy_rate_peak}% and coming back down, and a sector's rank depends on when it was strong. See the year-by-year chart and the first-half and second-half rows.</li>
+        <li><b>Only today's listed companies.</b> Companies delisted during the window are missing, which flatters returns. This is probably smaller than with the KSE-100, whose members are chosen for their size and so favour companies that have grown, but it is not zero.</li>
+        <li><b>Equal weights.</b> A sector index treats a small company like a large one. An index weighted by company size would differ, and most of the money in the market sits in the largest companies.</li>
+        <li><b>Yahoo Finance is not an official source.</b> Dividends it does not record are missing from the returns, so dividend contributions are, if anything, understated. ${q.corrections.events} wrong prices and unadjusted corporate actions, in ${q.corrections.companies} companies, were corrected by fixed rules and are listed in data/processed/price_corrections.csv.</li>
+        <li><b>Rupee returns.</b> Rupees per dollar went from ${q.fx.base.toFixed(0)} to ${q.fx.end.toFixed(0)}, so in dollars the whole market returned ${pc(market.usd_cagr)} a year against ${pc(market.cagr)} in rupees.</li>
+        <li><b>Not advice.</b> This describes the past. It says nothing certain about the future and is not a recommendation to buy or sell anything.</li></ul></div>`;
+    const f = D.funnel.slice().reverse();
+    Plotly.newPlot("m-funnel", [{ type: "bar", orientation: "h", y: f.map(r => r.step), x: f.map(r => r.companies), marker: { color: primary }, text: f.map(r => r.companies), textposition: "outside", cliponaxis: false,
+      hovertemplate: "%{y}: %{x}<extra></extra>" }], layout({ xaxis: { gridcolor: grid, range: [0, Math.max(...f.map(r => r.companies)) * 1.15] }, yaxis: { automargin: true, gridcolor: grid, tickfont: { size: 10 } }, margin: { t: 6, r: 30, b: 30, l: 260 } }), cfg);
+    const p = D.policy, end = S.window.end_date;
+    Plotly.newPlot("m-policy", [{ type: "scatter", mode: "lines", line: { shape: "hv", color: "#2A9D8F", width: 2.4 }, x: p.map(r => r.effective_date).concat([end]), y: p.map(r => r.policy_rate_pct).concat([p[p.length - 1].policy_rate_pct]),
+      hovertemplate: "%{x}: %{y}%<extra></extra>" }], layout({ yaxis: { title: "Policy rate (%)", gridcolor: grid }, margin: { t: 6, r: 12, b: 40, l: 56 } }), cfg);
+  };
+
+  const start = location.hash.replace("#", "");
+  show(tabs.some(t => t[0] === start) ? start : "answer", true);
+})();
+</script>
+</body>
+</html>

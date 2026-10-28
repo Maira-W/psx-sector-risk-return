@@ -1,0 +1,35 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install
+        run: pip install -r requirements-dev.txt
+
+      - name: Lint
+        run: ruff check .
+
+      # The raw prices are not stored in the repository, so this checks any raw file that is present
+      # and otherwise just reports that none are.
+      - name: Raw data matches its checksums
+        run: python -m psxsec verify
+
+      # The tests use made-up markets with known answers, then check that the committed results, documents,
+      # dashboard and notebook are consistent with each other and not out of date.
+      - name: Tests
+        run: pytest -q
