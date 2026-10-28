@@ -108,7 +108,7 @@ These are ways to use the numbers, not recommendations to buy or sell anything.
 - **Delisted companies.** Including companies that left the exchange would probably lower returns.
 - **Value weights.** An index weighted by company size would be driven by the largest companies in each sector.
 - **Better data.** The exchange's own prices, with complete dividend records, would replace Yahoo Finance.
-- **Dollar returns.** All returns here are in rupees. For a foreign investor the picture differs: rupees per dollar went from 174 to 277, so in dollars the whole market returned 13.0% a year against 23.9% in rupees.
+- **Dollar returns.** All returns here are in rupees. For a foreign investor the picture differs: rupees per dollar went from 174.5 to 276.8, so in dollars the whole market returned 13.0% a year against 23.9% in rupees.
 
 ## Not investment advice
 

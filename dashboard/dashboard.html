@@ -284,7 +284,7 @@
         <li><b>Only today's listed companies.</b> Companies delisted during the window are missing, which flatters returns. This is probably smaller than with the KSE-100, whose members are chosen for their size and so favour companies that have grown, but it is not zero.</li>
         <li><b>Equal weights.</b> A sector index treats a small company like a large one. An index weighted by company size would differ, and most of the money in the market sits in the largest companies.</li>
         <li><b>Yahoo Finance is not an official source.</b> Dividends it does not record are missing from the returns, so dividend contributions are, if anything, understated. ${q.corrections.events} wrong prices and unadjusted corporate actions, in ${q.corrections.companies} companies, were corrected by fixed rules and are listed in data/processed/price_corrections.csv.</li>
-        <li><b>Rupee returns.</b> Rupees per dollar went from ${q.fx.base.toFixed(0)} to ${q.fx.end.toFixed(0)}, so in dollars the whole market returned ${pc(market.usd_cagr)} a year against ${pc(market.cagr)} in rupees.</li>
+        <li><b>Rupee returns.</b> Rupees per dollar went from ${q.fx.base.toFixed(1)} to ${q.fx.end.toFixed(1)}, so in dollars the whole market returned ${pc(market.usd_cagr)} a year against ${pc(market.cagr)} in rupees.</li>
         <li><b>Not advice.</b> This describes the past. It says nothing certain about the future and is not a recommendation to buy or sell anything.</li></ul></div>`;
     const f = D.funnel.slice().reverse();
     Plotly.newPlot("m-funnel", [{ type: "bar", orientation: "h", y: f.map(r => r.step), x: f.map(r => r.companies), marker: { color: primary }, text: f.map(r => r.companies), textposition: "outside", cliponaxis: false,

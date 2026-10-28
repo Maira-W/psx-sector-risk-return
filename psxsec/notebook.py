@@ -152,7 +152,7 @@ This notebook uses only the results committed in `data/processed`, so it runs wi
               "- Only companies listed today are included; companies that were delisted are missing, which flatters returns.\n"
               "- Equal weights give small companies the same say as large ones.\n"
               "- Yahoo Finance is not an official source; dividends it does not record are missing.\n"
-              f"- Returns are in rupees. Rupees per dollar went from {fx['base']:.0f} to {fx['end']:.0f}; in dollars the whole market returned "
+              f"- Returns are in rupees. Rupees per dollar went from {fx['base']:.1f} to {fx['end']:.1f}; in dollars the whole market returned "
               f"{_pc(market['usd_cagr'])} a year against {_pc(market['cagr'])} in rupees.\n"
               "- This describes the past and is not a recommendation to buy or sell anything.")
     return [
@@ -180,6 +180,21 @@ This notebook uses only the results committed in `data/processed`, so it runs wi
     ]
 
 
+def _merge_streams(notebook) -> None:
+    """Join consecutive printed outputs of a cell into one. The kernel may deliver a line and its newline separately, which would
+    make the saved file differ from run to run for no reason."""
+    for cell in notebook.cells:
+        if cell.cell_type != "code":
+            continue
+        merged = []
+        for output in cell.outputs:
+            if merged and output.output_type == "stream" and merged[-1].output_type == "stream" and merged[-1].name == output.name:
+                merged[-1].text += output.text
+            else:
+                merged.append(output)
+        cell.outputs = merged
+
+
 def build(execute: bool = True) -> None:
     import nbformat
     from nbformat.v4 import new_code_cell, new_markdown_cell, new_notebook
@@ -196,7 +211,9 @@ def build(execute: bool = True) -> None:
         config.NOTEBOOKS.mkdir(parents=True, exist_ok=True)
         NotebookClient(notebook, timeout=600, kernel_name="python3", record_timing=False,
                        resources={"metadata": {"path": str(config.NOTEBOOKS)}}).execute()
-    nbformat.write(notebook, PATH)
+        _merge_streams(notebook)
+    text = nbformat.writes(notebook)
+    PATH.write_text(text if text.endswith("\n") else text + "\n", encoding="utf-8", newline="\n")      # Unix line endings on every machine
 
 
 def run() -> None:

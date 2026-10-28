@@ -116,7 +116,7 @@ def context() -> dict:
     large_bullet = (f"- **Without companies with price corrections** drops the {fixes['companies']} qualifying companies that have at least one correction "
                     "(`data/processed/price_corrections.csv`), in case a correction missed or mishandled an event." if fixes["companies"] else "")
     fx = quality["fx"]
-    usd_note = (f"rupees per dollar went from {fx['base']:.0f} to {fx['end']:.0f}, so in dollars the whole market returned {mk['usd_cagr'] * 100:.1f}% a year "
+    usd_note = (f"rupees per dollar went from {fx['base']:.1f} to {fx['end']:.1f}, so in dollars the whole market returned {mk['usd_cagr'] * 100:.1f}% a year "
                 f"against {mk['cagr'] * 100:.1f}% in rupees")
 
     if s["max_p_top1"] >= 0.6:

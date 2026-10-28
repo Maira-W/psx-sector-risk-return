@@ -26,7 +26,7 @@ The raw files are **not stored in this repository.** The prices and the exchange
 ## 2. Prices, volume and dividends: Yahoo Finance
 
 - **What:** daily close, adjusted close, volume, dividends and stock splits for each symbol with the suffix `.KA`, through the `yfinance` package (1.7.0), retrieved 2026-10-28.
-- **Used for:** every return in the analysis (579,383 price rows in all). The exchange rate (rupees per US dollar, Yahoo symbol `PKR=X`, same source and date) is used only to show returns in dollars as well as rupees: it went from 174 to 277 over the window.
+- **Used for:** every return in the analysis (579,383 price rows in all). The exchange rate (rupees per US dollar, Yahoo symbol `PKR=X`, same source and date) is used only to show returns in dollars as well as rupees: it went from 174.5 to 276.8 over the window.
 - **Problems found:**
   - **Missing companies.** Yahoo had no data for 103 of the 538 operating companies asked for (for example AASM, ABSON, AHCL, ALTN, AMSL, ANNT, APOT, ARMG, AVN, AZMT, BAPLR1 and BBFL). They are listed in the manifest and in [`data/processed/stock_status.csv`](../data/processed/stock_status.csv). 5 of them are KSE-100 companies (AHCL, BML, ENGROH, GAL and HUBC), which weakens the KSE-100 cross-check a little.
   - **Holidays.** Yahoo lists PSX holidays as rows with no volume and the previous price. They are dropped (a date counts as a market day only if at least 50 companies traded).

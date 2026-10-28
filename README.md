@@ -89,7 +89,7 @@ The raw prices are **not stored in this repository**; they belong to their sourc
 - **Only companies listed today** are included. Companies delisted during the window are missing, which flatters returns; this is probably smaller than it would be with the KSE-100, whose members favour companies that have grown, but it is not zero.
 - **Equal weights:** a small company counts as much as a large one.
 - **Yahoo Finance is not an official source.** Dividends it does not record are missing, so dividend contributions may be understated.
-- **Rupee returns:** rupees per dollar went from 174 to 277, so in dollars the whole market returned 13.0% a year against 23.9% in rupees.
+- **Rupee returns:** rupees per dollar went from 174.5 to 276.8, so in dollars the whole market returned 13.0% a year against 23.9% in rupees.
 - **Sectors with fewer than 4 qualifying companies are not ranked** (Leather and tanneries, Modarabas, Apparel, Textile weaving, Tobacco and Cable and electrical goods), and "Miscellaneous" is a catch-all, not a sector.
 - **Past performance does not predict future returns.**
 
