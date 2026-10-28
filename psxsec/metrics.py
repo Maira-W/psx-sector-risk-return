@@ -63,6 +63,46 @@ def calmar(cagr: float, mdd: float) -> float:
     return cagr / abs(mdd) if mdd < 0 else float("nan")
 
 
+def sortino(excess, ppy: float):
+    """Like the Sharpe ratio, but only the days that fall short of cash count as risk: mean excess return over the root of the
+    average squared shortfall, scaled to a year."""
+    values = np.asarray(excess, dtype=float)
+    return values.mean() / np.sqrt(np.mean(np.minimum(values, 0.0) ** 2)) * np.sqrt(ppy)
+
+
+def moments(returns) -> tuple[float, float]:
+    """Skewness and (raw) kurtosis of a return series; a normal distribution has skewness 0 and kurtosis 3."""
+    values = np.asarray(returns, dtype=float)
+    centred = values - values.mean()
+    spread = values.std()
+    return float(np.mean(centred ** 3) / spread ** 3), float(np.mean(centred ** 4) / spread ** 4)
+
+
+def tail_risk(returns, level: float = 0.95) -> tuple[float, float]:
+    """Value at risk and expected shortfall: the one-day return that is bettered on `level` of days, and the average return on
+    the worse days beyond it. Both are returns, so a loss is negative."""
+    values = np.asarray(returns, dtype=float)
+    cutoff = np.quantile(values, 1 - level)
+    return float(cutoff), float(values[values <= cutoff].mean())
+
+
+def capture_ratios(returns: pd.Series, benchmark: pd.Series) -> tuple[float, float]:
+    """Average return in the periods when the benchmark rose, over the benchmark's own average in those periods (up capture),
+    and the same for the periods when it fell (down capture). Above 1 in the up periods and below 1 in the down periods is best."""
+    up, down = benchmark > 0, benchmark < 0
+    return float(returns[up].mean() / benchmark[up].mean()), float(returns[down].mean() / benchmark[down].mean())
+
+
+def longest_drawdown_days(level: pd.Series) -> int:
+    """The most market days in a row that a growth-of-100 series spent below an earlier peak."""
+    below = (level < level.cummax()).to_numpy()
+    longest = run = 0
+    for flag in below:
+        run = run + 1 if flag else 0
+        longest = max(longest, run)
+    return longest
+
+
 # ---------------------------------------------------------------------------
 # The safe rate
 # ---------------------------------------------------------------------------

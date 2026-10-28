@@ -71,6 +71,25 @@ MIN_TRADING_COMPANIES = 50
 BOOTSTRAP_DRAWS = 2000
 BOOTSTRAP_BLOCK = 10
 
+# The market model and the macro model use weekly and monthly returns, which are less affected by shares that trade late than daily
+# ones. The numbers of lags are the numbers of weeks or months over which the errors are allowed to be related.
+BOOTSTRAP_BLOCK_WEEKS = 4
+HAC_LAGS_WEEKLY = 4
+HAC_LAGS_MONTHLY = 3
+
+# The out-of-sample test: every month, hold the TOP_SECTORS sectors with the best Sharpe ratio over the last LOOKBACK_MONTHS months.
+# The other look-back windows and counts are tried only to show how much the answer depends on these choices.
+LOOKBACK_MONTHS = 12
+TOP_SECTORS = 3
+LOOKBACK_CHECKS = (6, 24)
+TOP_CHECKS = (5,)
+STRATEGIES = {"equal_weight": "Equal weight, all sectors", "winners": "Best sectors of the past year", "losers": "Worst sectors of the past year",
+              "min_variance": "Minimum variance", "inverse_volatility": "Inverse volatility", "market": "Whole market"}
+
+# How many groups to cut the sectors into when clustering them by correlation, and the letters the documents use for them
+CLUSTERS = 4
+GROUP_LETTERS = "ABCDEFGH"
+
 # ---------------------------------------------------------------------------
 # Sectors (PSX's own sector codes)
 # ---------------------------------------------------------------------------
