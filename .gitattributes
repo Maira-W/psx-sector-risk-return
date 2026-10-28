@@ -1,0 +1,9 @@
+# Text files are stored with Unix line endings so the generated files are identical on every machine.
+* text=auto eol=lf
+
+# The raw source files must stay byte for byte as downloaded: their checksums are recorded in MANIFEST.json.
+data/raw/** -text
+
+# Binary files
+*.png binary
+*.pdf binary

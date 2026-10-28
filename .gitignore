@@ -1,0 +1,18 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Raw prices and the PSX page are not redistributed: `python -m psxsec ingest` downloads them again.
+# Only the manifest (source, date, size, checksum of each file) is kept in the repository.
+data/raw/*
+!data/raw/MANIFEST.json
+data/interim/
