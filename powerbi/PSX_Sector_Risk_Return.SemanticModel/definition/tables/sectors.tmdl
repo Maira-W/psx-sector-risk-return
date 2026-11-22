@@ -1,0 +1,322 @@
+table sectors
+
+	column sector
+		dataType: string
+		summarizeBy: none
+		sourceColumn: sector
+
+	column short_name
+		dataType: string
+		summarizeBy: none
+		sourceColumn: short_name
+
+	column n_companies
+		dataType: int64
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: n_companies
+
+	column n_in_kse100
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: n_in_kse100
+
+	column rank_sharpe
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: rank_sharpe
+
+	column cagr
+		dataType: double
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: cagr
+
+	column volatility
+		dataType: double
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: volatility
+
+	column max_drawdown
+		dataType: double
+		formatString: 0%
+		summarizeBy: none
+		sourceColumn: max_drawdown
+
+	column sharpe
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: sharpe
+
+	column sharpe_lo
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: sharpe_lo
+
+	column sharpe_hi
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: sharpe_hi
+
+	column rank_median
+		dataType: double
+		formatString: 0.0
+		summarizeBy: none
+		sourceColumn: rank_median
+
+	column rank_lo
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: rank_lo
+
+	column rank_hi
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: rank_hi
+
+	column p_top1
+		dataType: double
+		formatString: 0%
+		summarizeBy: none
+		sourceColumn: p_top1
+
+	column p_top3
+		dataType: double
+		formatString: 0%
+		summarizeBy: none
+		sourceColumn: p_top3
+
+	column p_beats_market
+		dataType: double
+		formatString: 0%
+		summarizeBy: none
+		sourceColumn: p_beats_market
+
+	column dividend_points
+		dataType: double
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: dividend_points
+
+	column usd_cagr
+		dataType: double
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: usd_cagr
+
+	column correlation_with_market
+		dataType: double
+		summarizeBy: none
+		sourceColumn: correlation_with_market
+
+	column typical_company_sharpe
+		dataType: double
+		summarizeBy: none
+		sourceColumn: typical_company_sharpe
+
+	column best_company
+		dataType: string
+		summarizeBy: none
+		sourceColumn: best_company
+
+	column sortino
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: sortino
+
+	column var_95
+		dataType: double
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: var_95
+
+	column cvar_95
+		dataType: double
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: cvar_95
+
+	column skew
+		dataType: double
+		summarizeBy: none
+		sourceColumn: skew
+
+	column excess_kurtosis
+		dataType: double
+		summarizeBy: none
+		sourceColumn: excess_kurtosis
+
+	column longest_fall_months
+		dataType: double
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: longest_fall_months
+
+	column up_capture
+		dataType: double
+		formatString: 0%
+		summarizeBy: none
+		sourceColumn: up_capture
+
+	column down_capture
+		dataType: double
+		formatString: 0%
+		summarizeBy: none
+		sourceColumn: down_capture
+
+	column beta
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: beta
+
+	column beta_se
+		dataType: double
+		summarizeBy: none
+		sourceColumn: beta_se
+
+	column alpha
+		dataType: double
+		formatString: 0%
+		summarizeBy: none
+		sourceColumn: alpha
+
+	column alpha_se
+		dataType: double
+		summarizeBy: none
+		sourceColumn: alpha_se
+
+	column alpha_t
+		dataType: double
+		formatString: 0.0
+		summarizeBy: none
+		sourceColumn: alpha_t
+
+	column alpha_p
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: alpha_p
+
+	column alpha_p_adjusted
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: alpha_p_adjusted
+
+	column alpha_q
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: alpha_q
+
+	column dsr
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: dsr
+
+	column market_model_r2
+		dataType: double
+		summarizeBy: none
+		sourceColumn: market_model_r2
+
+	column alpha_class
+		dataType: string
+		summarizeBy: none
+		sourceColumn: alpha_class
+		sortByColumn: alpha_class_order
+
+	column alpha_class_order
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: alpha_class_order
+
+	column rate_beta
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: rate_beta
+
+	column rate_se
+		dataType: double
+		summarizeBy: none
+		sourceColumn: rate_se
+
+	column rate_p
+		dataType: double
+		summarizeBy: none
+		sourceColumn: rate_p
+
+	column rate_q
+		dataType: double
+		summarizeBy: none
+		sourceColumn: rate_q
+
+	column rate_class
+		dataType: string
+		summarizeBy: none
+		sourceColumn: rate_class
+
+	column fx_beta
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: fx_beta
+
+	column fx_se
+		dataType: double
+		summarizeBy: none
+		sourceColumn: fx_se
+
+	column fx_p
+		dataType: double
+		summarizeBy: none
+		sourceColumn: fx_p
+
+	column fx_q
+		dataType: double
+		summarizeBy: none
+		sourceColumn: fx_q
+
+	column fx_class
+		dataType: string
+		summarizeBy: none
+		sourceColumn: fx_class
+
+	column macro_r2
+		dataType: double
+		summarizeBy: none
+		sourceColumn: macro_r2
+
+	column group_letter
+		dataType: string
+		summarizeBy: none
+		sourceColumn: group_letter
+
+	column component_1
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: component_1
+
+	column component_2
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: component_2
+
+	partition sectors = m
+		mode: import
+		source =
+				let
+					Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("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", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [sector = _t, short_name = _t, n_companies = _t, n_in_kse100 = _t, rank_sharpe = _t, cagr = _t, volatility = _t, max_drawdown = _t, sharpe = _t, sharpe_lo = _t, sharpe_hi = _t, rank_median = _t, rank_lo = _t, rank_hi = _t, p_top1 = _t, p_top3 = _t, p_beats_market = _t, dividend_points = _t, usd_cagr = _t, correlation_with_market = _t, typical_company_sharpe = _t, best_company = _t, sortino = _t, var_95 = _t, cvar_95 = _t, skew = _t, excess_kurtosis = _t, longest_fall_months = _t, up_capture = _t, down_capture = _t, beta = _t, beta_se = _t, alpha = _t, alpha_se = _t, alpha_t = _t, alpha_p = _t, alpha_p_adjusted = _t, alpha_q = _t, dsr = _t, market_model_r2 = _t, alpha_class = _t, alpha_class_order = _t, rate_beta = _t, rate_se = _t, rate_p = _t, rate_q = _t, rate_class = _t, fx_beta = _t, fx_se = _t, fx_p = _t, fx_q = _t, fx_class = _t, macro_r2 = _t, group_letter = _t, component_1 = _t, component_2 = _t]),
+					Typed = Table.TransformColumnTypes(Source, {{"sector", type text}, {"short_name", type text}, {"n_companies", Int64.Type}, {"n_in_kse100", Int64.Type}, {"rank_sharpe", Int64.Type}, {"cagr", type number}, {"volatility", type number}, {"max_drawdown", type number}, {"sharpe", type number}, {"sharpe_lo", type number}, {"sharpe_hi", type number}, {"rank_median", type number}, {"rank_lo", Int64.Type}, {"rank_hi", Int64.Type}, {"p_top1", type number}, {"p_top3", type number}, {"p_beats_market", type number}, {"dividend_points", type number}, {"usd_cagr", type number}, {"correlation_with_market", type number}, {"typical_company_sharpe", type number}, {"best_company", type text}, {"sortino", type number}, {"var_95", type number}, {"cvar_95", type number}, {"skew", type number}, {"excess_kurtosis", type number}, {"longest_fall_months", type number}, {"up_capture", type number}, {"down_capture", type number}, {"beta", type number}, {"beta_se", type number}, {"alpha", type number}, {"alpha_se", type number}, {"alpha_t", type number}, {"alpha_p", type number}, {"alpha_p_adjusted", type number}, {"alpha_q", type number}, {"dsr", type number}, {"market_model_r2", type number}, {"alpha_class", type text}, {"alpha_class_order", Int64.Type}, {"rate_beta", type number}, {"rate_se", type number}, {"rate_p", type number}, {"rate_q", type number}, {"rate_class", type text}, {"fx_beta", type number}, {"fx_se", type number}, {"fx_p", type number}, {"fx_q", type number}, {"fx_class", type text}, {"macro_r2", type number}, {"group_letter", type text}, {"component_1", type number}, {"component_2", type number}}, "en-US")
+				in
+					Typed
+

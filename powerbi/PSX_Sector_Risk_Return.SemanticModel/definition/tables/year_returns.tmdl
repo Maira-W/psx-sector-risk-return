@@ -1,0 +1,33 @@
+table year_returns
+
+	column sector
+		dataType: string
+		summarizeBy: none
+		sourceColumn: sector
+
+	column period_index
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: period_index
+
+	column period
+		dataType: string
+		summarizeBy: none
+		sourceColumn: period
+		sortByColumn: period_index
+
+	column period_return
+		dataType: double
+		formatString: 0%
+		summarizeBy: none
+		sourceColumn: period_return
+
+	partition year_returns = m
+		mode: import
+		source =
+				let
+					Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("jZhNj9s2EIb/irHn1OBwOPw4FkFT9JSizS3IQatlvcLakiHJbdJf35FNd21LGvJgwBD0jKhX8/3169On2I/Nvvk39k8fnoB/n+txo5WGzdht0n/Nl9UWEczTtw8PiH5H9A2CZ0Sj14BzCN8hvIHMZG+LNng/Z8w7Y24YOj/IA7qFw9E7QzeM5cs/qa3yyuoL9bE7HGJfN9V+81y1b4OsBbNAWlNYY0VRDBrQuIYK0qhtCEYZWkMFhWBrwJnV82Z0AhvIntnfu39iv9nFNvbV2HTtpmpfNi/NMPbN82m6kHUiUgpdsS1RSK+MZrOltkRl0enyU4muaI0jY4ptZaQn8En6z83+zO+qYRO/H/fdxWbWU5VhN8+ZEHVGDTq4jAVBXdiy1eR86wZEUQkD6txLCFJOAYtAcLbw82nsDt1zs4+bahji4Xkf+3zET+9AIi+LSJ4Tm8iLElrlRViUTwcIVn75jB86SvHxR/yrYX/+kdcreKtmjKgRIAd0eETEuNWBgw0ekVyA2jB7iug8gRNgioAvfdUOx64f8wKQwwAzSFDgHK1OJUe/hUQNvCFwOGNEEZxh3WjGiCqgskFd8u3HeIhtXgKNziq6J2QPAA8P94tRoR2mr////WIVVAEe7cuOD4qsuxC/tcOJpapjvjnw3Pj4GZTxfQc4f5D84UlbDzNG/PDBKwjzs4kfXinvg07M33EYJ+kuzcM5FQ+xPvXN2MR8FkWwDmyhqUyoWC4JodCUqKNTgRALLQnq4hYCKFNoSHa86R9dNP8Sv49Tvh6OTds27S4vMjeYKd0vsLKqU5VTuMaKwUjOG79GyinZEaUoW0AzSclzDjijf552VZ8PToUEcAfIMwxxyOi7+zOdJPJocHe/PLoo4M7g7v5cT2h1OtBtL3So+rc4lrgHe7tzTjQgKqKUscqKvKiQ8Y5dReTlFBastbIAGQV10D5NYK/x0NTVvqD/82TSqW8hWSlvjJk/SO5oDL8czRg5fgJcQ++WEQNHA4U00F9jru4Ox25oxnyF05oLtVuF5UpnULl1VhQHLBnh0GLtB6cRVlF5eNDB+pDY+rXt9t3ux9nx2MTh1LLgRbMYhCn2SuxkSp/neRVL7IhqkgtKmxIzsvexm9sidXJ7hhDSPP+p617OFo48nXRttd/UVV/gli6YNHuvWsgoi3TdCa1akJMbtwAWZQNyduORHzInyOiI6rrMeK36Q1XH01iW4zTPRqBX0EzfACpt4OakvBuwZGkFlEcYooBrh801VwDX96xY3IvIVf1W7UoKqFbhWkCXcbkoTNXHC7TsX06heHRRMwQwqf1epnMbU/Bpnvt1Xw2XpraOfcUlp2BnCtqkTmeRzjQdwabF4SIs11QOiDTyL8K55hScAGdcLTjrZqubY9WPBcMSFztYZeWuVXMsmzVUFMvyiQOuoaJU4Bz51admhLI8Nl/YX1r2xhj7olnHc0ldwjJ5HqY10AImB58mnfqAe0peXipDaddyT2VWD8HpKdK//Qc=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [sector = _t, period_index = _t, period = _t, period_return = _t]),
+					Typed = Table.TransformColumnTypes(Source, {{"sector", type text}, {"period_index", Int64.Type}, {"period", type text}, {"period_return", type number}}, "en-US")
+				in
+					Typed
+

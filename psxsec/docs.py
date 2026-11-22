@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import re
+from collections import Counter
 
 import pandas as pd
 
@@ -16,7 +17,8 @@ from .analysis import MARKET
 
 TEMPLATE_DIR = config.TEMPLATES / "docs"
 OUTPUTS = {"readme.md": config.ROOT / "README.md", "memo.md": config.DOCS / "recommendation_memo.md",
-           "methodology.md": config.DOCS / "methodology.md", "data_sources.md": config.DOCS / "data_sources.md"}
+           "methodology.md": config.DOCS / "methodology.md", "data_sources.md": config.DOCS / "data_sources.md",
+           "powerbi.md": config.DOCS / "powerbi.md"}
 PLACEHOLDER = re.compile(r"\{\{\s*(\w+)\s*(?::([^{}]+?))?\s*\}\}")
 
 
@@ -67,6 +69,83 @@ def _pv(x: float) -> str:
 def _opt(x, fmt) -> str:
     """A number formatted, or nothing where the result has none (a reference row has no test against itself)."""
     return "" if x is None else fmt(x)
+
+
+def powerbi_pages_table() -> str:
+    from .powerbi import report
+    plural = {"card": "card", "slicer": "slicer", "lineChart": "line chart", "clusteredBarChart": "bar chart",
+              "clusteredColumnChart": "column chart", "scatterChart": "scatter chart", "tableEx": "table"}
+    rows = []
+    for i, (page_id, display, builder) in enumerate(report.PAGES, start=1):
+        visuals = builder()
+        kinds = Counter(v["type"] for v in visuals)
+        parts = [f"{n} {plural[t]}{'s' if n > 1 else ''}" for t, n in sorted(kinds.items(), key=lambda kv: -kv[1])]
+        rows.append([i, f"**{display}**", report.PAGE_NOTES[page_id], len(visuals), ", ".join(parts)])
+    return _table(["#", "Page", "What it shows", "Visuals", "Made of"], rows, "rllrl")
+
+
+def powerbi_gallery(prefix: str, page_ids: tuple[str, ...] | None = None, columns: int = 2) -> str:
+    """Screenshots of Power BI pages as an HTML table. The images are saved from Power BI Desktop, one per page, named
+    `<page number>_<page id>.png`; a test fails if one is missing."""
+    from .powerbi import report
+    cells = []
+    for i, (page_id, display, _) in enumerate(report.PAGES, start=1):
+        if page_ids is not None and page_id not in page_ids:
+            continue
+        src = f"{prefix}/{i:02d}_{page_id}.png"
+        cells.append(f'<td width="{100 // columns}%"><a href="{src}"><img src="{src}" alt="Power BI report, page {i}: {display}">'
+                     f"</a><br><sub>Page {i}: {display}</sub></td>")
+    rows = ["<tr>\n" + "\n".join(cells[k:k + columns]) + "\n</tr>" for k in range(0, len(cells), columns)]
+    return "<table>\n" + "\n".join(rows) + "\n</table>"
+
+
+def powerbi_tables_table() -> str:
+    from .powerbi import tables as pbi_tables
+    rows = [[f"`{name}`", len(df), len(df.columns), pbi_tables.TABLE_NOTES[name]] for name, df in pbi_tables.make_tables().items()]
+    return _table(["Table", "Rows", "Columns", "Role"], rows, "lrrl")
+
+
+def powerbi_measures_table() -> str:
+    from .powerbi.measures import MEASURES
+    folders: dict[str, list[str]] = {}
+    for m in MEASURES:
+        folders.setdefault(m.folder, []).append(m.name)
+    rows = [[folder, len(names), ", ".join(f"`{n}`" for n in names[:4]) + (", ..." if len(names) > 4 else "")] for folder, names in folders.items()]
+    return _table(["Folder", "Measures", "Examples"], rows, "lrl")
+
+
+def dax_block(name: str) -> str:
+    """One measure's DAX, indented for a code block inside a list item of docs/powerbi.md."""
+    from .powerbi.measures import MEASURES, measure_lines
+    m = next(m for m in MEASURES if m.name == name)
+    return "\n".join("  " + line for line in [f"{m.name} =", *measure_lines(m)])
+
+
+# What opening the report in Power BI Desktop showed that the tests could not, and that was fixed (see powerbi_checked).
+PBI_PAGE_FINDINGS = (
+    "That found problems no test could: two measures Power BI rejected (the table called `levels` has to be quoted in DAX), a count that "
+    "showed \"(Blank)\" instead of 0, a log-scale setting that Power BI ignores unless it is written the way Power BI writes it, a "
+    "pick-a-series chart that was empty until something was picked, and titles, labels and table columns that were cut off. Each was "
+    "fixed and the pages were looked at again. The images in [`powerbi_pages`](powerbi_pages) are the pages after the fixes, exported "
+    "from Desktop (File, Export, Export to PDF).")
+
+
+def powerbi_checked(values: dict) -> str:
+    """The 'how it was built and checked' bullets of docs/powerbi.md, worded from the record Power BI Desktop produced."""
+    record = json.loads((config.POWERBI / "measure_values.json").read_text(encoding="utf-8"))
+    measures = record["measures"]
+    assert not [k for k, v in measures.items() if isinstance(v, str) and v.startswith("ERROR")]
+    examples = (f"{values['mkt_cagr']:.1f}% a year for the whole market, {values['top1']} as the best sector by Sharpe ratio, "
+                f"{values['n_alpha_own']} sectors with an alpha that looks real on its own and {values['alpha_adj']} after the correction, "
+                f"and a Sharpe ratio of {values['win_sharpe']:.2f} against {values['eq_sharpe']:.2f} for the best-sectors rule and equal weights")
+    return "\n".join([
+        "- The model, report and theme are written by [`psxsec/powerbi`](../psxsec/powerbi) from `data/processed`; none of it is edited by hand. "
+        "The project is written in the format Power BI Desktop itself saves.",
+        f"- Power BI Desktop {record['power_bi_desktop']} opened the saved `.pbix`. All {len(measures)} measures were evaluated through its local model "
+        f"and none returned an error, and every value equals the one worked out in Python from the same tables, for example {examples}. "
+        "The values Desktop returned are saved in [`powerbi/measure_values.json`](../powerbi/measure_values.json) and a test compares each one with Python.",
+        f"- Every page was opened in Power BI Desktop and inspected. {PBI_PAGE_FINDINGS}".rstrip(),
+    ])
 
 
 def second_layer(ranked: pd.DataFrame, mk: pd.Series, top: list[dict], s: dict) -> dict:
@@ -308,8 +387,11 @@ def context() -> dict:
     return_heading = "Return alone is a poor guide." if best_cagr["rank_sharpe"] > 2 else "Return and return per unit of risk agree at the top."
     falls_heading = "Falls were deep." if (ranked["max_drawdown"] < -0.2).sum() >= len(ranked) / 2 else "Falls varied widely."
     second = second_layer(ranked, mk, top, s)
+    from .powerbi import report as pbi_report
+    from .powerbi import tables as pbi_tables
+    from .powerbi.measures import MEASURES
 
-    return {
+    values = {
         # window and universe
         "base_date": _date(w["base_date"]), "end_date": _date(w["end_date"]), "base_month": _month(w["base_date"]), "end_month": _month(w["end_date"]),
         "years": w["years"], "market_days": w["market_days"], "per_year": quality["window"]["market_days_per_year"],
@@ -406,7 +488,15 @@ def context() -> dict:
                                 v["retrieved"][:10]] for k, v in manifest.items()], "lrlll"),
         "table_status": _table(["Status", "Companies"], [[k, int(v)] for k, v in status["status"].value_counts().items()], "lr"),
         **second,
+        # the Power BI report
+        "n_pbi_pages": len(pbi_report.PAGES), "n_measures": len(MEASURES), "n_pbi_tables": len(pbi_tables.TABLE_NOTES),
+        "table_pbi_pages": powerbi_pages_table(), "table_pbi_tables": powerbi_tables_table(), "table_pbi_measures": powerbi_measures_table(),
+        "pbi_gallery_readme": powerbi_gallery("docs/powerbi_pages", ("overview", "alpha", "oos", "moves")),
+        "pbi_gallery_all": powerbi_gallery("powerbi_pages"),
+        "dax_alpha_after": dax_block("Alpha Significant After Correction"), "dax_selected_level": dax_block("Selected Level"),
     }
+    values["pbi_checked"] = powerbi_checked(values)
+    return values
 
 
 def render_all() -> dict:

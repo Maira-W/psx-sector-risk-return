@@ -1,0 +1,26 @@
+table groups
+
+	column group_letter
+		dataType: string
+		summarizeBy: none
+		sourceColumn: group_letter
+
+	column n_sectors
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: n_sectors
+
+	column sectors
+		dataType: string
+		summarizeBy: none
+		sourceColumn: sectors
+
+	partition groups = m
+		mode: import
+		source =
+				let
+					Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("VVA9TwMxDP0r0c3ZQEiMpVDUqRV0qzr4UpNal9iRk4OWX497BwIGL89+X97vu0Xnuxub1zGCerfmd6wtIzfXAw/VAR9dxTAqNcLq3Q7PjRK6WoiZOHYHv+8eTODOZolXpndPHIkR1fa/jCC5SKWG3i1PmClAMr3nBHV2CahgqGFbKKgTViAMEH9slmZxa7PmOipwMKWtfNhpRDZyI+GJdaTalPrxCpiZ5IwaCNJcybsVqiWiT9RJ9tEk7212plmLqBXYnkAzBDSJOeZibJKlv/awvJj7hPofLqBt+k84sSSJl7mUmY9sInOWlchxLmZ0YYsUQK3GC77Zw/Ti3YbSdBChOjyXJPpN/bvIoAO26S2HLw==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [group_letter = _t, n_sectors = _t, sectors = _t]),
+					Typed = Table.TransformColumnTypes(Source, {{"group_letter", type text}, {"n_sectors", Int64.Type}, {"sectors", type text}}, "en-US")
+				in
+					Typed
+

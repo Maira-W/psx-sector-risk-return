@@ -7,3 +7,4 @@ data/raw/** -text
 # Binary files
 *.png binary
 *.pdf binary
+*.pbix binary

@@ -1,4 +1,4 @@
-"""Command line: python -m psxsec {ingest|verify|build|analyze|report|notebook|all}"""
+"""Command line: python -m psxsec {ingest|verify|build|analyze|report|powerbi|notebook|all}"""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import sys
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="psxsec", description=__doc__)
-    parser.add_argument("command", choices=["ingest", "verify", "build", "analyze", "report", "notebook", "all"])
+    parser.add_argument("command", choices=["ingest", "verify", "build", "analyze", "report", "powerbi", "notebook", "all"])
     parser.add_argument("--refresh", action="store_true", help="download the raw files again")
     args = parser.parse_args(argv)
 
@@ -29,6 +29,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.command in ("report", "all"):
         from . import report
         report.run()
+    if args.command == "powerbi":
+        from . import powerbi
+        powerbi.build()
     if args.command == "notebook":
         from . import notebook
         notebook.run()

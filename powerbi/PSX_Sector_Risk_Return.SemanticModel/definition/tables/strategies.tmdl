@@ -1,0 +1,87 @@
+table strategies
+
+	column strategy_key
+		dataType: string
+		summarizeBy: none
+		sourceColumn: strategy_key
+
+	column strategy
+		dataType: string
+		summarizeBy: none
+		sourceColumn: strategy
+		sortByColumn: strategy_order
+
+	column strategy_order
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: strategy_order
+
+	column cagr
+		dataType: double
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: cagr
+
+	column volatility
+		dataType: double
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: volatility
+
+	column max_drawdown
+		dataType: double
+		formatString: 0%
+		summarizeBy: none
+		sourceColumn: max_drawdown
+
+	column sharpe
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: sharpe
+
+	column sharpe_vs_equal
+		dataType: double
+		formatString: +0.00;-0.00
+		summarizeBy: none
+		sourceColumn: sharpe_vs_equal
+
+	column vs_equal_lo
+		dataType: double
+		formatString: +0.00;-0.00
+		summarizeBy: none
+		sourceColumn: vs_equal_lo
+
+	column vs_equal_hi
+		dataType: double
+		formatString: +0.00;-0.00
+		summarizeBy: none
+		sourceColumn: vs_equal_hi
+
+	column vs_equal_p
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: vs_equal_p
+
+	column vs_equal_p_adjusted
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: vs_equal_p_adjusted
+
+	column turnover
+		dataType: double
+		formatString: 0%
+		summarizeBy: none
+		sourceColumn: turnover
+
+	partition strategies = m
+		mode: import
+		source =
+				let
+					Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("fZLBbtswDIZfxfA5DUhRlKjrgB122LmHIAiMQluMKXabOCn69qVFedh22MEWRUrix588HPr8dh/K6T2PP89Lv+u/rtvOtrtuKKW75Zdlvt40hvrBnhIGx9V0LhI5NZ/UTt6H6pXAEP1q9rvpXsq/Pz0CjoiwP+4O/fs4Tbk+/yXfli1bN//olnPuXgf1feThqnFXX2dBlGjpSVi4pRckpBVyT9E1EuWgZHHwies13EMitgfAFmrVAIMxlflmSM+K8l8mspsJHTfT++Q2SSIE8kaC5IOYmxgDBLOFBKtfYRiCS9VEoHarkUUvRnYZp9NjuI7D9JI19H2cxsv90v3hsnw+BWQzUcvlltr5JNxUYh9MJS+Jt7wYoqXWIjxZHLABprZgTLHSjNNDdcqnx1yGZSzj8qEnvpmz+8tpdZCIJGyjo23EbXQgip0QbVhszQFJVYfaPQR2TabAyUhCvWTvgQteAatGw/VXXmf5+TyX3P3eWjWkWrbC3NqsbX4SRzDBBBtlTRxQGgSya/Cg2qExUGgM62gfj58=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [strategy_key = _t, strategy = _t, strategy_order = _t, cagr = _t, volatility = _t, max_drawdown = _t, sharpe = _t, sharpe_vs_equal = _t, vs_equal_lo = _t, vs_equal_hi = _t, vs_equal_p = _t, vs_equal_p_adjusted = _t, turnover = _t]),
+					Typed = Table.TransformColumnTypes(Source, {{"strategy_key", type text}, {"strategy", type text}, {"strategy_order", Int64.Type}, {"cagr", type number}, {"volatility", type number}, {"max_drawdown", type number}, {"sharpe", type number}, {"sharpe_vs_equal", type number}, {"vs_equal_lo", type number}, {"vs_equal_hi", type number}, {"vs_equal_p", type number}, {"vs_equal_p_adjusted", type number}, {"turnover", type number}}, "en-US")
+				in
+					Typed
+

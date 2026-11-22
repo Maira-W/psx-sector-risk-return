@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "PSX_Sector_Risk_Return"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "42ab2ab3-1f89-5869-ab2d-4ab1e57abb4b"
+  }
+}

@@ -150,6 +150,21 @@ def test_figures_exist_and_are_not_empty():
     assert {p.name for p in config.FIGURES.glob("*.png")} <= mentioned, "a figure is not used in any document"
 
 
+def test_there_is_an_image_of_every_power_bi_page():
+    from psxsec.powerbi import report
+    for number, (page_id, _, _) in enumerate(report.PAGES, start=1):
+        assert (config.POWERBI_PAGES / f"{number:02d}_{page_id}.png").stat().st_size > 20_000, page_id
+    assert len(list(config.POWERBI_PAGES.glob("*.png"))) == len(report.PAGES)
+
+
+def test_the_power_bi_guide_counts_what_the_project_holds():
+    from psxsec.powerbi import measures, report
+    guide = text_of(config.DOCS / "powerbi.md")
+    assert f"A {len(report.PAGES)}-page report" in guide and f"{len(measures.MEASURES)} DAX measures" in guide
+    for _, display, _ in report.PAGES:
+        assert f"**{display}**" in guide
+
+
 def test_the_notebook_has_the_code_in_notebook_py_and_ran_without_errors():
     saved = json.loads(text_of(notebook.PATH))
     expected = notebook.cells()

@@ -1,0 +1,28 @@
+table info_coeff
+
+	column decision_date
+		dataType: dateTime
+		formatString: mmm yyyy
+		summarizeBy: none
+		sourceColumn: decision_date
+
+	column information_coefficient
+		dataType: double
+		formatString: +0.00;-0.00
+		summarizeBy: none
+		sourceColumn: information_coefficient
+
+	column direction
+		dataType: string
+		summarizeBy: none
+		sourceColumn: direction
+
+	partition info_coeff = m
+		mode: import
+		source =
+				let
+					Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("lZXLbgIxDEV/Bc26g/xInOQvukcsKhUBG5AQEurfN/NIZgSoud3NSOfGdnxj73adkEjP1Ct3Hx1tPY0fn9fz5X743txPh83tfDzdN4+vn27/UXjulUbeMRvAS+GDcPN87YmnfHraiktP/ON2vRyfeOklTjwbIQKtAZjFAQJXI5BjAQR+iWCKCKyXMAuiITWE0jShIMClxsqLAnia8skFmwE9Kx4aehZTaOe/mCj/AflnE0maTBc1tXhXTZTP9x7h6/mqGgBeCy/UfgRusNBcr3BCeF/yZzOEt8mimVeNAB9qwyilpuHcaKC5AGdIgFR4rICVg1g8kFB20NiBQRAAXOoDsNg0nF9PIY6srQC+jqEcIKUIBND65IWSBwLMFsoCZW+AwFeBaHsw+sFE5VG+jrl3JdQhpN4jfCyPhikgV1Q95FIKbX7tIaTewUJTy4iDB86Xf411G01EZXGIAgIpc/fNGnjJyOoqGzYZxC8eckZIBb62jJ0BAWypOEFXtCwypw4IUBcZ0jNbeUhT/GOT7X8B", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [decision_date = _t, information_coefficient = _t, direction = _t]),
+					Typed = Table.TransformColumnTypes(Source, {{"decision_date", type date}, {"information_coefficient", type number}, {"direction", type text}}, "en-US")
+				in
+					Typed
+

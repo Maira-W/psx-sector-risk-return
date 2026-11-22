@@ -1,0 +1,12 @@
+relationship year_returns_to_sectors
+	fromColumn: year_returns.sector
+	toColumn: sectors.sector
+
+relationship rank_choices_to_sectors
+	fromColumn: rank_choices.sector
+	toColumn: sectors.sector
+
+relationship presets_to_preset_stats
+	fromColumn: presets.preset
+	toColumn: preset_stats.preset
+

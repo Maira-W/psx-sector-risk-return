@@ -1,0 +1,49 @@
+table rank_choices
+
+	column sector
+		dataType: string
+		summarizeBy: none
+		sourceColumn: sector
+
+	column choice
+		dataType: string
+		summarizeBy: none
+		sourceColumn: choice
+		sortByColumn: choice_order
+
+	column choice_short
+		dataType: string
+		summarizeBy: none
+		sourceColumn: choice_short
+		sortByColumn: choice_order
+
+	column choice_order
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: choice_order
+
+	column kind
+		dataType: string
+		summarizeBy: none
+		sourceColumn: kind
+
+	column sharpe
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: sharpe
+
+	column position
+		dataType: double
+		summarizeBy: none
+		sourceColumn: position
+
+	partition rank_choices = m
+		mode: import
+		source =
+				let
+					Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("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", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [sector = _t, choice = _t, choice_short = _t, choice_order = _t, kind = _t, sharpe = _t, position = _t]),
+					Typed = Table.TransformColumnTypes(Source, {{"sector", type text}, {"choice", type text}, {"choice_short", type text}, {"choice_order", Int64.Type}, {"kind", type text}, {"sharpe", type number}, {"position", type number}}, "en-US")
+				in
+					Typed
+
