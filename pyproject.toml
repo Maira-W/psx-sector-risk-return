@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "psxsec"
-version = "1.0.0"
+version = "1.1.0"
 description = "PSX sector risk and return: which sectors paid best for the risk over five years"
 readme = "README.md"
 requires-python = ">=3.11"
