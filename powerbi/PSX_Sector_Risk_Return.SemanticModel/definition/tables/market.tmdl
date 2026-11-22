@@ -1,0 +1,241 @@
+table market
+
+	column market_cagr
+		dataType: double
+		summarizeBy: none
+		sourceColumn: market_cagr
+
+	column market_volatility
+		dataType: double
+		summarizeBy: none
+		sourceColumn: market_volatility
+
+	column market_max_drawdown
+		dataType: double
+		summarizeBy: none
+		sourceColumn: market_max_drawdown
+
+	column market_sharpe
+		dataType: double
+		summarizeBy: none
+		sourceColumn: market_sharpe
+
+	column market_usd_cagr
+		dataType: double
+		summarizeBy: none
+		sourceColumn: market_usd_cagr
+
+	column market_total_return
+		dataType: double
+		summarizeBy: none
+		sourceColumn: market_total_return
+
+	column cash_cagr
+		dataType: double
+		summarizeBy: none
+		sourceColumn: cash_cagr
+
+	column policy_rate_start
+		dataType: double
+		summarizeBy: none
+		sourceColumn: policy_rate_start
+
+	column policy_rate_peak
+		dataType: double
+		summarizeBy: none
+		sourceColumn: policy_rate_peak
+
+	column policy_rate_end
+		dataType: double
+		summarizeBy: none
+		sourceColumn: policy_rate_end
+
+	column years
+		dataType: double
+		summarizeBy: none
+		sourceColumn: years
+
+	column market_days
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: market_days
+
+	column n_companies
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: n_companies
+
+	column n_sectors_ranked
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: n_sectors_ranked
+
+	column top_sector
+		dataType: string
+		summarizeBy: none
+		sourceColumn: top_sector
+
+	column top_sharpe
+		dataType: double
+		summarizeBy: none
+		sourceColumn: top_sharpe
+
+	column top_p1
+		dataType: double
+		summarizeBy: none
+		sourceColumn: top_p1
+
+	column method_rank_correlation_median
+		dataType: double
+		summarizeBy: none
+		sourceColumn: method_rank_correlation_median
+
+	column method_rank_correlation_min
+		dataType: double
+		summarizeBy: none
+		sourceColumn: method_rank_correlation_min
+
+	column period_rank_correlation_min
+		dataType: double
+		summarizeBy: none
+		sourceColumn: period_rank_correlation_min
+
+	column half_correlation
+		dataType: double
+		summarizeBy: none
+		sourceColumn: half_correlation
+
+	column alpha_raw_positive
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: alpha_raw_positive
+
+	column alpha_raw_negative
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: alpha_raw_negative
+
+	column alpha_adjusted_significant
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: alpha_adjusted_significant
+
+	column alpha_fdr_significant
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: alpha_fdr_significant
+
+	column best_alpha_sector
+		dataType: string
+		summarizeBy: none
+		sourceColumn: best_alpha_sector
+
+	column best_alpha
+		dataType: double
+		summarizeBy: none
+		sourceColumn: best_alpha
+
+	column best_alpha_p
+		dataType: double
+		summarizeBy: none
+		sourceColumn: best_alpha_p
+
+	column best_alpha_p_adjusted
+		dataType: double
+		summarizeBy: none
+		sourceColumn: best_alpha_p_adjusted
+
+	column best_dsr
+		dataType: double
+		summarizeBy: none
+		sourceColumn: best_dsr
+
+	column expected_best_sharpe
+		dataType: double
+		summarizeBy: none
+		sourceColumn: expected_best_sharpe
+
+	column null_largest_t_95
+		dataType: double
+		summarizeBy: none
+		sourceColumn: null_largest_t_95
+
+	column pc1_share
+		dataType: double
+		summarizeBy: none
+		sourceColumn: pc1_share
+
+	column effective_bets
+		dataType: double
+		summarizeBy: none
+		sourceColumn: effective_bets
+
+	column mean_correlation
+		dataType: double
+		summarizeBy: none
+		sourceColumn: mean_correlation
+
+	column residual_mean_correlation
+		dataType: double
+		summarizeBy: none
+		sourceColumn: residual_mean_correlation
+
+	column n_rate_fdr
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: n_rate_fdr
+
+	column n_fx_fdr
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: n_fx_fdr
+
+	column macro_months
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: macro_months
+
+	column policy_changes
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: policy_changes
+
+	column wf_months
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: wf_months
+
+	column wf_lookback
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: wf_lookback
+
+	column wf_top
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: wf_top
+
+	column ic_mean
+		dataType: double
+		summarizeBy: none
+		sourceColumn: ic_mean
+
+	column ic_t
+		dataType: double
+		summarizeBy: none
+		sourceColumn: ic_t
+
+	column ic_share_positive
+		dataType: double
+		summarizeBy: none
+		sourceColumn: ic_share_positive
+
+	partition market = m
+		mode: import
+		source =
+				let
+					Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("XZA5DgIxDEXvQg2R9+UCXGJESYFEhag4PYk9IyGKOC925O/vbTvBIE4hPJ0XEknGxAsMxsCsLKeFUiEyYC7EkSRonTQm8Ik+SOdF9WEFGZlZD1p1gjzK1/vr/Xg+PvdXNSPtDjCUXQvSAaUxPNGk0EBceJcl0NKbp1Kr1X/vaSoItf0BGO86EJbaGDydtpVAEVtZHogsHD1TqkApDVeQ2Ce1hMReFrAH+s8MWrZXkDi20WODI0ev0JcxPnzhFL7dvg==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [market_cagr = _t, market_volatility = _t, market_max_drawdown = _t, market_sharpe = _t, market_usd_cagr = _t, market_total_return = _t, cash_cagr = _t, policy_rate_start = _t, policy_rate_peak = _t, policy_rate_end = _t, years = _t, market_days = _t, n_companies = _t, n_sectors_ranked = _t, top_sector = _t, top_sharpe = _t, top_p1 = _t, method_rank_correlation_median = _t, method_rank_correlation_min = _t, period_rank_correlation_min = _t, half_correlation = _t, alpha_raw_positive = _t, alpha_raw_negative = _t, alpha_adjusted_significant = _t, alpha_fdr_significant = _t, best_alpha_sector = _t, best_alpha = _t, best_alpha_p = _t, best_alpha_p_adjusted = _t, best_dsr = _t, expected_best_sharpe = _t, null_largest_t_95 = _t, pc1_share = _t, effective_bets = _t, mean_correlation = _t, residual_mean_correlation = _t, n_rate_fdr = _t, n_fx_fdr = _t, macro_months = _t, policy_changes = _t, wf_months = _t, wf_lookback = _t, wf_top = _t, ic_mean = _t, ic_t = _t, ic_share_positive = _t]),
+					Typed = Table.TransformColumnTypes(Source, {{"market_cagr", type number}, {"market_volatility", type number}, {"market_max_drawdown", type number}, {"market_sharpe", type number}, {"market_usd_cagr", type number}, {"market_total_return", type number}, {"cash_cagr", type number}, {"policy_rate_start", type number}, {"policy_rate_peak", type number}, {"policy_rate_end", type number}, {"years", type number}, {"market_days", Int64.Type}, {"n_companies", Int64.Type}, {"n_sectors_ranked", Int64.Type}, {"top_sector", type text}, {"top_sharpe", type number}, {"top_p1", type number}, {"method_rank_correlation_median", type number}, {"method_rank_correlation_min", type number}, {"period_rank_correlation_min", type number}, {"half_correlation", type number}, {"alpha_raw_positive", Int64.Type}, {"alpha_raw_negative", Int64.Type}, {"alpha_adjusted_significant", Int64.Type}, {"alpha_fdr_significant", Int64.Type}, {"best_alpha_sector", type text}, {"best_alpha", type number}, {"best_alpha_p", type number}, {"best_alpha_p_adjusted", type number}, {"best_dsr", type number}, {"expected_best_sharpe", type number}, {"null_largest_t_95", type number}, {"pc1_share", type number}, {"effective_bets", type number}, {"mean_correlation", type number}, {"residual_mean_correlation", type number}, {"n_rate_fdr", Int64.Type}, {"n_fx_fdr", Int64.Type}, {"macro_months", Int64.Type}, {"policy_changes", Int64.Type}, {"wf_months", Int64.Type}, {"wf_lookback", Int64.Type}, {"wf_top", Int64.Type}, {"ic_mean", type number}, {"ic_t", type number}, {"ic_share_positive", type number}}, "en-US")
+				in
+					Typed
+

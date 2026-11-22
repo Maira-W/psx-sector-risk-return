@@ -1,0 +1,67 @@
+table sensitivity
+
+	column lookback_months
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: lookback_months
+
+	column top_sectors
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: top_sectors
+
+	column setting
+		dataType: string
+		summarizeBy: none
+		sourceColumn: setting
+		sortByColumn: setting_order
+
+	column setting_order
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: setting_order
+
+	column months
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: months
+
+	column sharpe_rule
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: sharpe_rule
+
+	column sharpe_equal_weight
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: sharpe_equal_weight
+
+	column difference
+		dataType: double
+		formatString: +0.00;-0.00
+		summarizeBy: none
+		sourceColumn: difference
+
+	column p
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: p
+
+	column mean_information_coefficient
+		dataType: double
+		formatString: +0.00;-0.00
+		summarizeBy: none
+		sourceColumn: mean_information_coefficient
+
+	partition sensitivity = m
+		mode: import
+		source =
+				let
+					Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("bdBLCoMwEAbgq0jWVjJP41nEVSl00wrV+9NJxjYqLkKGhHzzZ8YxaGgD2dLmNb/X59I21CyP+zp/FjsFW8K56DBib0Xs1CoulSTkVKpIfhJVYoIwtQ7LAZYdjBWOSHSCOVIEBxnPMOAWGfAyc74qsaCjHqU8T/bc09tOg5P9tgElrLIc5X1orjJiSieZlHp1MuGZLh/LyZAvQ+eupIVmGkqGDgR8MNYLXaRt3Mz57g/LEd5n1goDHdybOaCE3mP4DXqjpy8=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [lookback_months = _t, top_sectors = _t, setting = _t, setting_order = _t, months = _t, sharpe_rule = _t, sharpe_equal_weight = _t, difference = _t, p = _t, mean_information_coefficient = _t]),
+					Typed = Table.TransformColumnTypes(Source, {{"lookback_months", Int64.Type}, {"top_sectors", Int64.Type}, {"setting", type text}, {"setting_order", Int64.Type}, {"months", Int64.Type}, {"sharpe_rule", type number}, {"sharpe_equal_weight", type number}, {"difference", type number}, {"p", type number}, {"mean_information_coefficient", type number}}, "en-US")
+				in
+					Typed
+

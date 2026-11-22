@@ -9,6 +9,7 @@ Over the five years from 27 October 2021 to 27 October 2026, **which sectors of 
 | | |
 |---|---|
 | **Interactive dashboard** | [maira-w.github.io/psx-sector-risk-return](https://maira-w.github.io/psx-sector-risk-return/) (eight tabs: the answer, sector scorecard, ups and downs, how sure are we, risk and alpha, what moves them, portfolios with a builder, method) |
+| **Power BI report** | [`powerbi/PSX_Sector_Risk_Return.pbix`](powerbi/PSX_Sector_Risk_Return.pbix): 10 pages and 85 DAX measures ([guide](docs/powerbi.md)) |
 | **Notebook** | [`notebooks/sector_risk_return.ipynb`](notebooks/sector_risk_return.ipynb), a step-by-step walk-through with its outputs |
 | **Memo** | [`docs/recommendation_memo.md`](docs/recommendation_memo.md) |
 | **Method and data** | [methodology](docs/methodology.md) · [data sources](docs/data_sources.md) |
@@ -55,6 +56,21 @@ The second layer:
 
 All thirteen figures are in [`docs/figures`](docs/figures).
 
+## The Power BI report
+
+Four of the 10 pages, exported from Power BI Desktop. The rest are in [`docs/powerbi_pages`](docs/powerbi_pages), and the [guide](docs/powerbi.md) describes the model and the measures.
+
+<table>
+<tr>
+<td width="50%"><a href="docs/powerbi_pages/01_overview.png"><img src="docs/powerbi_pages/01_overview.png" alt="Power BI report, page 1: Overview"></a><br><sub>Page 1: Overview</sub></td>
+<td width="50%"><a href="docs/powerbi_pages/06_alpha.png"><img src="docs/powerbi_pages/06_alpha.png" alt="Power BI report, page 6: Risk and alpha"></a><br><sub>Page 6: Risk and alpha</sub></td>
+</tr>
+<tr>
+<td width="50%"><a href="docs/powerbi_pages/07_moves.png"><img src="docs/powerbi_pages/07_moves.png" alt="Power BI report, page 7: What moves them"></a><br><sub>Page 7: What moves them</sub></td>
+<td width="50%"><a href="docs/powerbi_pages/08_oos.png"><img src="docs/powerbi_pages/08_oos.png" alt="Power BI report, page 8: Out-of-sample test"></a><br><sub>Page 8: Out-of-sample test</sub></td>
+</tr>
+</table>
+
 ## What to take from it
 
 - **Use it to build a shortlist, not to pick a winner.** Fertilizer, Commercial banks, Power generation and distribution, Oil and gas exploration and Automobile assemblers are the five best by Sharpe ratio. The leader's 95% range is 0.36 to 2.20, and the 95% ranges of the next four sectors all overlap it, so the data cannot separate them from it.
@@ -69,7 +85,7 @@ The [memo](docs/recommendation_memo.md) sets out the reasoning, what is solid, w
 ## How it works
 
 ```
-data/raw  ──build──▶  data/interim  ──analyze──▶  data/processed  ──report──▶  docs/figures · dashboard/ · docs/
+data/raw  ──build──▶  data/interim  ──analyze──▶  data/processed  ──report──▶  docs/figures · dashboard/ · powerbi/ · docs/
  (downloaded;          (clean returns)             (results)                    (everything you open)
   fingerprinted)
 ```
@@ -79,7 +95,8 @@ data/raw  ──build──▶  data/interim  ──analyze──▶  data/proce
 | `ingest` | Downloads the PSX company and sector list and daily prices from Yahoo Finance for 538 companies, and records a SHA-256 fingerprint, source and date for each file in [`data/raw/MANIFEST.json`](data/raw/MANIFEST.json). `verify` checks any raw file that is present. |
 | `build` | Drops holidays, picks the five-year window, checks the prices (no duplicates, no zero prices), corrects wrong prices and unadjusted corporate actions by fixed rules (every correction is listed), and keeps the companies that trade regularly. |
 | `analyze` | Builds the sector indexes, measures return and risk, resamples the days to say how sure the ranking is, and repeats everything under 8 other choices. Then the second layer: market model and alpha with a correction for testing 22 sectors, the effect of interest rates and the rupee, the principal components and groups, and the walk-forward test. |
-| `report` | Draws the figures, builds the dashboard and writes these documents. |
+| `report` | Draws the figures, builds the dashboard and the Power BI project, and writes these documents. |
+| `powerbi` | Rebuilds only the Power BI project (`powerbi/`). It is also part of `report`. |
 | `notebook` | Re-runs the notebook from the committed results (needs the extras in `requirements-notebook.txt`). |
 
 The documents (including this file) are written from [`psxsec/templates`](psxsec/templates) and the results, so a number in the text cannot disagree with the data. Edit the template, not the output.
@@ -124,18 +141,19 @@ python -m psxsec all            # build, analyze and report (a few minutes)
 pytest                          # run the tests
 ```
 
-The committed results are deterministic given the downloaded prices (seed 42). A fresh download later will differ a little: Yahoo revises dividends and splits, and the window is fixed to end on 27 October 2026, but companies can be delisted or restated. `python -m psxsec notebook` re-runs the notebook.
+The committed results are deterministic given the downloaded prices (seed 42). A fresh download later will differ a little: Yahoo revises dividends and splits, and the window is fixed to end on 27 October 2026, but companies can be delisted or restated. `python -m psxsec notebook` re-runs the notebook. The Power BI project opens with a **Refresh now** banner the first time (a project stores no data); click it once. The `.pbix` already contains the data.
 
 ## Layout
 
 ```
-psxsec/            the package: ingest, build, metrics, stats, portfolios, advanced, analysis, charts, dashboard, docs, notebook
+psxsec/            the package: ingest, build, metrics, stats, portfolios, advanced, analysis, charts, dashboard, powerbi, docs, notebook
   templates/       dashboard page and document templates
 data/reference/    the company and sector list and the policy-rate table (with sources)
 data/raw/          MANIFEST.json (the raw files themselves are downloaded, not stored)
 data/processed/    results as CSV and JSON
-docs/              memo, methodology, data sources, figures
+docs/              memo, methodology, data sources, Power BI guide, figures, Power BI page images
 dashboard/         the interactive dashboard (one HTML file)
+powerbi/           Power BI project (.pbip), report snapshot (.pbix), measures.dax
 notebooks/         the walk-through notebook
 tests/             pytest suite
 .github/workflows/ continuous integration

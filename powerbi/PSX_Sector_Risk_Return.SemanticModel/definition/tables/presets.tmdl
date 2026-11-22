@@ -1,0 +1,38 @@
+table presets
+
+	column preset
+		dataType: string
+		summarizeBy: none
+		sourceColumn: preset
+		sortByColumn: preset_order
+
+	column preset_order
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: preset_order
+
+	column sector
+		dataType: string
+		summarizeBy: none
+		sourceColumn: sector
+
+	column short_name
+		dataType: string
+		summarizeBy: none
+		sourceColumn: short_name
+
+	column weight
+		dataType: double
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: weight
+
+	partition presets = m
+		mode: import
+		source =
+				let
+					Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("nVZbb9owFP4rEQ88VVN8tx/XqZ32MG1a91b1wQQPrCY2s5Ne9uvnkNACBdsBhHCOcz4fn+t3fz+7+dvJunhWerVuZ1czEH63yrW61v+UO34oP5WYDN/Zw9VJ5S+2aZSrdJAvpHn0QXQ9/mdo/7TPyhUrZZSTrbamkGZZLLVvnV50vWD3Th7cD11vEVbSF+plU9sBddyZn5BngH7uWtvYha5VIb1XzaJWzo/yQ0kG2C/1R4fLvh4uMxR/O2n8xrr2aJ0TItUo0+4vMpS+Gd+FYyp1tM5SfVK+7Y8aUmIbEq+qzulWK3/ijUwXqJe2j4LfaGO0WZ0WZQDddSvp9v4nZlYj3aNqh9Pe82pfmhOUtWp0JWt/tJ7gh8o2G+t1q87IsqCqtbG1Xb1ubxe0m84EU8bqeN/Og7u1drkF2oSCsCZsV9Kp3cb8gzinQ6yla2SlQjcYPfRRkgMjw9mDabJ6lKshToN0fiDLAPtah7IfHBb6VgidfxPO90XTmstGuvatr+weMiBuTLBcKTeYf/h0rH4dyq5AxeK1uAte3PQxgIkJgHafGEB0CmQhTJsEh5DftdFN1xRP0umxTaHUXOMlgJwJGAOI3gpSjBmkDMcQpt0KMIBKwkgM8aIRxyAuCQBRUyeNuf7ehMCopZEJQhkUEAsaUz/RpAVFFJN40M/3VQhDxIMXBqP7EeS8Kp5sLfvEaPsWh5NsSAAO4WjBWYg4JyKcoXB9HseYyIwIYpDDMZ3Pgl6UPKRElENG49CT0oeUjGMkWBzyLFdCJS0JESCuHmNMgALMUQLgNG+CkIb0TSRRlD1RzihO6V9GoRAtMRckkVvZRAoyIgQgiaw6RacAhRRhkZ+OeaQKIAgxTsXtPLUiHAX3Q5rnnxyCxUM3AAynAKfRrFAeHMAE6CVkS4T7gzIBnEu5mGBU0EQRTyJeoTujUqQKexL94gIimt+7zpMwwFlosnGgFBVDJQJl3/Ye/gM=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [preset = _t, preset_order = _t, sector = _t, short_name = _t, weight = _t]),
+					Typed = Table.TransformColumnTypes(Source, {{"preset", type text}, {"preset_order", Int64.Type}, {"sector", type text}, {"short_name", type text}, {"weight", type number}}, "en-US")
+				in
+					Typed
+

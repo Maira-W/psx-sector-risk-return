@@ -1,0 +1,48 @@
+table robustness_summary
+
+	column choice
+		dataType: string
+		summarizeBy: none
+		sourceColumn: choice
+		sortByColumn: choice_order
+
+	column choice_order
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: choice_order
+
+	column kind
+		dataType: string
+		summarizeBy: none
+		sourceColumn: kind
+
+	column sectors_compared
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: sectors_compared
+
+	column rank_correlation
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: rank_correlation
+
+	column top3_in_common
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: top3_in_common
+
+	column main_top_sector
+		dataType: string
+		summarizeBy: none
+		sourceColumn: main_top_sector
+
+	partition robustness_summary = m
+		mode: import
+		source =
+				let
+					Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("jZNNa8MwDIb/igiMbdCNfDSJc193Gb2sgx1KD26iEDPXDra7kn8/OU1LuyZsBxvhSI/fV3LW6+BttXiKwhBKvWu5EmhBK9kFsyCmtUTX6IqCKKItfC5YxChIaFknpIRaGOuCzWwdLPfWgTO8QgIAC+9A11Dxzg75Z1Qc9yiWF/G/UEV6iZpfoQZVRRZNoD4Fpe7dhbsDnUBrRIl0aAyWTmjlyemV3/xIzpMBrLQDocA1wgJXXHZW2P6Gd9xyyVWJFeA3ms4LpfxsxHKRnXE3OhG/ZAcG3d70avKxelawP3wiLxuwZEqbewtbtCfrXhMb1RRlE8yPrhUllycAPOywElw9UmoxRorTdHg2v0mvPoKGy9pP0jVIU1CVPvhGh7S9cIf24mnE/TzHSCsstaomUNEtKgvnvpP+S82lpMdNTRoKnW4hOVIdNw4S2GnlGguSGMZXxbdA+gOKiX4tSNiZgdxIcaQkI5SMzccomx8=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [choice = _t, choice_order = _t, kind = _t, sectors_compared = _t, rank_correlation = _t, top3_in_common = _t, main_top_sector = _t]),
+					Typed = Table.TransformColumnTypes(Source, {{"choice", type text}, {"choice_order", Int64.Type}, {"kind", type text}, {"sectors_compared", Int64.Type}, {"rank_correlation", type number}, {"top3_in_common", Int64.Type}, {"main_top_sector", type text}}, "en-US")
+				in
+					Typed
+

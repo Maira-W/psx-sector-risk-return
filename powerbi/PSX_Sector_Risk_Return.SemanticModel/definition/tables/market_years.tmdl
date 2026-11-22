@@ -1,0 +1,27 @@
+table market_years
+
+	column period_index
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: period_index
+
+	column period
+		dataType: string
+		summarizeBy: none
+		sourceColumn: period
+
+	column period_return
+		dataType: double
+		formatString: 0%
+		summarizeBy: none
+		sourceColumn: period_return
+
+	partition market_years = m
+		mode: import
+		source =
+				let
+					Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("Tc7LCcAgEATQVmTPJqz70VhFChBPKSAX+yeLBtbbMDyYaQ0SRLifEQgphfGGP5PVB54pszJDjw3IIW2QrTaHpGU5dsebk+kKoohMJ+5kczpdTchXnU7d6ebyOmgjtWTo/QM=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [period_index = _t, period = _t, period_return = _t]),
+					Typed = Table.TransformColumnTypes(Source, {{"period_index", Int64.Type}, {"period", type text}, {"period_return", type number}}, "en-US")
+				in
+					Typed
+

@@ -1,0 +1,408 @@
+table _Measures
+
+	/// Compound annual return of the whole market (every qualifying company, equal-weighted, dividends included).
+	measure 'Market Return a Year' = MAX ( market[market_cagr] )
+		formatString: 0.0%
+		displayFolder: The whole market
+
+	/// What cash would have earned at the State Bank of Pakistan's policy rate, compounded.
+	measure 'Cash Return a Year' = MAX ( market[cash_cagr] )
+		formatString: 0.0%
+		displayFolder: The whole market
+
+	measure 'Market Excess Return a Year' = [Market Return a Year] - [Cash Return a Year]
+		formatString: 0.0%
+		displayFolder: The whole market
+
+	measure 'Market Volatility' = MAX ( market[market_volatility] )
+		formatString: 0.0%
+		displayFolder: The whole market
+
+	measure 'Market Worst Fall' = MAX ( market[market_max_drawdown] )
+		formatString: 0%
+		displayFolder: The whole market
+
+	/// Return above cash per unit of risk for the whole market, scaled to a year.
+	measure 'Market Sharpe' = MAX ( market[market_sharpe] )
+		formatString: 0.00
+		displayFolder: The whole market
+
+	measure 'Market Return in Dollars a Year' = MAX ( market[market_usd_cagr] )
+		formatString: 0.0%
+		displayFolder: The whole market
+
+	measure 'Companies Analysed' = MAX ( market[n_companies] )
+		formatString: 0
+		displayFolder: The whole market
+
+	measure 'Top Sector by Sharpe' = SELECTEDVALUE ( market[top_sector] )
+		formatString: General
+		displayFolder: The whole market
+
+	measure 'Top Sector Sharpe' = MAX ( market[top_sharpe] )
+		formatString: 0.00
+		displayFolder: The whole market
+
+	measure 'Sector Count' = COUNTROWS ( sectors )
+		formatString: 0
+		displayFolder: Return and risk
+
+	/// Compound annual return of the sector index (equal-weighted, rebalanced monthly, dividends included).
+	measure 'Return a Year' = AVERAGE ( sectors[cagr] )
+		formatString: 0.0%
+		displayFolder: Return and risk
+
+	/// Standard deviation of daily returns, scaled to a year.
+	measure Volatility = AVERAGE ( sectors[volatility] )
+		formatString: 0.0%
+		displayFolder: Return and risk
+
+	/// The largest drop from a peak to a later low of the sector's growth-of-100 series.
+	measure 'Worst Fall' = AVERAGE ( sectors[max_drawdown] )
+		formatString: 0%
+		displayFolder: Return and risk
+
+	/// Average daily return above cash divided by its standard deviation, scaled to a year.
+	measure 'Sharpe Ratio' = AVERAGE ( sectors[sharpe] )
+		formatString: 0.00
+		displayFolder: Return and risk
+
+	/// Lower end of the 95% range from resampling the days 2,000 times.
+	measure 'Sharpe Ratio Low' = AVERAGE ( sectors[sharpe_lo] )
+		formatString: 0.00
+		displayFolder: Return and risk
+
+	/// Upper end of the 95% range from resampling the days 2,000 times.
+	measure 'Sharpe Ratio High' = AVERAGE ( sectors[sharpe_hi] )
+		formatString: 0.00
+		displayFolder: Return and risk
+
+	measure Companies = SUM ( sectors[n_companies] )
+		formatString: #,0
+		displayFolder: Return and risk
+
+	measure 'Dividend Points' = AVERAGE ( sectors[dividend_points] )
+		formatString: 0.0%
+		displayFolder: Return and risk
+
+	measure 'Return in Dollars a Year' = AVERAGE ( sectors[usd_cagr] )
+		formatString: 0.0%
+		displayFolder: Return and risk
+
+	measure 'Rank by Sharpe' = AVERAGE ( sectors[rank_sharpe] )
+		formatString: 0
+		displayFolder: Return and risk
+
+	measure 'Sectors Clearly Better Than Market' = COALESCE ( CALCULATE ( COUNTROWS ( sectors ), sectors[p_beats_market] >= 0.95 ), 0 )
+		formatString: 0
+		displayFolder: Return and risk
+
+	measure 'Sectors Clearly Worse Than Market' = COALESCE ( CALCULATE ( COUNTROWS ( sectors ), sectors[p_beats_market] <= 0.05 ), 0 )
+		formatString: 0
+		displayFolder: Return and risk
+
+	measure 'Sector Year Return' = AVERAGE ( year_returns[period_return] )
+		formatString: 0%
+		displayFolder: Return and risk
+
+	measure 'Market Year Return' =
+			CALCULATE (
+			    AVERAGE ( market_years[period_return] ),
+			    TREATAS ( VALUES ( year_returns[period_index] ), market_years[period_index] )
+			)
+		formatString: 0%
+		displayFolder: Return and risk
+
+	measure 'Highlight Level' = AVERAGE ( levels_top[level] )
+		formatString: 0
+		displayFolder: Return and risk
+
+	/// Growth of 100 rupees for the series picked in the list (one to eight). Until something is picked it draws the whole market and cash.
+	measure 'Selected Level' =
+			VAR picked = COUNTROWS ( ALLSELECTED ( 'levels'[series] ) )
+			VAR shown = SELECTEDVALUE ( 'levels'[series] )
+			RETURN
+			    IF ( picked <= 8 || shown IN { "Whole market", "Cash at the policy rate" }, AVERAGE ( 'levels'[level] ), BLANK () )
+		formatString: 0
+		displayFolder: Return and risk
+
+	/// How far below its previous high each picked series was, in percent (one to eight). Until something is picked it draws the whole market and cash.
+	measure 'Selected Drawdown' =
+			VAR picked = COUNTROWS ( ALLSELECTED ( 'levels'[series] ) )
+			VAR shown = SELECTEDVALUE ( 'levels'[series] )
+			RETURN
+			    IF ( picked <= 8 || shown IN { "Whole market", "Cash at the policy rate" }, AVERAGE ( 'levels'[drawdown_pct] ), BLANK () )
+		formatString: 0.0
+		displayFolder: Return and risk
+
+	/// Share of the 2,000 resampled histories in which the sector had the best Sharpe ratio.
+	measure 'Chance of First' = AVERAGE ( sectors[p_top1] )
+		formatString: 0%
+		displayFolder: How sure
+
+	/// Share of the 2,000 resampled histories in which the sector was in the top three by Sharpe ratio.
+	measure 'Chance of Top 3' = AVERAGE ( sectors[p_top3] )
+		formatString: 0%
+		displayFolder: How sure
+
+	/// Share of the resampled histories in which the sector's Sharpe ratio beat the whole market's.
+	measure 'Chance Better Than Market' = AVERAGE ( sectors[p_beats_market] )
+		formatString: 0%
+		displayFolder: How sure
+
+	measure 'Sectors With a 10% Chance of First' = COALESCE ( CALCULATE ( COUNTROWS ( sectors ), sectors[p_top1] >= 0.1 ), 0 )
+		formatString: 0
+		displayFolder: How sure
+
+	measure 'Top Sector Chance of First' = MAX ( market[top_p1] )
+		formatString: 0%
+		displayFolder: How sure
+
+	/// Position by Sharpe ratio (1 is best) under the main analysis and each of the twelve other ways of doing it.
+	measure 'Rank in Each Analysis' = AVERAGE ( rank_choices[position] )
+		formatString: 0
+		displayFolder: How sure
+
+	measure 'Method Rank Correlation (median)' = MAX ( market[method_rank_correlation_median] )
+		formatString: 0.00
+		displayFolder: How sure
+
+	measure 'Method Rank Correlation (lowest)' = MAX ( market[method_rank_correlation_min] )
+		formatString: 0.00
+		displayFolder: How sure
+
+	measure 'Date Rank Correlation (lowest)' = MAX ( market[period_rank_correlation_min] )
+		formatString: 0.00
+		displayFolder: How sure
+
+	measure 'First vs Second Half Correlation' = MAX ( market[half_correlation] )
+		formatString: 0.00
+		displayFolder: How sure
+
+	/// How strongly the sector follows the rest of the market (every company outside that sector); 1 means one for one.
+	measure Beta = AVERAGE ( sectors[beta] )
+		formatString: 0.00
+		displayFolder: Skill or luck
+
+	/// Return a year that the rest of the market does not explain (weekly market model with the Dimson correction).
+	measure 'Alpha a Year' = AVERAGE ( sectors[alpha] )
+		formatString: 0%
+		displayFolder: Skill or luck
+
+	measure 'Alpha t' = AVERAGE ( sectors[alpha_t] )
+		formatString: 0.0
+		displayFolder: Skill or luck
+
+	/// Two-sided p-value of the alpha, tested for this sector on its own (Newey-West errors).
+	measure 'Alpha p Alone' = AVERAGE ( sectors[alpha_p] )
+		formatString: 0.000
+		displayFolder: Skill or luck
+
+	/// p-value after allowing for having looked at every ranked sector (Romano-Wolf resampling test).
+	measure 'Alpha p Corrected' = AVERAGE ( sectors[alpha_p_adjusted] )
+		formatString: 0.000
+		displayFolder: Skill or luck
+
+	/// False-discovery-rate version of the p-value (Benjamini-Hochberg): a looser rule that lets a small share of false findings through.
+	measure 'Alpha q' = AVERAGE ( sectors[alpha_q] )
+		formatString: 0.000
+		displayFolder: Skill or luck
+
+	measure 'Sortino Ratio' = AVERAGE ( sectors[sortino] )
+		formatString: 0.00
+		displayFolder: Skill or luck
+
+	/// Average return on the worst 5% of days (expected shortfall at 95%).
+	measure 'Bad Day Loss' = AVERAGE ( sectors[cvar_95] )
+		formatString: 0.0%
+		displayFolder: Skill or luck
+
+	/// Sector's average gain in the months the rest of the market rose, as a share of the market's own.
+	measure 'Up Capture' = AVERAGE ( sectors[up_capture] )
+		formatString: 0%
+		displayFolder: Skill or luck
+
+	/// Sector's average loss in the months the rest of the market fell, as a share of the market's own.
+	measure 'Down Capture' = AVERAGE ( sectors[down_capture] )
+		formatString: 0%
+		displayFolder: Skill or luck
+
+	/// Chance that the true Sharpe ratio beats what the best of all the sectors would reach by luck alone.
+	measure 'Deflated Sharpe' = AVERAGE ( sectors[dsr] )
+		formatString: 0.00
+		displayFolder: Skill or luck
+
+	measure 'Longest Fall (months)' = AVERAGE ( sectors[longest_fall_months] )
+		formatString: 0
+		displayFolder: Skill or luck
+
+	measure 'Alpha Significant Alone' = COALESCE ( CALCULATE ( COUNTROWS ( sectors ), sectors[alpha_p] < 0.05 ), 0 )
+		formatString: 0
+		displayFolder: Skill or luck
+
+	/// Sectors whose alpha stays significant at 5% once the test allows for looking at all of them.
+	measure 'Alpha Significant After Correction' = COALESCE ( CALCULATE ( COUNTROWS ( sectors ), sectors[alpha_p_adjusted] < 0.05 ), 0 )
+		formatString: 0
+		displayFolder: Skill or luck
+
+	measure 'Alpha Significant Looser Rule' = COALESCE ( CALCULATE ( COUNTROWS ( sectors ), sectors[alpha_q] < 0.05 ), 0 )
+		formatString: 0
+		displayFolder: Skill or luck
+
+	measure 'Best Alpha' = MAX ( market[best_alpha] )
+		formatString: 0%
+		displayFolder: Skill or luck
+
+	measure 'Best Alpha Sector' = SELECTEDVALUE ( market[best_alpha_sector] )
+		formatString: General
+		displayFolder: Skill or luck
+
+	measure 'Best Alpha p Corrected' = MAX ( market[best_alpha_p_adjusted] )
+		formatString: 0.000
+		displayFolder: Skill or luck
+
+	measure 'Best Deflated Sharpe' = MAX ( market[best_dsr] )
+		formatString: 0.00
+		displayFolder: Skill or luck
+
+	/// The Sharpe ratio the best of all the sectors would be expected to reach if none had any skill.
+	measure 'Luck Bar for Sharpe' = MAX ( market[expected_best_sharpe] )
+		formatString: 0.00
+		displayFolder: Skill or luck
+
+	/// Extra return in a month, in percent, for each percentage point the policy rate rose, with the rest of the market held fixed.
+	measure 'Rate Effect' = AVERAGE ( sectors[rate_beta] )
+		formatString: 0.00
+		displayFolder: What moves the sectors
+
+	/// Extra return in a month, in percent, for each 1% the rupee weakened against the dollar, with the rest of the market held fixed.
+	measure 'Rupee Effect' = AVERAGE ( sectors[fx_beta] )
+		formatString: 0.00
+		displayFolder: What moves the sectors
+
+	/// Share of all the variation in sector returns carried by the first principal component, the market-wide movement.
+	measure 'Market Share of Variation' = MAX ( market[pc1_share] )
+		formatString: 0.0%
+		displayFolder: What moves the sectors
+
+	/// How many equally important independent sources of risk would give the same concentration of variance.
+	measure 'Effective Bets' = MAX ( market[effective_bets] )
+		formatString: 0.0
+		displayFolder: What moves the sectors
+
+	measure 'Average Correlation' = MAX ( market[mean_correlation] )
+		formatString: 0.00
+		displayFolder: What moves the sectors
+
+	/// Average correlation between two sectors after the part the rest of the market explains is taken out.
+	measure 'Average Correlation Without Market' = MAX ( market[residual_mean_correlation] )
+		formatString: 0.00
+		displayFolder: What moves the sectors
+
+	measure 'Sectors Reacting to Rates' = MAX ( market[n_rate_fdr] )
+		formatString: 0
+		displayFolder: What moves the sectors
+
+	measure 'Sectors Reacting to the Rupee' = MAX ( market[n_fx_fdr] )
+		formatString: 0
+		displayFolder: What moves the sectors
+
+	measure 'Component Share' = AVERAGE ( components[share] )
+		formatString: 0.0%
+		displayFolder: What moves the sectors
+
+	measure 'Component 1 Loading' = AVERAGE ( sectors[component_1] )
+		formatString: 0.00
+		displayFolder: What moves the sectors
+
+	measure 'Component 2 Loading' = AVERAGE ( sectors[component_2] )
+		formatString: 0.00
+		displayFolder: What moves the sectors
+
+	/// Growth of 100 rupees of a rule that chooses weights each month using only the previous 12 months.
+	measure 'Strategy Level' = AVERAGE ( strategy_levels[level] )
+		formatString: 0
+		displayFolder: Out of sample
+
+	/// Sharpe ratio of holding the three sectors with the best past Sharpe ratio, chosen anew each month.
+	measure 'Winners Sharpe' = CALCULATE ( AVERAGE ( strategies[sharpe] ), strategies[strategy_key] = "winners" )
+		formatString: 0.00
+		displayFolder: Out of sample
+
+	measure 'Equal Weight Sharpe' = CALCULATE ( AVERAGE ( strategies[sharpe] ), strategies[strategy_key] = "equal_weight" )
+		formatString: 0.00
+		displayFolder: Out of sample
+
+	measure 'Winners p Alone' = CALCULATE ( AVERAGE ( strategies[vs_equal_p] ), strategies[strategy_key] = "winners" )
+		formatString: 0.000
+		displayFolder: Out of sample
+
+	/// p-value of that rule's Sharpe ratio against equal weights, multiplied by the five comparisons made.
+	measure 'Winners p Corrected' = CALCULATE ( AVERAGE ( strategies[vs_equal_p_adjusted] ), strategies[strategy_key] = "winners" )
+		formatString: 0.000
+		displayFolder: Out of sample
+
+	measure 'Minimum Variance Sharpe' = CALCULATE ( AVERAGE ( strategies[sharpe] ), strategies[strategy_key] = "min_variance" )
+		formatString: 0.00
+		displayFolder: Out of sample
+
+	measure 'Minimum Variance p Corrected' = CALCULATE ( AVERAGE ( strategies[vs_equal_p_adjusted] ), strategies[strategy_key] = "min_variance" )
+		formatString: 0.000
+		displayFolder: Out of sample
+
+	/// Rank correlation between the sectors' Sharpe ratios over the previous 12 months and their returns in the next month.
+	measure 'Information Coefficient' = AVERAGE ( info_coeff[information_coefficient] )
+		formatString: +0.00;-0.00
+		displayFolder: Out of sample
+
+	measure 'Months Tested' = MAX ( market[wf_months] )
+		formatString: 0
+		displayFolder: Out of sample
+
+	measure 'Months Pointing the Right Way' =
+			DIVIDE (
+			    CALCULATE ( COUNTROWS ( info_coeff ), info_coeff[information_coefficient] > 0 ),
+			    COUNTROWS ( info_coeff )
+			)
+		formatString: 0%
+		displayFolder: Out of sample
+
+	/// Share of the portfolio in the sector. The presets are worked out with hindsight from the whole five years.
+	measure 'Preset Weight' = AVERAGE ( presets[weight] )
+		formatString: 0.0%
+		displayFolder: Preset portfolios
+
+	measure 'Preset Level' = AVERAGE ( preset_levels[level] )
+		formatString: 0
+		displayFolder: Preset portfolios
+
+	measure 'Preset Return a Year' = AVERAGE ( preset_stats[cagr] )
+		formatString: 0.0%
+		displayFolder: Preset portfolios
+
+	measure 'Preset Volatility' = AVERAGE ( preset_stats[volatility] )
+		formatString: 0.0%
+		displayFolder: Preset portfolios
+
+	measure 'Preset Worst Fall' = AVERAGE ( preset_stats[max_drawdown] )
+		formatString: 0%
+		displayFolder: Preset portfolios
+
+	measure 'Preset Sharpe' = AVERAGE ( preset_stats[sharpe] )
+		formatString: 0.00
+		displayFolder: Preset portfolios
+
+	column Placeholder
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Placeholder
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+					Source = #table(type table [Placeholder = text], {{"measures"}})
+				in
+					Source
+

@@ -1,0 +1,50 @@
+{
+  "name": "PSX sector risk and return",
+  "dataColors": [
+    "#1F3B57",
+    "#2A9D8F",
+    "#E76F51",
+    "#E9C46A",
+    "#9AA5B1",
+    "#7B4FA3"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#1D2733",
+  "tableAccent": "#1F3B57",
+  "good": "#2A9D8F",
+  "bad": "#E76F51",
+  "neutral": "#9AA5B1",
+  "textClasses": {
+    "callout": {
+      "fontSize": 24,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#1F3B57"
+    },
+    "title": {
+      "fontSize": 12,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#1F3B57"
+    },
+    "header": {
+      "fontSize": 11,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#1F3B57"
+    },
+    "label": {
+      "fontSize": 10,
+      "fontFace": "Segoe UI",
+      "color": "#4A5568"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "*": [
+          {
+            "fontFamily": "Segoe UI"
+          }
+        ]
+      }
+    }
+  }
+}

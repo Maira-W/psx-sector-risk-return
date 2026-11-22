@@ -1,0 +1,51 @@
+table preset_stats
+
+	column preset
+		dataType: string
+		summarizeBy: none
+		sourceColumn: preset
+		sortByColumn: preset_order
+
+	column preset_order
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: preset_order
+
+	column cagr
+		dataType: double
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: cagr
+
+	column volatility
+		dataType: double
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: volatility
+
+	column max_drawdown
+		dataType: double
+		formatString: 0%
+		summarizeBy: none
+		sourceColumn: max_drawdown
+
+	column sharpe
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: sharpe
+
+	column sectors_held
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: sectors_held
+
+	partition preset_stats = m
+		mode: import
+		source =
+				let
+					Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("NY+xbsMwDER/RdCcBhRJSdRaIEOGThmNDEohNAIct3UcB/n7SJY9CDjoyHe8rtOH/0fs1TPln+ukd9qUB3u0VpCaRBbkIj9gT2Ac+OWbLTkORSLq867Tn+k+KVKXlzpd4/iXqtMGfVmyDQXA6BoKvZDUMFMkCNQJWkhfeci3x03Nccxx+E6LUdfJUuCWbsQTyEqyRK5lBbAo9VZZSMdhTuM9qfm3j1Pu8/QqFm8Ft35G3EYKwLxebX0Qv9Y7vwE=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [preset = _t, preset_order = _t, cagr = _t, volatility = _t, max_drawdown = _t, sharpe = _t, sectors_held = _t]),
+					Typed = Table.TransformColumnTypes(Source, {{"preset", type text}, {"preset_order", Int64.Type}, {"cagr", type number}, {"volatility", type number}, {"max_drawdown", type number}, {"sharpe", type number}, {"sectors_held", Int64.Type}}, "en-US")
+				in
+					Typed
+

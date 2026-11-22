@@ -1,0 +1,29 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+ref table sectors
+ref table market
+ref table market_years
+ref table levels_top
+ref table levels
+ref table year_returns
+ref table rank_choices
+ref table robustness_summary
+ref table strategies
+ref table strategy_levels
+ref table info_coeff
+ref table sensitivity
+ref table presets
+ref table preset_stats
+ref table preset_levels
+ref table components
+ref table groups
+ref table notes
+ref table _Measures
+

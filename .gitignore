@@ -16,3 +16,8 @@ Thumbs.db
 data/raw/*
 !data/raw/MANIFEST.json
 data/interim/
+
+# Power BI writes these on the machine that opens a project; they are not part of it
+.pbi/
+diagramLayout.json
+*.abf
